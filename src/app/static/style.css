@@ -613,7 +613,7 @@ main {
     overflow: hidden;
     border-radius: 18px;
     padding: 3rem 2.5rem;
-    background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 55%, #7c3aed 100%);
+    background: linear-gradient(135deg, #0b1220 0%, #172554 55%, #4c1d95 100%);
     color: #ffffff;
 }
 .hero-portal::before,
@@ -644,27 +644,29 @@ main {
     display: inline-block;
     padding: 0.35em 0.9em;
     border-radius: 999px;
-    background: rgba(255, 255, 255, 0.12);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.16);
+    border: 1px solid rgba(255, 255, 255, 0.3);
     font-size: 0.75rem;
     font-weight: 600;
     letter-spacing: 0.5px;
     text-transform: uppercase;
+    color: #f8fafc;
     margin-bottom: 1.25rem;
 }
 .hero-titulo {
     font-size: clamp(1.7rem, 3.5vw, 2.6rem);
     font-weight: 800;
     letter-spacing: -0.5px;
+    color: #ffffff;
 }
 .hero-gradiente {
-    background: linear-gradient(90deg, #60a5fa, #a78bfa, #f472b6);
+    background: linear-gradient(90deg, #93c5fd, #c4b5fd, #f9a8d4);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
 }
 .hero-texto {
-    color: rgba(255, 255, 255, 0.78);
+    color: rgba(255, 255, 255, 0.9);
     font-size: 1.05rem;
     line-height: 1.65;
     max-width: 560px;
@@ -690,10 +692,10 @@ main {
     border-radius: 14px;
     padding: 1rem 1.5rem;
     color: #ffffff;
-    background: linear-gradient(90deg, #2563eb, #7c3aed, #ec4899, #2563eb);
+    background: linear-gradient(90deg, #1e40af, #6d28d9, #be185d, #1e40af);
     background-size: 300% 100%;
     animation: shimmerBarra 10s linear infinite;
-    box-shadow: 0 6px 18px rgba(124, 58, 237, 0.35);
+    box-shadow: 0 6px 18px rgba(109, 40, 217, 0.4);
 }
 .banner-promo-icon {
     display: inline-flex;
@@ -1513,13 +1515,20 @@ main {
 /* ===== Portal: CTA final ===== */
 .banner-cta {
     background:
-        radial-gradient(90% 200% at 10% 0%, rgba(99, 102, 241, 0.55), transparent 55%),
-        radial-gradient(90% 200% at 90% 100%, rgba(236, 72, 153, 0.45), transparent 55%),
-        linear-gradient(135deg, #2563eb, #7c3aed 55%, #ec4899);
+        radial-gradient(90% 200% at 10% 0%, rgba(99, 102, 241, 0.25), transparent 55%),
+        radial-gradient(90% 200% at 90% 100%, rgba(236, 72, 153, 0.2), transparent 55%),
+        linear-gradient(135deg, #1d4ed8, #6d28d9 55%, #be185d);
     color: #ffffff;
     box-shadow: 0 16px 40px rgba(99, 102, 241, 0.35);
     position: relative;
     overflow: hidden;
+}
+.banner-cta h2,
+.banner-cta h3 {
+    color: #ffffff;
+}
+.banner-cta p {
+    color: rgba(255, 255, 255, 0.92);
 }
 .banner-cta::before {
     content: "";
