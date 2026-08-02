@@ -1,12 +1,28 @@
+{% macro icono_categoria(categoria, clase='') -%}
+{%- set iconos = {
+    'computadoras': '<path d="M20 16V7a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v9"/><path d="M2 16h20"/>',
+    'perifericos': '<rect x="6" y="3" width="12" height="18" rx="6"/><path d="M12 7v4"/>',
+    'monitores': '<rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8"/><path d="M12 17v4"/>',
+    'almacenamiento': '<ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14a9 3 0 0 0 18 0V5"/><path d="M3 12a9 3 0 0 0 18 0"/>',
+    'audio': '<path d="M3 14h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a9 9 0 0 1 18 0v7a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3"/>',
+    'tablets': '<rect x="4" y="2" width="16" height="20" rx="2"/><path d="M12 18h.01"/>',
+    'redes': '<path d="M5 13a10 10 0 0 1 14 0"/><path d="M8.5 16.5a5 5 0 0 1 7 0"/><path d="M2 8.82a15 15 0 0 1 20 0"/><path d="M12 20h.01"/>',
+    'gaming': '<line x1="6" y1="11" x2="10" y2="11"/><line x1="8" y1="9" x2="8" y2="13"/><line x1="15" y1="12" x2="15.01" y2="12"/><line x1="18" y1="10" x2="18.01" y2="10"/><path d="M17.32 5H6.68a4 4 0 0 0-3.978 3.59c-.006.052-.01.101-.017.152C2.604 9.416 2 14.456 2 16a3 3 0 0 0 3 3c1 0 1.5-.5 2-1l1.414-1.414A2 2 0 0 1 9.828 16h4.344a2 2 0 0 1 1.414.586L17 18c.5.5 1 1 2 1a3 3 0 0 0 3-3c0-1.545-.604-6.584-.685-7.258-.007-.05-.011-.1-.017-.151A4 4 0 0 0 17.32 5z"/>',
+    'oficina': '<polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8" rx="1"/>',
+    'accesorios': '<path d="M12 22v-5"/><path d="M9 8V2"/><path d="M15 8V2"/><path d="M18 8v5a4 4 0 0 1-4 4h-4a4 4 0 0 1-4-4V8Z"/>',
+    'gaming-sillas': '<path d="M4 6h16v3a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3z"/><path d="M7 12v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-5"/><path d="M5 21l2-4"/><path d="M19 21l-2-4"/>'
+} -%}
+{%- set cat = (categoria or '') | lower | replace(' ', '-') -%}
+{%- set cuerpo = iconos.get(cat, '<path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/>') -%}
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+     stroke-linecap="round" stroke-linejoin="round" class="{{ clase }} cat-icon cat-{{ cat }}"
+     aria-hidden="true">{{ cuerpo | safe }}</svg>
+{%- endmacro %}
+
 {% macro imagen_producto(producto, clase='img-prod') -%}
 <div class="img-contenedor {{ clase }}">
     <div class="img-fallback" role="img" aria-label="{{ producto.nombre }}">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
-             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
-            <path d="m3.3 7 8.7 5 8.7-5"></path>
-            <path d="M12 22V12"></path>
-        </svg>
+        {{ icono_categoria(producto.categoria) }}
     </div>
     {% if producto.imagen %}
         <img src="{{ url_for('static', filename='uploads/' ~ producto.imagen) }}"
@@ -14,6 +30,59 @@
              loading="lazy" onerror="this.style.display='none'">
     {% endif %}
 </div>
+{%- endmacro %}
+
+{% macro categoria_icono(categoria, clase='') -%}
+{%- set cat = (categoria or '')|lower|replace('á','a')|replace('é','e')|replace('í','i')|replace('ó','o')|replace('ú','u') -%}
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+     stroke-linecap="round" stroke-linejoin="round" class="{{ clase }}" aria-hidden="true">
+{% if 'computador' in cat %}
+    <path d="M20 16V7a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v9m16 0H4m16 0 1.28 2.55a1 1 0 0 1-.9 1.45H3.62a1 1 0 0 1-.9-1.45L4 16"></path>
+{% elif 'periferic' in cat or 'mouse' in cat or 'teclado' in cat %}
+    <rect x="5" y="2" width="14" height="20" rx="7"></rect>
+    <path d="M12 6v4"></path>
+{% elif 'monitor' in cat or 'pantalla' in cat %}
+    <rect x="2" y="3" width="20" height="14" rx="2"></rect>
+    <path d="M8 21h8M12 17v4"></path>
+{% elif 'almacen' in cat or 'ssd' in cat or 'disco' in cat %}
+    <path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"></path>
+    <line x1="2" x2="22" y1="12" y2="12"></line>
+    <line x1="6" x2="6.01" y1="16" y2="16"></line>
+    <line x1="10" x2="10.01" y1="16" y2="16"></line>
+{% elif 'audio' in cat or 'parlante' in cat or 'audifono' in cat or 'sonido' in cat %}
+    <path d="M3 14h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a9 9 0 0 1 18 0v7a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3"></path>
+{% elif 'tablet' in cat or 'tableta' in cat %}
+    <rect x="4" y="2" width="16" height="20" rx="2"></rect>
+    <line x1="12" x2="12.01" y1="18" y2="18"></line>
+{% elif 'red' in cat or 'router' in cat or 'wifi' in cat %}
+    <path d="M2 8.82a15 15 0 0 1 20 0"></path>
+    <path d="M5 13a10 10 0 0 1 14 0"></path>
+    <path d="M8.5 16.5a5 5 0 0 1 7 0"></path>
+    <line x1="12" x2="12.01" y1="20" y2="20"></line>
+{% elif 'gaming' in cat or 'consola' in cat or 'juego' in cat or 'gamer' in cat %}
+    <line x1="6" x2="10" y1="12" y2="12"></line>
+    <line x1="8" x2="8" y1="10" y2="14"></line>
+    <line x1="15" x2="15.01" y1="13" y2="13"></line>
+    <line x1="18" x2="18.01" y1="11" y2="11"></line>
+    <rect x="2" y="6" width="20" height="12" rx="6"></rect>
+{% elif 'oficina' in cat or 'impresora' in cat %}
+    <path d="M6 9V2h12v7"></path>
+    <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+    <rect x="6" y="14" width="12" height="8" rx="1"></rect>
+{% elif 'accesor' in cat or 'cargador' in cat or 'hub' in cat or 'usb' in cat %}
+    <path d="M12 22v-5"></path>
+    <path d="M9 8V2"></path>
+    <path d="M15 8V2"></path>
+    <path d="M18 8v5a4 4 0 0 1-4 4h-4a4 4 0 0 1-4-4V8Z"></path>
+{% elif 'telefono' in cat or 'celular' in cat %}
+    <rect x="6" y="2" width="12" height="20" rx="2"></rect>
+    <line x1="12" x2="12.01" y1="18" y2="18"></line>
+{% else %}
+    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+    <path d="m3.3 7 8.7 5 8.7-5"></path>
+    <path d="M12 22V12"></path>
+{% endif %}
+</svg>
 {%- endmacro %}
 
 {% macro producto_card(producto, cliente=False) -%}

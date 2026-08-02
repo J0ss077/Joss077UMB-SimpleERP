@@ -1395,13 +1395,31 @@ main {
     color: var(--text);
 }
 .categoria-chip {
-    width: 34px;
-    height: 34px;
-    border-radius: 10px;
+    width: 38px;
+    height: 38px;
+    border-radius: 11px;
     flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     background: linear-gradient(135deg, var(--accent), var(--accent-2));
-    opacity: 0.9;
+    box-shadow: 0 4px 10px rgba(37, 99, 235, 0.25);
 }
+.categoria-chip svg {
+    width: 20px;
+    height: 20px;
+    color: #ffffff;
+}
+.cat-chip-computadoras   { background: linear-gradient(135deg, #2563eb, #3b82f6); }
+.cat-chip-perifericos    { background: linear-gradient(135deg, #7c3aed, #a855f7); }
+.cat-chip-monitores      { background: linear-gradient(135deg, #0891b2, #06b6d4); }
+.cat-chip-almacenamiento { background: linear-gradient(135deg, #d97706, #f59e0b); }
+.cat-chip-audio          { background: linear-gradient(135deg, #e11d48, #f43f5e); }
+.cat-chip-tablets        { background: linear-gradient(135deg, #059669, #10b981); }
+.cat-chip-redes          { background: linear-gradient(135deg, #0284c7, #0ea5e9); }
+.cat-chip-gaming         { background: linear-gradient(135deg, #c026d3, #d946ef); }
+.cat-chip-oficina        { background: linear-gradient(135deg, #4f46e5, #6366f1); }
+.cat-chip-accesorios     { background: linear-gradient(135deg, #ea580c, #f97316); }
 .categoria-nombre {
     font-weight: 600;
     font-size: 0.95rem;
@@ -1601,3 +1619,26 @@ main {
     text-transform: uppercase;
     letter-spacing: 0.4px;
 }
+
+/* ===== Icono de categoria en el placeholder de imagen ===== */
+.img-contenedor .img-fallback .cat-icon {
+    width: 42%;
+    height: 42%;
+    max-width: 76px;
+    max-height: 76px;
+}
+.img-detalle .img-fallback .cat-icon {
+    max-width: 120px;
+    max-height: 120px;
+}
+.cat-computadoras   { color: #3b82f6; }
+.cat-perifericos    { color: #a855f7; }
+.cat-monitores      { color: #06b6d4; }
+.cat-almacenamiento { color: #f59e0b; }
+.cat-audio          { color: #f43f5e; }
+.cat-tablets        { color: #10b981; }
+.cat-redes          { color: #0ea5e9; }
+.cat-gaming         { color: #d946ef; }
+.cat-oficina        { color: #6366f1; }
+.cat-accesorios     { color: #f97316; }
+.cat-gaming-sillas  { color: #d946ef; }

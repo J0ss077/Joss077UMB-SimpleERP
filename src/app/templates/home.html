@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% from "_macros.html" import producto_card %}
+{% from "_macros.html" import producto_card, icono_categoria %}
 {% block title %}Inicio — ERP TechStore{% endblock %}
 
 {% block content %}
@@ -90,7 +90,9 @@
     {% for categoria in categorias %}
         <div class="col-6 col-md-4 col-lg-3">
             <a href="{{ url_for('main.catalogo', categoria=categoria) }}" class="categoria-card text-decoration-none">
-                <span class="categoria-chip"></span>
+                <span class="categoria-chip cat-chip-{{ (categoria|lower)|replace(' ', '-') }}">
+                    {{ icono_categoria(categoria) }}
+                </span>
                 <span class="categoria-nombre">{{ categoria }}</span>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                      stroke-linecap="round" stroke-linejoin="round" class="categoria-flecha" aria-hidden="true">
