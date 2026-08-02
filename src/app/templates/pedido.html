@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block title %}Pedido Confirmado — ERP TechStore{% endblock %}
+
+{% block content %}
+<!-- ============================================================ -->
+<!-- CONFIRMACION DE PEDIDO                                       -->
+<!-- ============================================================ -->
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+
+        <div class="text-center mb-4">
+            <span class="check-gran">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                     stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M20 6 9 17l-5-5"></path>
+                </svg>
+            </span>
+            <h1 class="h3 mb-1">Gracias por tu compra!</h1>
+            <p class="text-muted mb-0">
+                Tu pedido fue registrado como la factura
+                <strong>#{{ factura.id_factura }}</strong> del
+                {{ factura.fecha.strftime('%d/%m/%Y a las %H:%M') }}.
+            </p>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-header card-header-accent">
+                <h6 class="mb-0">Resumen del pedido</h6>
+            </div>
+            <div class="card-body p-0">
+                <table class="table table-hover align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th class="ps-3">Producto</th>
+                            <th class="text-center">Cant.</th>
+                            <th class="text-end">Precio Unit.</th>
+                            <th class="text-end pe-3">Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for detalle in factura.detalles %}
+                            <tr>
+                                <td class="ps-3 fw-semibold">{{ detalle.producto.nombre }}</td>
+                                <td class="text-center">{{ detalle.cantidad }}</td>
+                                <td class="text-end">${{ "%.2f"|format(detalle.precio_unitario | float) }}</td>
+                                <td class="text-end pe-3 fw-bold">${{ "%.2f"|format(detalle.get_subtotal()) }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                    <tfoot class="table-total">
+                        <tr>
+                            <td colspan="3" class="text-end fw-bold pe-2">TOTAL:</td>
+                            <td class="text-end fw-bold fs-4 pe-3 text-primary">
+                                ${{ "%.2f"|format(factura.get_total()) }}
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+
+        <div class="d-flex flex-wrap gap-2 justify-content-center">
+            <a href="{{ url_for('invoices.ver', factura_id=factura.id_factura) }}" class="btn btn-primary">
+                Ver factura completa
+            </a>
+            <a href="{{ url_for('main.catalogo') }}" class="btn btn-outline-secondary">
+                Seguir comprando
+            </a>
+            <a href="{{ url_for('invoices.listar') }}" class="btn btn-outline-secondary">
+                Mis facturas
+            </a>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

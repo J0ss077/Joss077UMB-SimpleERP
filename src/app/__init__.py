@@ -6,7 +6,7 @@ Este patron permite crear la aplicacion en tiempo de ejecucion,
 facilitando pruebas, configuracion multiple y extension futura.
 """
 
-from flask import Flask
+from flask import Flask, session
 from flask_login import LoginManager
 
 from app.config import Config
@@ -57,6 +57,14 @@ def create_app(config_class=Config):
     with app.app_context():
         db.create_all()
 
+    # 6. Datos globales para todas las plantillas (carrito y favoritos)
+    @app.context_processor
+    def _contexto_global():
+        return {
+            'carrito_cantidad': sum(session.get('carrito', {}).values()),
+            'favoritos_ids': set(session.get('favoritos', [])),
+        }
+
     return app
 
 
@@ -76,9 +84,11 @@ def _registrar_blueprints(app):
     from app.products import products_bp
     from app.invoices import invoices_bp
     from app.reports import reports_bp
+    from app.tienda import tienda_bp
 
     app.register_blueprint(main_bp)
     app.register_blueprint(auth_bp)
     app.register_blueprint(products_bp)
     app.register_blueprint(invoices_bp)
     app.register_blueprint(reports_bp)
+    app.register_blueprint(tienda_bp)

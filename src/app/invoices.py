@@ -27,6 +27,75 @@ invoices_bp = Blueprint('invoices', __name__, url_prefix='/invoices')
 
 
 # ---------------------------------------------------------------------------
+# LOGICA COMPARTIDA: TRANSACCION ACID (RNF01)
+# ---------------------------------------------------------------------------
+def crear_factura_transaccional(id_cliente, lineas_venta):
+    """
+    Crea una factura con transaccion ACID (RNF01).
+
+    Argumentos:
+        id_cliente    : id_usuario asociado a la factura (cliente de la venta).
+        lineas_venta  : lista de tuplas (producto, cantidad).
+
+    Retorna:
+        (factura, None)      en exito.
+        (None, mensaje)      en error (stock insuficiente u otro fallo).
+    """
+    try:
+        # Crear cabecera de factura
+        factura = Factura(
+            id_usuario=id_cliente,
+            fecha=datetime.utcnow(),
+            estado='activa'
+        )
+        db.session.add(factura)
+        db.session.flush()  # Obtener id_factura sin hacer commit aun
+
+        # Procesar cada linea de detalle
+        for producto, cantidad in lineas_venta:
+            # Validar stock suficiente
+            if not producto.hay_stock_suficiente(cantidad):
+                raise ValueError(
+                    f'Stock insuficiente para "{producto.nombre}". '
+                    f'Disponible: {producto.stock}, solicitado: {cantidad}'
+                )
+
+            # Congelar precio actual del producto
+            precio_unitario = producto.get_precio()
+            subtotal = cantidad * precio_unitario
+
+            # Crear linea de detalle
+            detalle = DetalleFactura(
+                id_factura=factura.id_factura,
+                id_producto=producto.id_producto,
+                cantidad=cantidad,
+                precio_unitario=precio_unitario,
+                subtotal=subtotal
+            )
+            db.session.add(detalle)
+
+            # Descontar stock (RF09)
+            producto.actualizar_stock(-cantidad)
+
+        # Calcular total de la factura (RF08)
+        factura.calcular_total()
+
+        # --- Confirmar transaccion (COMMIT) ---
+        db.session.commit()
+        return factura, None
+
+    except ValueError as e:
+        # Error de negocio (ej. stock insuficiente)
+        db.session.rollback()
+        return None, str(e)
+
+    except Exception as e:
+        # Cualquier otro error: deshacer todo (ROLLBACK)
+        db.session.rollback()
+        return None, f'Error al crear la factura: {str(e)}'
+
+
+# ---------------------------------------------------------------------------
 # HISTORIAL DE FACTURAS - RF11
 # ---------------------------------------------------------------------------
 @invoices_bp.route('/')
@@ -72,6 +141,11 @@ def crear():
               5. Calcular total.
               6. Confirmar (commit) o deshacer (rollback) todo junto.
     """
+    # Los clientes compran desde el carrito (tienda)
+    if current_user.get_rol() == 'cliente':
+        flash('Como cliente puedes comprar desde tu carrito.', 'info')
+        return redirect(url_for('tienda.ver_carrito'))
+
     # Obtener clientes para selector (admin/vendedor pueden elegir)
     clientes = None
     if current_user.es_admin() or current_user.get_rol() == 'vendedor':
@@ -106,65 +180,19 @@ def crear():
             flash('Debes seleccionar al menos un producto con cantidad mayor a cero.', 'error')
             return redirect(url_for('invoices.crear'))
 
-        # --- Paso 2: Iniciar transaccion ACID ---
-        try:
-            # Crear cabecera de factura
-            factura = Factura(
-                id_usuario=id_cliente,
-                fecha=datetime.utcnow(),
-                estado='activa'
-            )
-            db.session.add(factura)
-            db.session.flush()  # Obtener id_factura sin hacer commit aun
+        # --- Paso 2: Ejecutar transaccion ACID compartida ---
+        factura, error = crear_factura_transaccional(id_cliente, lineas_venta)
 
-            # Procesar cada linea de detalle
-            for producto, cantidad in lineas_venta:
-                # Validar stock suficiente
-                if not producto.hay_stock_suficiente(cantidad):
-                    raise ValueError(
-                        f'Stock insuficiente para "{producto.nombre}". '
-                        f'Disponible: {producto.stock}, solicitado: {cantidad}'
-                    )
+        if error:
+            flash(error, 'error')
+            return redirect(url_for('invoices.crear'))
 
-                # Congelar precio actual del producto
-                precio_unitario = producto.get_precio()
-                subtotal = cantidad * precio_unitario
-
-                # Crear linea de detalle
-                detalle = DetalleFactura(
-                    id_factura=factura.id_factura,
-                    id_producto=producto.id_producto,
-                    cantidad=cantidad,
-                    precio_unitario=precio_unitario,
-                    subtotal=subtotal
-                )
-                db.session.add(detalle)
-
-                # Descontar stock (RF09)
-                producto.actualizar_stock(-cantidad)
-
-            # Calcular total de la factura (RF08)
-            factura.calcular_total()
-
-            # --- Confirmar transaccion (COMMIT) ---
-            db.session.commit()
-
-            flash(
-                f'Factura #{factura.id_factura} creada exitosamente. '
-                f'Total: ${factura.get_total():.2f}',
-                'success'
-            )
-            return redirect(url_for('invoices.ver', factura_id=factura.id_factura))
-
-        except ValueError as e:
-            # Error de negocio (ej. stock insuficiente)
-            db.session.rollback()
-            flash(str(e), 'error')
-
-        except Exception as e:
-            # Cualquier otro error: deshacer todo (ROLLBACK)
-            db.session.rollback()
-            flash(f'Error al crear la factura: {str(e)}', 'error')
+        flash(
+            f'Factura #{factura.id_factura} creada exitosamente. '
+            f'Total: ${factura.get_total():.2f}',
+            'success'
+        )
+        return redirect(url_for('invoices.ver', factura_id=factura.id_factura))
 
     # GET: mostrar formulario con productos disponibles
     productos = Producto.query.filter(Producto.stock > 0).order_by(Producto.nombre).all()

@@ -73,25 +73,55 @@
             <!-- Menu de navegacion -->
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
+                    <!-- Inicio: siempre visible -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('main.index') }}">Inicio</a>
+                    </li>
                     <!-- Catalogo: siempre visible -->
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('main.index') }}">Catalogo</a>
+                        <a class="nav-link" href="{{ url_for('main.catalogo') }}">Catalogo</a>
                     </li>
 
                     {% if current_user.is_authenticated %}
-                        <!-- Productos -->
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('products.listar') }}">Productos</a>
-                        </li>
-                        <!-- Facturas -->
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('invoices.listar') }}">Facturas</a>
-                        </li>
-                        <!-- Reportes: solo admin -->
-                        {% if current_user.es_admin() %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('reports.index') }}">Reportes</a>
-                        </li>
+                        {% if current_user.get_rol() == 'cliente' %}
+                            <!-- Tienda del cliente -->
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('tienda.ver_favoritos') }}">Favoritos</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link position-relative" href="{{ url_for('tienda.ver_carrito') }}">
+                                    <span class="d-inline-flex align-items-center gap-1">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                             stroke-linecap="round" stroke-linejoin="round" style="width: 18px; height: 18px;" aria-hidden="true">
+                                            <circle cx="8" cy="21" r="1"></circle>
+                                            <circle cx="19" cy="21" r="1"></circle>
+                                            <path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"></path>
+                                        </svg>
+                                        Carrito
+                                        {% if carrito_cantidad > 0 %}
+                                            <span class="carrito-badge" id="carritoBadge">{{ carrito_cantidad }}</span>
+                                        {% endif %}
+                                    </span>
+                                </a>
+                            </li>
+                        {% else %}
+                            <!-- Gestion para vendedor y admin -->
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('products.listar') }}">Productos</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('invoices.listar') }}">Facturas</a>
+                            </li>
+                            {% if current_user.es_admin() %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('reports.index') }}">Reportes</a>
+                            </li>
+                            {% endif %}
+                            {% if current_user.get_rol() == 'vendedor' %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('invoices.crear') }}">Nueva Factura</a>
+                            </li>
+                            {% endif %}
                         {% endif %}
                     {% endif %}
                 </ul>
@@ -99,14 +129,31 @@
                 <!-- Usuario / Sesion -->
                 <ul class="navbar-nav">
                     {% if current_user.is_authenticated %}
-                        <li class="nav-item">
-                            <span class="nav-link nav-usuario d-flex align-items-center gap-2">
-                                {{ current_user.nombre }}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle d-flex align-items-center gap-2"
+                               href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <span class="avatar">{{ current_user.nombre[:1] | upper }}</span>
+                                <span class="d-none d-lg-inline">{{ current_user.nombre }}</span>
                                 <span class="rol-badge rol-{{ current_user.get_rol() }}">{{ current_user.get_rol() }}</span>
-                            </span>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('auth.logout') }}">Cerrar Sesion</a>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li>
+                                    <span class="dropdown-item-text small text-muted text-truncate">
+                                        {{ current_user.email }}
+                                    </span>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <a class="dropdown-item" href="{{ url_for('invoices.listar') }}">
+                                        Mis Facturas
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item text-danger" href="{{ url_for('auth.logout') }}">
+                                        Cerrar Sesion
+                                    </a>
+                                </li>
+                            </ul>
                         </li>
                     {% else %}
                         <li class="nav-item">

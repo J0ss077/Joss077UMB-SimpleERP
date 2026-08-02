@@ -1,0 +1,58 @@
+{% macro producto_card(producto, cliente=False) -%}
+<div class="col">
+    <div class="producto-card">
+        <a href="{{ url_for('tienda.ver_producto', producto_id=producto.id_producto) }}"
+           class="producto-card-link">
+            <div class="d-flex justify-content-between align-items-start mb-2">
+                <h5 class="card-title mb-0">{{ producto.nombre }}</h5>
+                <span class="badge bg-secondary">{{ producto.categoria or 'Sin categoria' }}</span>
+            </div>
+
+            {% if producto.descripcion %}
+                <p class="text-muted small mb-3">
+                    {{ producto.descripcion[:120] }}{% if producto.descripcion|length > 120 %}...{% endif %}
+                </p>
+            {% endif %}
+
+            <div class="d-flex justify-content-between align-items-center mt-auto">
+                <span class="precio fs-5">${{ "%.2f"|format(producto.get_precio()) }}</span>
+                <span class="badge {% if producto.stock > 10 %}bg-success{% elif producto.stock > 0 %}bg-warning text-dark{% else %}bg-danger{% endif %}">
+                    {% if producto.stock > 0 %}
+                        Stock: {{ producto.stock }}
+                    {% else %}
+                        Agotado
+                    {% endif %}
+                </span>
+            </div>
+        </a>
+
+        {% if cliente %}
+        <div class="mt-3 d-flex gap-2">
+            <form method="POST" action="{{ url_for('tienda.agregar_carrito') }}"
+                  class="d-flex gap-1 flex-grow-1">
+                <input type="hidden" name="producto_id" value="{{ producto.id_producto }}">
+                <input type="number" name="cantidad" class="form-control form-control-sm"
+                       value="1" min="1" max="{{ producto.stock }}" style="width: 70px;"
+                       {% if producto.stock == 0 %}disabled{% endif %}>
+                <button type="submit" class="btn btn-primary btn-sm flex-grow-1"
+                        {% if producto.stock == 0 %}disabled{% endif %}>
+                    Agregar
+                </button>
+            </form>
+            <form method="POST" action="{{ url_for('tienda.toggle_favorito') }}">
+                <input type="hidden" name="producto_id" value="{{ producto.id_producto }}">
+                <button type="submit"
+                        class="btn btn-sm favorito-btn {% if producto.id_producto in favoritos_ids %}favorito-activo{% else %}btn-outline-secondary{% endif %}"
+                        aria-label="Agregar o quitar de favoritos">
+                    <svg viewBox="0 0 24 24" fill="{% if producto.id_producto in favoritos_ids %}currentColor{% else %}none{% endif %}"
+                         stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                         stroke-linejoin="round" aria-hidden="true">
+                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                    </svg>
+                </button>
+            </form>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{%- endmacro %}

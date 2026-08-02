@@ -31,6 +31,14 @@
         });
     }
 
+    /* ===== Badge del carrito: animacion al cargar ===== */
+    var badgeCarrito = document.getElementById('carritoBadge');
+    if (badgeCarrito) {
+        badgeCarrito.style.animation = 'none';
+        void badgeCarrito.offsetWidth;
+        badgeCarrito.style.animation = '';
+    }
+
     /* ===== Efecto ripple en botones ===== */
     document.querySelectorAll('.btn').forEach(function (boton) {
         boton.addEventListener('click', function (evento) {

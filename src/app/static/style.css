@@ -454,9 +454,8 @@ main {
 
 /* ===== Catalogo: tarjetas de producto cliqueables ===== */
 .producto-card {
-    display: block;
-    color: inherit;
-    text-decoration: none;
+    display: flex;
+    flex-direction: column;
     border: 1px solid var(--border);
     border-radius: 14px;
     background: var(--bg-card);
@@ -470,6 +469,15 @@ main {
     box-shadow: 0 16px 40px var(--shadow);
     transform: translateY(-5px);
     border-color: var(--accent);
+}
+.producto-card-link {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    color: inherit;
+    text-decoration: none;
+}
+.producto-card-link:hover {
     color: inherit;
 }
 .producto-card .precio {
@@ -478,6 +486,218 @@ main {
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
+}
+
+/* ===== Boton de favorito (corazon) ===== */
+.favorito-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    border-width: 1.5px;
+}
+.favorito-btn svg {
+    width: 18px;
+    height: 18px;
+}
+.favorito-btn.favorito-activo {
+    background: linear-gradient(135deg, #f43f5e, #e11d48);
+    border-color: #e11d48;
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(225, 29, 72, 0.35);
+}
+
+/* ===== Badge del carrito en la navbar ===== */
+.carrito-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 5px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #f59e0b, #ef4444);
+    color: #ffffff;
+    font-size: 0.7rem;
+    font-weight: 700;
+    line-height: 1;
+    box-shadow: 0 2px 8px rgba(245, 158, 11, 0.5);
+    animation: badgePop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+@keyframes badgePop {
+    0%   { transform: scale(0); }
+    70%  { transform: scale(1.25); }
+    100% { transform: scale(1); }
+}
+
+/* ===== Avatar circular del usuario ===== */
+.avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #2563eb, #7c3aed);
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 0.95rem;
+    box-shadow: 0 2px 8px rgba(37, 99, 235, 0.35);
+    flex-shrink: 0;
+}
+
+/* ===== Portal: hero ===== */
+.hero-portal {
+    position: relative;
+    overflow: hidden;
+    border-radius: 18px;
+    padding: 3rem 2.5rem;
+    background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 55%, #7c3aed 100%);
+    color: #ffffff;
+}
+.hero-portal::before,
+.hero-portal::after {
+    content: "";
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.07);
+}
+.hero-portal::before {
+    width: 320px;
+    height: 320px;
+    top: -120px;
+    right: -80px;
+}
+.hero-portal::after {
+    width: 220px;
+    height: 220px;
+    bottom: -100px;
+    left: -60px;
+    background: rgba(255, 255, 255, 0.05);
+}
+.hero-portal .row {
+    position: relative;
+    z-index: 1;
+}
+.hero-etiqueta {
+    display: inline-block;
+    padding: 0.35em 0.9em;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-bottom: 1.25rem;
+}
+.hero-titulo {
+    font-size: clamp(1.7rem, 3.5vw, 2.6rem);
+    font-weight: 800;
+    letter-spacing: -0.5px;
+}
+.hero-gradiente {
+    background: linear-gradient(90deg, #60a5fa, #a78bfa, #f472b6);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+.hero-texto {
+    color: rgba(255, 255, 255, 0.78);
+    font-size: 1.05rem;
+    line-height: 1.65;
+    max-width: 560px;
+}
+.hero-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 190px;
+    height: 190px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.08);
+    border: 2px dashed rgba(255, 255, 255, 0.25);
+    color: #a5b4fc;
+}
+.hero-badge svg {
+    width: 90px;
+    height: 90px;
+}
+
+/* ===== Portal: banner promocional ===== */
+.banner-promo {
+    border-radius: 14px;
+    padding: 1rem 1.5rem;
+    color: #ffffff;
+    background: linear-gradient(90deg, #2563eb, #7c3aed, #ec4899, #2563eb);
+    background-size: 300% 100%;
+    animation: shimmerBarra 10s linear infinite;
+    box-shadow: 0 6px 18px rgba(124, 58, 237, 0.35);
+}
+.banner-promo-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.18);
+    flex-shrink: 0;
+}
+.banner-promo-icon svg {
+    width: 24px;
+    height: 24px;
+}
+.banner-promo-sep {
+    opacity: 0.6;
+    margin: 0 0.5rem;
+}
+
+/* ===== Portal: features ===== */
+.feature-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 52px;
+    height: 52px;
+    border-radius: 16px;
+    color: #ffffff;
+    margin-bottom: 1rem;
+}
+.feature-icon svg {
+    width: 26px;
+    height: 26px;
+}
+.feature-icon-primary {
+    background: linear-gradient(135deg, #2563eb, #7c3aed);
+    box-shadow: 0 8px 18px rgba(37, 99, 235, 0.35);
+}
+.feature-icon-success {
+    background: linear-gradient(135deg, #16a34a, #0d9488);
+    box-shadow: 0 8px 18px rgba(22, 163, 74, 0.35);
+}
+.feature-icon-warn {
+    background: linear-gradient(135deg, #f59e0b, #f97316);
+    box-shadow: 0 8px 18px rgba(245, 158, 11, 0.35);
+}
+
+/* ===== Confirmacion de pedido: check grande ===== */
+.check-gran {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #16a34a, #0d9488);
+    color: #ffffff;
+    box-shadow: 0 12px 30px rgba(22, 163, 74, 0.4);
+    margin-bottom: 1.25rem;
+    animation: badgePop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.check-gran svg {
+    width: 48px;
+    height: 48px;
 }
 
 /* ===== Progress bar (stock) ===== */

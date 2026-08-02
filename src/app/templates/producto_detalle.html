@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% block title %}{{ producto.nombre }} — ERP TechStore{% endblock %}
+
+{% block content %}
+<!-- ============================================================ -->
+<!-- DETALLE DE PRODUCTO                                          -->
+<!-- ============================================================ -->
+
+<a href="{{ request.referrer or url_for('main.catalogo') }}" class="btn btn-outline-secondary btn-sm mb-4">
+    &larr; Volver
+</a>
+
+<div class="row g-4">
+    <!-- Informacion principal -->
+    <div class="col-lg-7">
+        <div class="card h-100">
+            <div class="card-body p-4">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <h1 class="h3 mb-0">{{ producto.nombre }}</h1>
+                    <span class="badge bg-secondary">{{ producto.categoria or 'Sin categoria' }}</span>
+                </div>
+
+                <p class="text-muted lead mb-4">
+                    {{ producto.descripcion or 'Sin descripcion disponible.' }}
+                </p>
+
+                <div class="d-flex align-items-center gap-3 mb-4">
+                    <span class="precio fs-1 fw-bold">${{ "%.2f"|format(producto.get_precio()) }}</span>
+                    <span class="badge {% if producto.stock > 10 %}bg-success{% elif producto.stock > 0 %}bg-warning text-dark{% else %}bg-danger{% endif %} fs-6">
+                        {% if producto.stock > 0 %}
+                            Stock: {{ producto.stock }}
+                        {% else %}
+                            Agotado
+                        {% endif %}
+                    </span>
+                </div>
+
+                {% if current_user.get_rol() == 'cliente' and producto.stock > 0 %}
+                    <div class="d-flex gap-2 flex-wrap">
+                        <form method="POST" action="{{ url_for('tienda.agregar_carrito') }}" class="d-flex gap-2">
+                            <input type="hidden" name="producto_id" value="{{ producto.id_producto }}">
+                            <input type="number" name="cantidad" class="form-control" value="1"
+                                   min="1" max="{{ producto.stock }}" style="width: 110px;"
+                                   aria-label="Cantidad">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                Agregar al carrito
+                            </button>
+                        </form>
+                        <form method="POST" action="{{ url_for('tienda.toggle_favorito') }}">
+                            <input type="hidden" name="producto_id" value="{{ producto.id_producto }}">
+                            <button type="submit"
+                                    class="btn btn-lg favorito-btn {% if producto.id_producto in favoritos_ids %}favorito-activo{% else %}btn-outline-secondary{% endif %}"
+                                    aria-label="Agregar o quitar de favoritos">
+                                <svg viewBox="0 0 24 24" fill="{% if producto.id_producto in favoritos_ids %}currentColor{% else %}none{% endif %}"
+                                     stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                     stroke-linejoin="round" aria-hidden="true">
+                                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                                </svg>
+                            </button>
+                        </form>
+                    </div>
+                {% elif producto.stock == 0 %}
+                    <div class="alert alert-danger mb-0">Producto agotado. Pronto repondremos stock.</div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Datos secundarios -->
+    <div class="col-lg-5">
+        <div class="card">
+            <div class="card-header card-header-accent">
+                <h6 class="mb-0">Informacion del Producto</h6>
+            </div>
+            <div class="card-body">
+                <table class="table table-sm table-borderless mb-0 small">
+                    <tr>
+                        <th class="text-muted text-uppercase small">ID</th>
+                        <td class="fw-semibold">#{{ producto.id_producto }}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-muted text-uppercase small">Categoria</th>
+                        <td>{{ producto.categoria or 'Sin categoria' }}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-muted text-uppercase small">Precio</th>
+                        <td class="fw-bold">${{ "%.2f"|format(producto.get_precio()) }}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-muted text-uppercase small">Stock</th>
+                        <td>{{ producto.stock }} unidades</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <div class="card mt-3">
+            <div class="card-body">
+                <h6 class="fw-semibold mb-2">Compra segura</h6>
+                <p class="text-muted small mb-0">
+                    Tu factura se genera con una transaccion atomica: si algo falla,
+                    todo se revierte y tu dinero queda protegido.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

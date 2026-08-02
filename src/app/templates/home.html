@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+{% from "_macros.html" import producto_card %}
+{% block title %}Inicio — ERP TechStore{% endblock %}
+
+{% block content %}
+<!-- ============================================================ -->
+<!-- PORTAL DE INICIO DE LA EMPRESA                               -->
+<!-- ============================================================ -->
+
+<!-- ===== Hero ===== -->
+<div class="hero-portal mb-4">
+    <div class="row align-items-center g-4">
+        <div class="col-lg-7">
+            <span class="hero-etiqueta">Sistema ERP transaccional</span>
+            <h1 class="hero-titulo mb-3">
+                Bienvenido{% if current_user.is_authenticated %}, {{ current_user.nombre.split()[0] }}{% endif %} a
+                <span class="hero-gradiente">ERP TechStore</span>
+            </h1>
+            <p class="hero-texto mb-4">
+                Gestiona tu tienda de tecnologia en un solo lugar: inventario en tiempo real,
+                facturacion con transacciones seguras y reportes para tomar mejores decisiones.
+            </p>
+            <div class="d-flex gap-2 flex-wrap">
+                <a href="{{ url_for('main.catalogo') }}" class="btn btn-primary btn-lg">
+                    Ver Catalogo
+                </a>
+                <a href="{{ url_for('invoices.listar') }}" class="btn btn-outline-secondary btn-lg">
+                    Mis Facturas
+                </a>
+            </div>
+        </div>
+        <div class="col-lg-5 d-none d-lg-block text-center">
+            <div class="hero-badge">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                     stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                    <path d="m3.3 7 8.7 5 8.7-5"></path>
+                    <path d="M12 22V12"></path>
+                </svg>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== Banner promocional ===== -->
+<div class="banner-promo mb-4">
+    <div class="d-flex align-items-center justify-content-between gap-3 flex-wrap">
+        <div class="d-flex align-items-center gap-3">
+            <span class="banner-promo-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                     stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M3 7h11v9H3z"></path>
+                    <path d="M14 10h4l3 3v3h-7z"></path>
+                    <circle cx="7" cy="17.5" r="1.5"></circle>
+                    <circle cx="17" cy="17.5" r="1.5"></circle>
+                </svg>
+            </span>
+            <div>
+                <strong>Envio gratis</strong> en compras mayores a $200
+                <span class="banner-promo-sep">|</span>
+                <strong>Oferta del mes:</strong> hasta 20% de descuento
+            </div>
+        </div>
+        <a href="{{ url_for('main.catalogo') }}" class="btn btn-light btn-sm fw-semibold">
+            Comprar ahora
+        </a>
+    </div>
+</div>
+
+<!-- ===== Features ===== -->
+<div class="row g-4 mb-4">
+    <div class="col-md-4">
+        <div class="card h-100 feature-card">
+            <div class="card-body">
+                <span class="feature-icon feature-icon-primary">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                         stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                        <path d="m3.3 7 8.7 5 8.7-5"></path>
+                        <path d="M12 22V12"></path>
+                    </svg>
+                </span>
+                <h5 class="fw-semibold">Inventario en tiempo real</h5>
+                <p class="text-muted small mb-0">
+                    Consulta de stock con alertas cuando el inventario este bajo.
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100 feature-card">
+            <div class="card-body">
+                <span class="feature-icon feature-icon-success">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                         stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <path d="M14 2v6h6"></path>
+                        <path d="M16 13H8"></path>
+                        <path d="M16 17H8"></path>
+                    </svg>
+                </span>
+                <h5 class="fw-semibold">Facturacion segura</h5>
+                <p class="text-muted small mb-0">
+                    Transacciones atomicas: la factura y el stock se procesan juntos.
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100 feature-card">
+            <div class="card-body">
+                <span class="feature-icon feature-icon-warn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                         stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M3 3v18h18"></path>
+                        <rect x="7" y="12" width="3" height="6" rx="1"></rect>
+                        <rect x="12" y="7" width="3" height="11" rx="1"></rect>
+                        <rect x="17" y="10" width="3" height="8" rx="1"></rect>
+                    </svg>
+                </span>
+                <h5 class="fw-semibold">Reportes claros</h5>
+                <p class="text-muted small mb-0">
+                    Ventas totales y alertas de stock bajo para decidir mejor.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== Productos destacados ===== -->
+<div class="d-flex justify-content-between align-items-end mb-3">
+    <div>
+        <h2 class="h4 mb-0">Productos destacados</h2>
+        <p class="text-muted small mb-0">Lo mas solicitado de nuestra tienda.</p>
+    </div>
+    <a href="{{ url_for('main.catalogo') }}" class="btn btn-sm btn-outline-secondary">
+        Ver todos &rarr;
+    </a>
+</div>
+
+<div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+    {% for producto in destacados %}
+        {{ producto_card(producto, current_user.get_rol() == 'cliente') }}
+    {% else %}
+        <div class="col">
+            <div class="alert alert-info mb-0">Aun no hay productos destacados.</div>
+        </div>
+    {% endfor %}
+</div>
+
+{% endblock %}
