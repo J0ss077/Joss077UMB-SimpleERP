@@ -1,65 +1,126 @@
 {% extends "base.html" %}
 {% block title %}Registro — ERP TechStore{% endblock %}
 
+{% block navbar %}{% endblock %}
+{% block main_class %}auth-main{% endblock %}
+{% block flashes %}{% endblock %}
+{% block footer %}{% endblock %}
+
 {% block content %}
 <!-- ============================================================ -->
-<!-- FORMULARIO DE REGISTRO (RF02)                                -->
+<!-- REGISTRO PROFESIONAL (RF02): panel de marca + formulario      -->
 <!-- ============================================================ -->
 
-<div class="row justify-content-center">
-    <div class="col-md-6 col-lg-5">
+<div class="auth-wrapper">
 
-        <h1 class="mb-1 text-center">Crear Cuenta</h1>
-        <p class="text-muted text-center mb-4">Complete el formulario para registrarse en el sistema.</p>
-
-        <div class="card">
-            <div class="card-body p-4">
-
-                <form method="POST" action="{{ url_for('auth.register') }}">
-                    <!-- Nombre -->
-                    <div class="mb-3">
-                        <label for="nombre" class="form-label fw-semibold small text-uppercase text-muted">Nombre Completo</label>
-                        <input type="text" name="nombre" id="nombre" class="form-control"
-                               placeholder="Su nombre" required autofocus>
-                    </div>
-
-                    <!-- Email -->
-                    <div class="mb-3">
-                        <label for="email" class="form-label fw-semibold small text-uppercase text-muted">Correo Electronico</label>
-                        <input type="email" name="email" id="email" class="form-control"
-                               placeholder="tu@email.com" required>
-                    </div>
-
-                    <!-- Contrasena -->
-                    <div class="mb-3">
-                        <label for="password" class="form-label fw-semibold small text-uppercase text-muted">Contrasena</label>
-                        <input type="password" name="password" id="password" class="form-control"
-                               placeholder="Minimo 4 caracteres" required minlength="4">
-                    </div>
-
-                    <!-- Confirmar contrasena -->
-                    <div class="mb-3">
-                        <label for="password_confirm" class="form-label fw-semibold small text-uppercase text-muted">Confirmar Contrasena</label>
-                        <input type="password" name="password_confirm" id="password_confirm" class="form-control"
-                               placeholder="Repita su contrasena" required minlength="4">
-                    </div>
-
-                    <!-- Boton -->
-                    <button type="submit" class="btn btn-success w-100 mt-2">
-                        Crear Cuenta
-                    </button>
-                </form>
-
+    <!-- ===== Panel izquierdo: presentacion de la app ===== -->
+    <aside class="auth-panel">
+        <div class="auth-panel-inner">
+            <div class="auth-brand">
+                <span class="auth-brand-mark">ERP</span>
+                <span class="auth-brand-name">TechStore</span>
             </div>
+
+            <h2 class="auth-title">
+                Crea tu cuenta y comienza a operar tu tienda
+            </h2>
+            <p class="auth-subtitle">
+                Registrate como administrador, vendedor o cliente y accede
+                a un sistema completo de inventario, facturacion y reportes.
+            </p>
+
+            <ul class="auth-features">
+                <li>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                         stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <path d="m8.5 12.5 2.5 2.5 5-5.5"></path>
+                    </svg>
+                    Cuentas con roles: admin, vendedor y cliente
+                </li>
+                <li>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                         stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <path d="m8.5 12.5 2.5 2.5 5-5.5"></path>
+                    </svg>
+                    Contrasenas protegidas con hash seguro
+                </li>
+                <li>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                         stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <path d="m8.5 12.5 2.5 2.5 5-5.5"></path>
+                    </svg>
+                    Acceso inmediato a tu area de trabajo
+                </li>
+            </ul>
         </div>
+    </aside>
 
-        <!-- Enlace a login -->
-        <p class="text-center mt-3 small">
-            Ya tiene cuenta?
-            <a href="{{ url_for('auth.login') }}">Inicie sesion aqui</a>
-        </p>
+    <!-- ===== Panel derecho: formulario de registro ===== -->
+    <section class="auth-form-side">
+        <div class="auth-form-wrap">
+            <h1 class="auth-form-title">Crear Cuenta</h1>
+            <p class="auth-form-subtitle">Complete el formulario para registrarse en el sistema.</p>
 
-    </div>
+            <form method="POST" action="{{ url_for('auth.register') }}">
+                <!-- Nombre -->
+                <div class="mb-3">
+                    <label for="nombre" class="form-label fw-semibold small text-uppercase text-muted">Nombre Completo</label>
+                    <input type="text" name="nombre" id="nombre" class="form-control"
+                           placeholder="Su nombre" required autofocus>
+                </div>
+
+                <!-- Email -->
+                <div class="mb-3">
+                    <label for="email" class="form-label fw-semibold small text-uppercase text-muted">Correo Electronico</label>
+                    <input type="email" name="email" id="email" class="form-control"
+                           placeholder="tu@email.com" required>
+                </div>
+
+                <!-- Contrasena -->
+                <div class="mb-3">
+                    <label for="password" class="form-label fw-semibold small text-uppercase text-muted">Contrasena</label>
+                    <input type="password" name="password" id="password" class="form-control"
+                           placeholder="Minimo 4 caracteres" required minlength="4">
+                </div>
+
+                <!-- Confirmar contrasena -->
+                <div class="mb-3">
+                    <label for="password_confirm" class="form-label fw-semibold small text-uppercase text-muted">Confirmar Contrasena</label>
+                    <input type="password" name="password_confirm" id="password_confirm" class="form-control"
+                           placeholder="Repita su contrasena" required minlength="4">
+                </div>
+
+                <!-- Boton -->
+                <button type="submit" class="btn btn-success w-100 mt-2">
+                    Crear Cuenta
+                </button>
+            </form>
+
+            <!-- ===== Alertas (debajo del formulario) ===== -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="mt-4">
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+
+            <!-- Enlace a login -->
+            <p class="text-center mt-4 small">
+                Ya tiene cuenta?
+                <a href="{{ url_for('auth.login') }}">Inicie sesion aqui</a>
+            </p>
+        </div>
+    </section>
+
 </div>
 
 {% endblock %}

@@ -26,6 +26,9 @@
     --footer-bg: #ffffff;
     --navbar-bg: rgba(15, 23, 42, 0.92);
     --shadow: rgba(15, 23, 42, 0.10);
+    --auth-grad-1: #2563eb;
+    --auth-grad-2: #7c3aed;
+    --auth-grad-3: #db2777;
 }
 
 html[data-theme="dark"] {
@@ -44,6 +47,9 @@ html[data-theme="dark"] {
     --footer-bg: #111a2e;
     --navbar-bg: rgba(8, 12, 24, 0.85);
     --shadow: rgba(0, 0, 0, 0.50);
+    --auth-grad-1: #0f172a;
+    --auth-grad-2: #1e3a8a;
+    --auth-grad-3: #7c3aed;
 }
 
 /* ===== Reset y base ===== */
@@ -488,7 +494,7 @@ footer {
     flex: 0 0 46%;
     position: relative;
     overflow: hidden;
-    background: linear-gradient(150deg, #0f172a 0%, #1e3a8a 55%, #7c3aed 100%);
+    background: linear-gradient(150deg, var(--auth-grad-1) 0%, var(--auth-grad-2) 55%, var(--auth-grad-3) 100%);
     color: #ffffff;
     display: flex;
     align-items: center;
