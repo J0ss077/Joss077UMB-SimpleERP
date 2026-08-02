@@ -1,55 +1,134 @@
-@startuml ERP_Clases
+@startuml Diagrama_de_Clases_ERP_TechStore
+title ERP TechStore - Diagrama de Clases (Modelo de Datos y Logica Transaccional)
+skinparam classAttributeIconSize 10
+skinparam class {
+  BackgroundColor #eef4ff
+  BorderColor #2563eb
+  FontColor #0f172a
+}
+hide empty members
 
+' ===== Clases entidad (capa de datos) =====
 class Usuario {
-  -id: int
-  -nombre: string
-  -email: string
-  -passwordHash: string
-  -rol: string
-  +getId(): int
-  +getEmail(): string
-  +getRol(): string
-  +login(email, password): bool
-  +validarCredenciales(): bool
+  - id_usuario : int <<PK>>
+  - nombre : str(100)
+  - email : str(150) <<unico>>
+  - password_hash : str(255)
+  - rol : str(20) <<admin|vendedor|cliente>>
+  - telefono : str(20)
+  - direccion : str(255)
+  - ciudad : str(100)
+  - imagen : str(255)
+  - newsletter : bool
+  - tema_preferido : str(10)
+  - activo : bool
+  --
+  + set_password(password) : void
+  + check_password(password) : bool
+  + get_id() : str
+  + get_rol() : str
+  + get_email() : str
+  + es_admin() : bool
 }
 
 class Producto {
-  -id: int
-  -nombre: string
-  -descripcion: string
-  -precio: float
-  -stock: int
-  -categoria: string
-  +getStock(): int
-  +getPrecio(): float
-  +actualizarStock(cantidad: int): void
-  +registrarProducto(): void
+  - id_producto : int <<PK>>
+  - nombre : str(150)
+  - descripcion : Text
+  - precio : Numeric(10,2)
+  - stock : int
+  - categoria : str(100)
+  - imagen : str(255)
+  --
+  + get_stock() : int
+  + get_precio() : float
+  + actualizar_stock(cantidad) : void
+  + hay_stock_suficiente(cantidad) : bool
 }
 
 class Factura {
-  -id: int
-  -fecha: date
-  -idUsuario: int
-  -total: float
-  -estado: string
-  +getTotal(): float
-  +generarFactura(): void
-  +calcularTotal(): float
-  +anularFactura(): void
+  - id_factura : int <<PK>>
+  - id_usuario : int <<FK>>
+  - fecha : DateTime
+  - total : Numeric(12,2)
+  - estado : str(20) <<activa|anulada>>
+  - direccion_envio : Text
+  - ciudad_envio : str(100)
+  - telefono_contacto : str(20)
+  - estado_pedido : str(20) <<pendiente|enviado|entregado>>
+  --
+  + get_total() : float
+  + calcular_total() : void
+  + anular() : void
+  + esta_anulada() : bool
 }
 
 class DetalleFactura {
-  -id: int
-  -idFactura: int
-  -idProducto: int
-  -cantidad: int
-  -precioUnitario: float
-  -subtotal: float
-  +getSubtotal(): float
+  - id_detalle : int <<PK>>
+  - id_factura : int <<FK>>
+  - id_producto : int <<FK>>
+  - cantidad : int
+  - precio_unitario : Numeric(10,2) <<congelado>>
+  - subtotal : Numeric(12,2)
+  --
+  + get_subtotal() : float
 }
 
-Usuario "1" -- "0..*" Factura : genera
-Factura "1" -- "1..*" DetalleFactura : contiene
-DetalleFactura "1" -- "1" Producto : referencia
+class CarritoItem {
+  - id_carrito : int <<PK>>
+  - id_usuario : int <<FK>>
+  - id_producto : int <<FK>>
+  - cantidad : int
+  --
+  <<uq: (id_usuario, id_producto)>>
+}
 
+class Favorito {
+  - id_favorito : int <<PK>>
+  - id_usuario : int <<FK>>
+  - id_producto : int <<FK>>
+  --
+  <<uq: (id_usuario, id_producto)>>
+}
+
+' ===== Capa de servicios / controladores =====
+class "invoices.py\nServicio Transaccional" as Servicio {
+  + crear_factura_transaccional(
+      id_cliente, lineas_venta,
+      direccion_envio=None,
+      ciudad_envio=None,
+      telefono_contacto=None) : (Factura, str|None)
+  --
+  <<BEGIN / COMMIT / ROLLBACK>>
+  <<factura + detalle + stock atomicos>>
+}
+
+class "tienda.py\nControlador (checkout)" as Tienda {
+  + checkout() : GET paso 1 / POST paso 2
+  + agregar_carrito() : redirect
+  + recomprar(factura_id) : redirect
+}
+
+class "flask_login.UserMixin" as Mixin
+
+' ===== Relaciones =====
+Usuario "1" -- "0..*" Factura : posee
+Usuario "1" -- "0..*" CarritoItem : posee
+Usuario "1" -- "0..*" Favorito : posee
+Factura "1" -- "1..*" DetalleFactura : contiene
+Producto "1" -- "0..*" DetalleFactura : aparece en
+Producto "1" -- "0..*" CarritoItem : esta en
+Producto "1" -- "0..*" Favorito : marcado en
+
+Tienda ..> Servicio : llama
+Servicio ..> Factura : crea y retorna
+Servicio ..> Producto : valida y descuenta stock
+Servicio ..> DetalleFactura : genera lineas
+
+Usuario ..|> Mixin : hereda (Flask-Login)
+
+note bottom of Factura
+  RF07-RF10: factura, total, stock, anulacion
+  RNF01: transaccion ACID compartida
+end note
 @enduml
