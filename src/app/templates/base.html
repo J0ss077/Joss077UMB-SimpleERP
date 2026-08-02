@@ -84,9 +84,9 @@
                 <ul class="navbar-nav">
                     {% if current_user.is_authenticated %}
                         <li class="nav-item">
-                            <span class="nav-link text-light">
+                            <span class="nav-link text-light d-flex align-items-center gap-2">
                                 {{ current_user.nombre }}
-                                <span class="badge bg-info text-dark">{{ current_user.get_rol() }}</span>
+                                <span class="rol-badge rol-{{ current_user.get_rol() }}">{{ current_user.get_rol() }}</span>
                             </span>
                         </li>
                         <li class="nav-item">

@@ -213,6 +213,36 @@ html[data-theme="dark"] .badge.bg-danger  { color: #f87171; }
 html[data-theme="dark"] .badge.bg-secondary { color: #94a3b8; }
 html[data-theme="dark"] .badge.bg-info    { color: #60a5fa; }
 
+/* ===== Badge de rol en la navbar ===== */
+.rol-badge {
+    display: inline-block;
+    border-radius: 999px;
+    padding: 0.4em 0.85em;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.4px;
+    text-transform: capitalize;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    background: rgba(255, 255, 255, 0.10);
+    color: #ffffff;
+    white-space: nowrap;
+}
+.rol-admin {
+    background: linear-gradient(135deg, #f59e0b, #ef4444);
+    border-color: rgba(255, 255, 255, 0.25);
+    box-shadow: 0 2px 8px rgba(245, 158, 11, 0.35);
+}
+.rol-vendedor {
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+    border-color: rgba(255, 255, 255, 0.25);
+    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.35);
+}
+.rol-cliente {
+    background: linear-gradient(135deg, #10b981, #0ea5e9);
+    border-color: rgba(255, 255, 255, 0.25);
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.35);
+}
+
 /* ===== Botones ===== */
 .btn {
     position: relative;
