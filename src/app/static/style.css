@@ -419,15 +419,6 @@ main {
     transition: width 0.5s ease;
 }
 
-/* ===== Footer ===== */
-footer {
-    font-size: 0.8rem;
-    color: var(--text-muted);
-    background-color: var(--footer-bg);
-    border-top: 1px solid var(--border) !important;
-    transition: background-color 0.35s ease, color 0.35s ease;
-}
-
 /* ===== Panel de metricas ===== */
 .metrica-card {
     text-align: center;
