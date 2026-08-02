@@ -3,17 +3,39 @@
 
 {% block content %}
 <!-- ============================================================ -->
-<!-- PANEL DE REPORTES (RF12)                                     -->
+<!-- PANEL DE REPORTES / DASHBOARD (RF12)                         -->
 <!-- ============================================================ -->
 
-<h1 class="mb-1">Panel de Reportes</h1>
-<p class="text-muted mb-4">Metricas y reportes del sistema.</p>
+<div class="page-head">
+    <span class="page-head-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="3" y="3" width="7" height="7" rx="1.5"></rect>
+            <rect x="14" y="3" width="7" height="7" rx="1.5"></rect>
+            <rect x="3" y="14" width="7" height="7" rx="1.5"></rect>
+            <rect x="14" y="14" width="7" height="7" rx="1.5"></rect>
+        </svg>
+    </span>
+    <div>
+        <h1 class="mb-0">Panel de Reportes</h1>
+        <p class="text-muted small mb-0">Metricas y reportes del sistema en tiempo real.</p>
+    </div>
+</div>
 
+<!-- ===== Tarjetas de metricas ===== -->
 <div class="row g-4 mb-4">
     <!-- Tarjeta: Total Productos -->
     <div class="col-md-4">
         <div class="card metrica-card border-top border-3 border-primary">
             <div class="card-body">
+                <span class="metrica-icon metrica-icon-primary">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                         stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                        <path d="m3.3 7 8.7 5 8.7-5"></path>
+                        <path d="M12 22V12"></path>
+                    </svg>
+                </span>
                 <h6 class="text-muted small text-uppercase mb-2">Productos Registrados</h6>
                 <p class="valor text-primary mb-0">{{ total_productos }}</p>
             </div>
@@ -24,6 +46,16 @@
     <div class="col-md-4">
         <div class="card metrica-card border-top border-3 border-success">
             <div class="card-body">
+                <span class="metrica-icon metrica-icon-success">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                         stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <path d="M14 2v6h6"></path>
+                        <path d="M16 13H8"></path>
+                        <path d="M16 17H8"></path>
+                        <path d="M10 9H8"></path>
+                    </svg>
+                </span>
                 <h6 class="text-muted small text-uppercase mb-2">Facturas Activas</h6>
                 <p class="valor text-success mb-0">{{ total_facturas }}</p>
             </div>
@@ -34,6 +66,14 @@
     <div class="col-md-4">
         <div class="card metrica-card border-top border-3 border-{% if productos_stock_bajo > 0 %}danger{% else %}success{% endif %}">
             <div class="card-body">
+                <span class="metrica-icon {% if productos_stock_bajo > 0 %}metrica-icon-danger{% else %}metrica-icon-success{% endif %}">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                         stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                        <path d="M12 9v4"></path>
+                        <path d="M12 17h.01"></path>
+                    </svg>
+                </span>
                 <h6 class="text-muted small text-uppercase mb-2">Stock Bajo (&lt;5)</h6>
                 <p class="valor text-{% if productos_stock_bajo > 0 %}danger{% else %}success{% endif %} mb-0">
                     {{ productos_stock_bajo }}
@@ -43,14 +83,23 @@
     </div>
 </div>
 
-<!-- Accesos rapidos -->
+<!-- ===== Accesos rapidos ===== -->
 <div class="row g-4">
     <div class="col-md-6">
-        <div class="card">
+        <div class="card h-100">
             <div class="card-body text-center py-5">
-                <h3>Reporte de Ventas</h3>
-                <p class="text-muted">Total facturado, facturas activas y anuladas.</p>
-                <a href="{{ url_for('reports.ventas') }}" class="btn btn-primary btn-lg mt-2">
+                <span class="quick-icon quick-icon-info">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                         stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M3 3v18h18"></path>
+                        <rect x="7" y="12" width="3" height="6" rx="1"></rect>
+                        <rect x="12" y="7" width="3" height="11" rx="1"></rect>
+                        <rect x="17" y="10" width="3" height="8" rx="1"></rect>
+                    </svg>
+                </span>
+                <h3 class="h5 mb-2">Reporte de Ventas</h3>
+                <p class="text-muted mb-3">Total facturado, facturas activas y anuladas.</p>
+                <a href="{{ url_for('reports.ventas') }}" class="btn btn-primary mt-2">
                     Ver Reporte de Ventas
                 </a>
             </div>
@@ -58,11 +107,19 @@
     </div>
 
     <div class="col-md-6">
-        <div class="card">
+        <div class="card h-100">
             <div class="card-body text-center py-5">
-                <h3>Reporte de Stock Bajo</h3>
-                <p class="text-muted">Productos que necesitan reabastecimiento urgente.</p>
-                <a href="{{ url_for('reports.stock_bajo') }}" class="btn btn-warning btn-lg mt-2">
+                <span class="quick-icon quick-icon-warn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                         stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <path d="M12 8v4"></path>
+                        <path d="M12 16h.01"></path>
+                    </svg>
+                </span>
+                <h3 class="h5 mb-2">Reporte de Stock Bajo</h3>
+                <p class="text-muted mb-3">Productos que necesitan reabastecimiento urgente.</p>
+                <a href="{{ url_for('reports.stock_bajo') }}" class="btn btn-warning mt-2">
                     Ver Stock Bajo
                 </a>
             </div>

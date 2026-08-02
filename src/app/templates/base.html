@@ -23,6 +23,18 @@
 </head>
 <body>
 
+    <!-- ===== Fondo decorativo: circulos, anillos y rectangulos ===== -->
+    {% block decor %}
+    <div class="decor" aria-hidden="true">
+        <span class="decor-blob decor-blob-1"></span>
+        <span class="decor-blob decor-blob-2"></span>
+        <span class="decor-ring decor-ring-1"></span>
+        <span class="decor-ring decor-ring-2"></span>
+        <span class="decor-rect decor-rect-1"></span>
+        <span class="decor-dots"></span>
+    </div>
+    {% endblock decor %}
+
     <!-- ===== Barra de progreso de carga ===== -->
     <div id="loadBar" class="load-bar" aria-hidden="true"></div>
 

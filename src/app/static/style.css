@@ -509,6 +509,221 @@ footer {
     }
 }
 
+/* ===== Fondo decorativo: circulos, anillos, rectangulos ===== */
+.decor {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    overflow: hidden;
+    pointer-events: none;
+}
+.decor-blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.35;
+}
+.decor-blob-1 {
+    width: 480px;
+    height: 480px;
+    top: -140px;
+    right: -120px;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+}
+.decor-blob-2 {
+    width: 380px;
+    height: 380px;
+    bottom: -160px;
+    left: -120px;
+    background: linear-gradient(135deg, var(--accent-2), #db2777);
+    opacity: 0.20;
+}
+.decor-ring {
+    position: absolute;
+    border-radius: 50%;
+    border: 2px dashed var(--border-hover);
+    opacity: 0.55;
+}
+.decor-ring-1 {
+    width: 300px;
+    height: 300px;
+    top: 22%;
+    left: -140px;
+}
+.decor-ring-2 {
+    width: 170px;
+    height: 170px;
+    bottom: 16%;
+    right: 5%;
+}
+.decor-rect {
+    position: absolute;
+    border-radius: 18px;
+    border: 2px solid var(--border-hover);
+    transform: rotate(20deg);
+    opacity: 0.55;
+}
+.decor-rect-1 {
+    width: 90px;
+    height: 90px;
+    top: 16%;
+    right: 22%;
+}
+.decor-dots {
+    position: absolute;
+    top: 34%;
+    right: 10%;
+    width: 90px;
+    height: 90px;
+    background-image: radial-gradient(var(--border-hover) 2px, transparent 2px);
+    background-size: 18px 18px;
+    opacity: 0.6;
+}
+
+/* ===== Cabecera de pagina con icono ===== */
+.page-head {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.75rem;
+}
+.page-head-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 52px;
+    height: 52px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    color: #ffffff;
+    box-shadow: 0 8px 20px rgba(37, 99, 235, 0.30);
+    flex-shrink: 0;
+}
+.page-head-icon svg {
+    width: 26px;
+    height: 26px;
+}
+
+/* ===== Iconos circulares de metricas ===== */
+.metrica-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    margin-bottom: 0.9rem;
+    color: #ffffff;
+}
+.metrica-icon svg {
+    width: 26px;
+    height: 26px;
+}
+.metrica-icon-primary {
+    background: linear-gradient(135deg, #2563eb, #7c3aed);
+    box-shadow: 0 8px 18px rgba(37, 99, 235, 0.35);
+}
+.metrica-icon-success {
+    background: linear-gradient(135deg, #16a34a, #0d9488);
+    box-shadow: 0 8px 18px rgba(22, 163, 74, 0.35);
+}
+.metrica-icon-danger {
+    background: linear-gradient(135deg, #dc2626, #e11d48);
+    box-shadow: 0 8px 18px rgba(220, 38, 38, 0.35);
+}
+
+/* ===== Iconos circulares de accesos rapidos ===== */
+.quick-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 68px;
+    height: 68px;
+    border-radius: 50%;
+    margin-bottom: 1rem;
+    color: #ffffff;
+}
+.quick-icon svg {
+    width: 30px;
+    height: 30px;
+}
+.quick-icon-info {
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+    box-shadow: 0 10px 24px rgba(59, 130, 246, 0.35);
+}
+.quick-icon-warn {
+    background: linear-gradient(135deg, #f59e0b, #f97316);
+    box-shadow: 0 10px 24px rgba(245, 158, 11, 0.35);
+}
+
+/* ===== Indicador circular de stock (products/stock) ===== */
+.stock-gauge {
+    --gauge-color: #16a34a;
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    background: conic-gradient(var(--gauge-color) calc(var(--pct, 0) * 1%), var(--track) 0);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.25rem;
+    position: relative;
+    animation: gaugeIn 0.8s cubic-bezier(0.4, 0, 0.2, 1) backwards;
+}
+@keyframes gaugeIn {
+    from { transform: rotate(-90deg) scale(0.6); opacity: 0; }
+    to   { transform: rotate(0deg) scale(1); opacity: 1; }
+}
+.stock-gauge::before {
+    content: "";
+    position: absolute;
+    inset: 14px;
+    border-radius: 50%;
+    background: var(--bg-card);
+}
+.stock-gauge-inner {
+    position: relative;
+    text-align: center;
+}
+.stock-gauge-num {
+    font-size: 2.6rem;
+    font-weight: 800;
+    line-height: 1;
+    display: block;
+}
+.stock-gauge-label {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+.gauge-success { --gauge-color: #16a34a; }
+.gauge-warning { --gauge-color: #d97706; }
+.gauge-danger  { --gauge-color: #dc2626; }
+
+/* ===== Cabecera de cards con degradado ===== */
+.card-header-accent {
+    background: linear-gradient(135deg, var(--accent), var(--accent-2)) !important;
+    color: #ffffff;
+    border-bottom: none;
+    font-weight: 600;
+}
+
+/* ===== Total de factura resaltado ===== */
+.table-total {
+    background: linear-gradient(135deg, rgba(37, 99, 235, 0.12), rgba(124, 58, 237, 0.12));
+}
+.table-total td {
+    border-top: 2px solid var(--accent) !important;
+}
+
+/* ===== Badge claro adaptable a ambos temas ===== */
+.badge.bg-light {
+    background: var(--bg-soft) !important;
+    color: var(--text-muted) !important;
+    border: 1px solid var(--border);
+}
+
 /* ===== Login profesional: pantalla dividida ===== */
 .auth-main {
     max-width: 100%;

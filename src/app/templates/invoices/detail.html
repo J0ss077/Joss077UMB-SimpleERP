@@ -6,10 +6,22 @@
 <!-- DETALLE DE FACTURA (RF07)                                    -->
 <!-- ============================================================ -->
 
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <div>
-        <h1 class="mb-0">Factura #{{ factura.id_factura }}</h1>
-        <p class="text-muted small mb-0">Emitida el {{ factura.fecha.strftime('%d/%m/%Y a las %H:%M:%S') }}.</p>
+<div class="d-flex justify-content-between align-items-start mb-4 gap-3 flex-wrap">
+    <div class="page-head mb-0">
+        <span class="page-head-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                 stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <path d="M14 2v6h6"></path>
+                <path d="M16 13H8"></path>
+                <path d="M16 17H8"></path>
+                <path d="M10 9H8"></path>
+            </svg>
+        </span>
+        <div>
+            <h1 class="mb-0">Factura #{{ factura.id_factura }}</h1>
+            <p class="text-muted small mb-0">Emitida el {{ factura.fecha.strftime('%d/%m/%Y a las %H:%M:%S') }}.</p>
+        </div>
     </div>
     <div class="d-flex gap-2">
         {% if not factura.esta_anulada() and current_user.es_admin() %}
@@ -32,7 +44,7 @@
     <!-- Datos de cabecera -->
     <div class="col-md-4">
         <div class="card mb-3">
-            <div class="card-header bg-dark text-white">
+            <div class="card-header card-header-accent">
                 <h6 class="mb-0">Informacion General</h6>
             </div>
             <div class="card-body">
@@ -69,11 +81,11 @@
     <!-- Detalle de productos -->
     <div class="col-md-8">
         <div class="card">
-            <div class="card-header bg-dark text-white">
+            <div class="card-header card-header-accent">
                 <h6 class="mb-0">Detalle de Productos</h6>
             </div>
             <div class="card-body p-0">
-                <table class="table table-striped mb-0">
+                <table class="table table-hover mb-0">
                     <thead>
                         <tr>
                             <th class="ps-3">Producto</th>
@@ -95,10 +107,10 @@
                             </tr>
                         {% endfor %}
                     </tbody>
-                    <tfoot class="table-dark">
+                    <tfoot class="table-total">
                         <tr>
                             <td colspan="3" class="text-end fw-bold fs-6 pe-2">TOTAL (RF08):</td>
-                            <td class="text-end fw-bold fs-4 pe-3 text-warning">
+                            <td class="text-end fw-bold fs-4 pe-3 text-primary">
                                 ${{ "%.2f"|format(factura.get_total()) }}
                             </td>
                         </tr>

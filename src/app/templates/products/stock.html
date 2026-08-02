@@ -9,11 +9,23 @@
 <div class="row justify-content-center">
     <div class="col-md-7">
 
-        <h1 class="mb-1">Consulta de Stock</h1>
-        <p class="text-muted mb-4">Detalle del inventario del producto.</p>
+        <div class="page-head">
+            <span class="page-head-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                     stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                    <path d="m3.3 7 8.7 5 8.7-5"></path>
+                    <path d="M12 22V12"></path>
+                </svg>
+            </span>
+            <div>
+                <h1 class="mb-0">Consulta de Stock</h1>
+                <p class="text-muted small mb-0">Detalle del inventario del producto.</p>
+            </div>
+        </div>
 
         <div class="card">
-            <div class="card-header bg-dark text-white">
+            <div class="card-header card-header-accent">
                 <h5 class="mb-0">{{ producto.nombre }}</h5>
             </div>
             <div class="card-body p-4">
@@ -47,15 +59,21 @@
                     </tr>
                 </table>
 
-                <!-- Barra visual de stock -->
+                <!-- Indicador circular de stock -->
                 {% set porcentaje = producto.stock / 50 * 100 if producto.stock <= 50 else 100 %}
-                <div class="progress mb-3" style="height: 20px;">
-                    <div class="progress-bar {% if producto.stock > 10 %}bg-success{% elif producto.stock > 0 %}bg-warning{% else %}bg-danger{% endif %}"
-                         role="progressbar"
-                         style="width: {{ porcentaje if porcentaje <= 100 else 100 }}%;"
-                         aria-valuenow="{{ producto.stock }}" aria-valuemin="0" aria-valuemax="100">
-                        {{ producto.stock }} / 50+
+                <div class="stock-gauge
+                            {% if producto.stock > 10 %}gauge-success{% elif producto.stock > 0 %}gauge-warning{% else %}gauge-danger{% endif %}"
+                     style="--pct: {{ porcentaje if porcentaje <= 100 else 100 }};">
+                    <div class="stock-gauge-inner">
+                        <span class="stock-gauge-num {% if producto.stock > 10 %}text-success{% elif producto.stock > 0 %}text-warning{% else %}text-danger{% endif %}">
+                            {{ producto.stock }}
+                        </span>
+                        <span class="stock-gauge-label">unidades</span>
                     </div>
+                </div>
+
+                <div class="text-center text-muted small mb-4">
+                    Capacidad de referencia: 50 unidades. Stock actual: {{ porcentaje|round|int }}%.
                 </div>
 
                 <!-- Estado del inventario -->
