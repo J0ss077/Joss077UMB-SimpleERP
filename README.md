@@ -63,7 +63,7 @@ src/
 ```bash
 # 1. Clonar el repositorio
 git clone <url-del-repo>
-cd guia-001/src/
+cd Joss077UMB-SimpleERP/src/
 
 # 2. Construir e iniciar los contenedores
 docker-compose up --build
