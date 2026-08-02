@@ -32,6 +32,12 @@ class Usuario(UserMixin, db.Model):
         email            : Correo electronico (unico, se usa para login).
         password_hash    : Contrasena hasheada (nunca texto plano, RNF03).
         rol              : Rol: 'admin', 'vendedor' o 'cliente'.
+        telefono         : Numero de contacto (opcional).
+        direccion        : Direccion de envio (opcional).
+        ciudad           : Ciudad del usuario (opcional).
+        imagen           : Nombre del archivo de foto de perfil (opcional).
+        newsletter       : True si el usuario acepta recibir promociones.
+        tema_preferido   : Tema de interfaz: 'auto', 'light' o 'dark'.
     """
 
     __tablename__ = 'usuarios'
@@ -42,6 +48,12 @@ class Usuario(UserMixin, db.Model):
     email = db.Column(db.String(150), unique=True, nullable=False)
     password_hash = db.Column(db.String(255), nullable=False)
     rol = db.Column(db.String(20), nullable=False)
+    telefono = db.Column(db.String(20))
+    direccion = db.Column(db.String(255))
+    ciudad = db.Column(db.String(100))
+    imagen = db.Column(db.String(255))
+    newsletter = db.Column(db.Boolean, nullable=False, default=False)
+    tema_preferido = db.Column(db.String(10), nullable=False, default='auto')
 
     # --- Relaciones ---
     facturas = db.relationship('Factura', backref='usuario', lazy=True)

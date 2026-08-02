@@ -8,8 +8,12 @@
     <!-- Aplicar tema guardado antes de pintar (evita parpadeo) -->
     <script>
         (function () {
-            var tema = localStorage.getItem('erp-tema') ||
-                (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+            {% if current_user.is_authenticated and current_user.tema_preferido in ('light', 'dark') %}
+                var tema = '{{ current_user.tema_preferido }}';
+            {% else %}
+                var tema = localStorage.getItem('erp-tema') ||
+                    (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+            {% endif %}
             document.documentElement.setAttribute('data-theme', tema);
             document.documentElement.setAttribute('data-bs-theme', tema);
         })();
@@ -21,7 +25,7 @@
     <!-- Estilos personalizados -->
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
-<body>
+<body{% if current_user.is_authenticated %} data-usuario="1"{% endif %}>
 
     <!-- ===== Fondo decorativo: circulos, anillos y rectangulos ===== -->
     {% block decor %}
@@ -133,7 +137,15 @@
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle d-flex align-items-center gap-2"
                                href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <span class="avatar">{{ current_user.nombre[:1] | upper }}</span>
+                                <span class="avatar">
+                                    {% if current_user.imagen %}
+                                        <img src="{{ url_for('static', filename='uploads/' ~ current_user.imagen) }}"
+                                             alt="{{ current_user.nombre }}" onerror="this.style.display='none'">
+                                        <span class="avatar-inicial">{{ current_user.nombre[:1] | upper }}</span>
+                                    {% else %}
+                                        <span class="avatar-inicial">{{ current_user.nombre[:1] | upper }}</span>
+                                    {% endif %}
+                                </span>
                                 <span class="d-none d-lg-inline">{{ current_user.nombre }}</span>
                                 <span class="rol-badge rol-{{ current_user.get_rol() }}">{{ current_user.get_rol() }}</span>
                             </a>
@@ -144,6 +156,11 @@
                                     </span>
                                 </li>
                                 <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <a class="dropdown-item" href="{{ url_for('perfil.ver') }}">
+                                        Mi Perfil
+                                    </a>
+                                </li>
                                 <li>
                                     <a class="dropdown-item" href="{{ url_for('invoices.listar') }}">
                                         Mis Facturas

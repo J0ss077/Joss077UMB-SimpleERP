@@ -1529,3 +1529,75 @@ main {
     position: relative;
     z-index: 1;
 }
+
+/* ===== Avatar con foto (navbar) ===== */
+.avatar {
+    position: relative;
+}
+.avatar img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    z-index: 1;
+}
+.avatar-inicial {
+    position: relative;
+    z-index: 0;
+}
+
+/* ===== Perfil del usuario ===== */
+.perfil-avatar {
+    position: relative;
+    width: 92px;
+    height: 92px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #2563eb, #7c3aed);
+    box-shadow: 0 8px 24px rgba(99, 102, 241, 0.35);
+    overflow: hidden;
+}
+.perfil-avatar img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 1;
+}
+.perfil-avatar-inicial {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    color: #ffffff;
+    font-size: 2.4rem;
+    font-weight: 700;
+    z-index: 0;
+}
+.perfil-stat {
+    padding: 0.75rem 0.4rem;
+    border-radius: 12px;
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
+    height: 100%;
+}
+.perfil-stat-num {
+    display: block;
+    font-size: 1.15rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+.perfil-stat-label {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+}

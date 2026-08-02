@@ -1,0 +1,256 @@
+{% extends "base.html" %}
+{% block title %}Mi Perfil — ERP TechStore{% endblock %}
+
+{% block content %}
+<!-- ============================================================ -->
+<!-- PERFIL DE USUARIO                                           -->
+<!-- ============================================================ -->
+
+<div class="page-head mb-4">
+    <span class="page-head-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+        </svg>
+    </span>
+    <div>
+        <h1 class="mb-0">Mi Perfil</h1>
+        <p class="text-muted small mb-0">Administra tus datos personales, envio y preferencias.</p>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- ===== Columna izquierda: tarjeta de usuario + resumen ===== -->
+    <div class="col-lg-4">
+        <div class="card mb-4">
+            <div class="card-body text-center p-4">
+                <div class="perfil-avatar mx-auto mb-3">
+                    {% if current_user.imagen %}
+                        <img src="{{ url_for('static', filename='uploads/' ~ current_user.imagen) }}"
+                             alt="{{ current_user.nombre }}" onerror="this.style.display='none'">
+                        <span class="perfil-avatar-inicial">{{ current_user.nombre[:1] | upper }}</span>
+                    {% else %}
+                        <span class="perfil-avatar-inicial">{{ current_user.nombre[:1] | upper }}</span>
+                    {% endif %}
+                </div>
+                <h2 class="h5 mb-1">{{ current_user.nombre }}</h2>
+                <p class="text-muted small mb-2">{{ current_user.email }}</p>
+                <span class="rol-badge rol-{{ current_user.get_rol() }}">{{ current_user.get_rol() }}</span>
+                <p class="text-muted small mt-3 mb-0">
+                    Cliente desde
+                    {% if current_user.facturas %}
+                        tu primera compra.
+                    {% else %}
+                        tu registro.
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+
+        <!-- Mini resumen de actividad -->
+        <div class="card mb-4">
+            <div class="card-header card-header-accent">
+                <h6 class="mb-0">Resumen de actividad</h6>
+            </div>
+            <div class="card-body">
+                <div class="row g-2 text-center">
+                    <div class="col-6">
+                        <div class="perfil-stat">
+                            <span class="perfil-stat-num">{{ total_facturas }}</span>
+                            <span class="perfil-stat-label">Facturas</span>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="perfil-stat">
+                            <span class="perfil-stat-num">${{ "%.2f"|format(total_gastado) }}</span>
+                            <span class="perfil-stat-label">Gastado</span>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="perfil-stat">
+                            <span class="perfil-stat-num">{{ favoritos_count }}</span>
+                            <span class="perfil-stat-label">Favoritos</span>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="perfil-stat">
+                            <span class="perfil-stat-num">{{ carrito_count }}</span>
+                            <span class="perfil-stat-label">En carrito</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== Columna derecha: formularios ===== -->
+    <div class="col-lg-8">
+        <!-- Datos personales y preferencias -->
+        <div class="card mb-4">
+            <div class="card-header card-header-accent">
+                <h6 class="mb-0">Datos personales, envio y preferencias</h6>
+            </div>
+            <div class="card-body p-4">
+                <form method="POST" action="{{ url_for('perfil.ver') }}" enctype="multipart/form-data">
+                    <!-- Nombre y telefono -->
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="nombre" class="form-label fw-semibold small text-uppercase text-muted">Nombre completo *</label>
+                            <input type="text" name="nombre" id="nombre" class="form-control"
+                                   value="{{ current_user.nombre }}" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="telefono" class="form-label fw-semibold small text-uppercase text-muted">Telefono</label>
+                            <input type="tel" name="telefono" id="telefono" class="form-control"
+                                   value="{{ current_user.telefono or '' }}" maxlength="20"
+                                   placeholder="Ej: 300 123 4567">
+                        </div>
+                    </div>
+
+                    <!-- Email (fijo, identifica la cuenta) -->
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold small text-uppercase text-muted">Email</label>
+                        <input type="email" class="form-control" value="{{ current_user.email }}" disabled>
+                        <div class="form-text">El email identifica tu cuenta y no se puede cambiar.</div>
+                    </div>
+
+                    <!-- Datos de envio -->
+                    <div class="row">
+                        <div class="col-md-8 mb-3">
+                            <label for="direccion" class="form-label fw-semibold small text-uppercase text-muted">Direccion de envio</label>
+                            <input type="text" name="direccion" id="direccion" class="form-control"
+                                   value="{{ current_user.direccion or '' }}" maxlength="255"
+                                   placeholder="Ej: Calle 10 # 5-30, Apto 201">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="ciudad" class="form-label fw-semibold small text-uppercase text-muted">Ciudad</label>
+                            <input type="text" name="ciudad" id="ciudad" class="form-control"
+                                   value="{{ current_user.ciudad or '' }}" maxlength="100"
+                                   placeholder="Ej: Pasto">
+                        </div>
+                    </div>
+
+                    <!-- Preferencias -->
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="tema" class="form-label fw-semibold small text-uppercase text-muted">Tema de la interfaz</label>
+                            <select name="tema" id="tema" class="form-select">
+                                <option value="auto" {% if current_user.tema_preferido == 'auto' %}selected{% endif %}>Automatico (segun el sistema)</option>
+                                <option value="light" {% if current_user.tema_preferido == 'light' %}selected{% endif %}>Claro</option>
+                                <option value="dark" {% if current_user.tema_preferido == 'dark' %}selected{% endif %}>Oscuro</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3 d-flex align-items-end">
+                            <div class="form-check form-switch mb-2">
+                                <input class="form-check-input" type="checkbox" name="newsletter" id="newsletter" value="1"
+                                       {% if current_user.newsletter %}checked{% endif %}>
+                                <label class="form-check-label" for="newsletter">Recibir promociones y ofertas</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Foto de perfil -->
+                    <div class="mb-4">
+                        <label for="imagen" class="form-label fw-semibold small text-uppercase text-muted">Foto de perfil</label>
+                        {% if current_user.imagen %}
+                            <div class="d-flex align-items-center gap-3 mb-2">
+                                <img src="{{ url_for('static', filename='uploads/' ~ current_user.imagen) }}"
+                                     alt="Foto actual" class="img-mini" onerror="this.style.display='none'">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="quitar_foto" id="quitar_foto" value="1">
+                                    <label class="form-check-label small" for="quitar_foto">Quitar foto actual</label>
+                                </div>
+                            </div>
+                        {% endif %}
+                        <input type="file" name="imagen" id="imagen" class="form-control"
+                               accept="image/png,image/jpeg,image/webp,image/gif,image/svg+xml">
+                        <div class="form-text">PNG, JPG, WEBP, GIF o SVG. Tamano maximo 5 MB.</div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">
+                        Guardar cambios
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Cambiar contrasena -->
+        <div class="card mb-4">
+            <div class="card-header card-header-accent">
+                <h6 class="mb-0">Cambiar contrasena</h6>
+            </div>
+            <div class="card-body p-4">
+                <form method="POST" action="{{ url_for('perfil.cambiar_contrasena') }}">
+                    <div class="mb-3">
+                        <label for="contrasena_actual" class="form-label fw-semibold small text-uppercase text-muted">Contrasena actual *</label>
+                        <input type="password" name="contrasena_actual" id="contrasena_actual" class="form-control" required>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="nueva_contrasena" class="form-label fw-semibold small text-uppercase text-muted">Nueva contrasena *</label>
+                            <input type="password" name="nueva_contrasena" id="nueva_contrasena" class="form-control" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="confirmar_contrasena" class="form-label fw-semibold small text-uppercase text-muted">Confirmar contrasena *</label>
+                            <input type="password" name="confirmar_contrasena" id="confirmar_contrasena" class="form-control" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-warning">
+                        Actualizar contrasena
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Historial de pedidos -->
+        <div class="card">
+            <div class="card-header card-header-accent d-flex justify-content-between align-items-center">
+                <h6 class="mb-0">Mis ultimos pedidos</h6>
+                <a href="{{ url_for('invoices.listar') }}" class="btn btn-sm btn-outline-secondary">Ver todas</a>
+            </div>
+            {% if ultimas_facturas %}
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead>
+                                <tr>
+                                    <th class="ps-3">#</th>
+                                    <th>Fecha</th>
+                                    <th>Total</th>
+                                    <th>Estado</th>
+                                    <th class="text-end pe-3">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for factura in ultimas_facturas %}
+                                    <tr class="{% if factura.esta_anulada() %}fila-anulada{% endif %}">
+                                        <td class="ps-3 fw-semibold">#{{ factura.id_factura }}</td>
+                                        <td class="small">{{ factura.fecha.strftime('%d/%m/%Y') }}</td>
+                                        <td class="fw-bold">${{ "%.2f"|format(factura.get_total()) }}</td>
+                                        <td>
+                                            <span class="badge {% if factura.esta_anulada() %}bg-danger{% else %}bg-success{% endif %}">
+                                                {{ factura.estado | capitalize }}
+                                            </span>
+                                        </td>
+                                        <td class="text-end pe-3">
+                                            <a href="{{ url_for('invoices.ver', factura_id=factura.id_factura) }}"
+                                               class="btn btn-sm btn-outline-primary">Ver Detalle</a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            {% else %}
+                <div class="card-body text-center py-4">
+                    <p class="text-muted mb-0">Aun no tienes pedidos.</p>
+                    <a href="{{ url_for('main.catalogo') }}" class="btn btn-primary btn-sm mt-2">Ir al catalogo</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}

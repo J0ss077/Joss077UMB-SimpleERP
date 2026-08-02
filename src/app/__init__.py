@@ -85,6 +85,7 @@ def _registrar_blueprints(app):
     from app.invoices import invoices_bp
     from app.reports import reports_bp
     from app.tienda import tienda_bp
+    from app.perfil import perfil_bp
 
     app.register_blueprint(main_bp)
     app.register_blueprint(auth_bp)
@@ -92,3 +93,4 @@ def _registrar_blueprints(app):
     app.register_blueprint(invoices_bp)
     app.register_blueprint(reports_bp)
     app.register_blueprint(tienda_bp)
+    app.register_blueprint(perfil_bp)

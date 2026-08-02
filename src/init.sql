@@ -9,7 +9,13 @@ CREATE TABLE IF NOT EXISTS usuarios (
     nombre VARCHAR(100) NOT NULL,
     email VARCHAR(150) UNIQUE NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
-    rol VARCHAR(20) NOT NULL CHECK (rol IN ('admin', 'vendedor', 'cliente'))
+    rol VARCHAR(20) NOT NULL CHECK (rol IN ('admin', 'vendedor', 'cliente')),
+    telefono VARCHAR(20),
+    direccion VARCHAR(255),
+    ciudad VARCHAR(100),
+    imagen VARCHAR(255),
+    newsletter BOOLEAN NOT NULL DEFAULT FALSE,
+    tema_preferido VARCHAR(10) NOT NULL DEFAULT 'auto'
 );
 
 -- Tabla: PRODUCTOS

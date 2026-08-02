@@ -28,6 +28,13 @@
             botonTema.classList.remove('girar');
             void botonTema.offsetWidth;
             botonTema.classList.add('girar');
+
+            // Sincronizar el tema con el perfil del usuario (si hay sesion)
+            if (document.body.dataset.usuario === '1') {
+                var datos = new URLSearchParams();
+                datos.append('tema', nuevo);
+                fetch('/perfil/tema', { method: 'POST', body: datos });
+            }
         });
     }
 

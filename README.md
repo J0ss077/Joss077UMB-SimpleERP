@@ -10,6 +10,7 @@ Sistema ERP transaccional para una tienda de tecnologia, construido con Flask. I
 | **Catalogo** | Visualizacion, busqueda y filtro de productos por categoria (RF03, RF04) |
 | **Autenticacion** | Login y registro con roles: admin, vendedor, cliente (RF01, RF02) |
 | **Tienda del Cliente** | Carrito de compras en sesion, favoritos, detalle de producto y confirmacion de pedido |
+| **Perfil de Usuario** | Datos personales, foto, datos de envio, preferencias (tema/newsletter), cambio de contrasena y resumen de actividad |
 | **Inventario** | CRUD de productos y consulta de stock con indicador visual (RF05, RF06) |
 | **Facturacion** | Creacion de facturas con transaccion ACID, anulacion y reversion de stock (RF07-RF10, RNF01) |
 | **Reportes** | Panel con metricas, ventas totales y stock bajo (RF12) |
@@ -61,6 +62,8 @@ src/
     ├── products.py         # Gestion de productos e inventario
     ├── invoices.py         # Facturacion (transacciones ACID compartidas)
     ├── tienda.py           # Carrito, favoritos, detalle de producto y pedidos
+    ├── perfil.py           # Perfil de usuario (datos, envio, preferencias, contrasena)
+    ├── utils.py            # Utilidades compartidas (subida de imagenes)
     ├── reports.py          # Reportes administrativos
     ├── templates/          # Plantillas HTML (Jinja2)
     │   ├── base.html       # Layout comun (navbar por rol, avatar, modo oscuro)
@@ -71,6 +74,7 @@ src/
     │   ├── carrito.html    # Carrito de compras
     │   ├── favoritos.html  # Productos favoritos
     │   ├── pedido.html     # Confirmacion de pedido
+    │   ├── perfil.html     # Perfil del usuario
     │   ├── login.html      # Inicio de sesion (pantalla dividida)
     │   ├── register.html   # Registro (pantalla dividida)
     │   ├── products/       # Vistas de productos
