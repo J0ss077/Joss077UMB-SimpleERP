@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block title %}Ventas por Categoria — ERP TechStore{% endblock %}
+
+{% block content %}
+<!-- ============================================================ -->
+<!-- REPORTE: VENTAS POR CATEGORIA                                -->
+<!-- ============================================================ -->
+
+<div class="d-flex justify-content-between align-items-start mb-4 gap-3 flex-wrap">
+    <div class="page-head mb-0">
+        <span class="page-head-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                 stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M3 3v18h18"></path>
+                <path d="m19 9-5 5-4-4-3 3"></path>
+            </svg>
+        </span>
+        <div>
+            <h1 class="mb-0">Ventas por Categoria</h1>
+            <p class="text-muted small mb-0">Facturacion y unidades agrupadas por categoria de producto.</p>
+        </div>
+    </div>
+</div>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="GET" action="{{ url_for('reports.por_categoria') }}" class="row g-3 align-items-end">
+            <div class="col-md-3">
+                <label for="desde" class="form-label fw-semibold small text-uppercase text-muted">Desde</label>
+                <input type="date" name="desde" id="desde" class="form-control" value="{{ desde }}">
+            </div>
+            <div class="col-md-3">
+                <label for="hasta" class="form-label fw-semibold small text-uppercase text-muted">Hasta</label>
+                <input type="date" name="hasta" id="hasta" class="form-control" value="{{ hasta }}">
+            </div>
+            <div class="col-md-6 d-flex gap-2">
+                <button type="submit" class="btn btn-primary">Filtrar</button>
+                {% if desde or hasta %}
+                    <a href="{{ url_for('reports.por_categoria') }}" class="btn btn-outline-secondary">Limpiar</a>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+</div>
+
+{% if datos %}
+    <div class="card">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th class="ps-3">Categoria</th>
+                            <th class="text-center">Unidades vendidas</th>
+                            <th class="text-end pe-3">Total facturado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for d in datos %}
+                            <tr>
+                                <td class="ps-3 fw-semibold">{{ d.categoria }}</td>
+                                <td class="text-center">{{ d.unidades }}</td>
+                                <td class="text-end pe-3 fw-bold text-primary">${{ "%.2f"|format(d.ventas) }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% else %}
+    <div class="alert alert-info">No hay ventas registradas en el rango seleccionado.</div>
+{% endif %}
+
+<div class="mt-3">
+    <a href="{{ url_for('reports.index') }}" class="btn btn-outline-secondary">
+        &larr; Volver a Reportes
+    </a>
+</div>
+
+{% endblock %}

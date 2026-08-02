@@ -34,19 +34,22 @@
 
         <form method="POST" action="{{ url_for('invoices.crear') }}">
 
-            <!-- Seleccion de cliente (admin y vendedor) -->
+            <!-- Seleccion de cliente (admin y vendedor) con busqueda -->
             {% if clientes %}
                 <div class="mb-4">
                     <label for="id_cliente" class="form-label fw-semibold small text-uppercase text-muted">Cliente</label>
-                    <select name="id_cliente" id="id_cliente" class="form-select" required>
-                        <option value="">-- Seleccionar cliente --</option>
+                    <input type="text" name="id_cliente" id="id_cliente" class="form-control"
+                           list="lista_clientes" required
+                           placeholder="Buscar por nombre o email..."
+                           {% if current_user.es_admin() %}autofocus{% endif %}>
+                    <datalist id="lista_clientes">
                         {% for c in clientes %}
-                            <option value="{{ c.id_usuario }}"
-                                    {% if c.id_usuario == current_user.id_usuario %}selected{% endif %}>
-                                {{ c.nombre }} ({{ c.get_rol() }})
+                            <option value="{{ c.id_usuario }}">
+                                {{ c.nombre }} ({{ c.email }}) - {{ c.get_rol() }}
                             </option>
                         {% endfor %}
-                    </select>
+                    </datalist>
+                    <div class="form-text">Escriba el id o seleccione de la lista desplegable.</div>
                 </div>
             {% endif %}
 

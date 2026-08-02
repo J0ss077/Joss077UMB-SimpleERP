@@ -54,9 +54,12 @@ class Usuario(UserMixin, db.Model):
     imagen = db.Column(db.String(255))
     newsletter = db.Column(db.Boolean, nullable=False, default=False)
     tema_preferido = db.Column(db.String(10), nullable=False, default='auto')
+    activo = db.Column(db.Boolean, nullable=False, default=True)
 
     # --- Relaciones ---
     facturas = db.relationship('Factura', backref='usuario', lazy=True)
+    carrito_items = db.relationship('CarritoItem', backref='usuario', lazy=True)
+    favoritos = db.relationship('Favorito', backref='usuario', lazy=True)
 
     # === Metodos requeridos por Flask-Login ===
 
@@ -164,6 +167,9 @@ class Factura(db.Model):
         fecha            : Fecha y hora de emision (se asigna automaticamente).
         total            : Suma total calculada de todos los detalles.
         estado           : 'activa' (vigente) o 'anulada' (reversada, RF10).
+        direccion_envio  : Direccion de entrega del pedido (opcional).
+        ciudad_envio     : Ciudad de entrega del pedido (opcional).
+        estado_pedido    : Avance del envio: 'pendiente', 'enviado' o 'entregado'.
     """
 
     __tablename__ = 'facturas'
@@ -178,6 +184,12 @@ class Factura(db.Model):
     fecha = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     total = db.Column(db.Numeric(12, 2), nullable=False, default=0)
     estado = db.Column(db.String(20), nullable=False, default='activa')
+    direccion_envio = db.Column(db.Text)
+    ciudad_envio = db.Column(db.String(100))
+    telefono_contacto = db.Column(db.String(20))
+    estado_pedido = db.Column(
+        db.String(20), nullable=False, default='pendiente'
+    )
 
     # --- Relaciones ---
     detalles = db.relationship(
@@ -259,3 +271,77 @@ class DetalleFactura(db.Model):
     def get_subtotal(self):
         """Devuelve el subtotal de esta linea de detalle como float."""
         return float(self.subtotal)
+
+
+# ===========================================================================
+# MODELO: CarritoItem
+# ===========================================================================
+class CarritoItem(db.Model):
+    """
+    Representa un producto agregado al carrito de compras de un usuario.
+
+    El carrito se persiste en la base de datos (no en la sesion) para que
+    sobreviva al cierre de sesion y se sincronice entre dispositivos.
+
+    Atributos:
+        id_carrito (PK)  : Identificador unico autoincremental.
+        id_usuario (FK)  : Usuario dueno del carrito.
+        id_producto (FK) : Producto agregado.
+        cantidad         : Unidades del producto en el carrito (>= 1).
+    """
+
+    __tablename__ = 'carrito_items'
+
+    id_carrito = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    id_usuario = db.Column(
+        db.Integer,
+        db.ForeignKey('usuarios.id_usuario'),
+        nullable=False
+    )
+    id_producto = db.Column(
+        db.Integer,
+        db.ForeignKey('productos.id_producto'),
+        nullable=False
+    )
+    cantidad = db.Column(db.Integer, nullable=False, default=1)
+
+    # Un usuario no puede tener el mismo producto repetido en su carrito
+    __table_args__ = (
+        db.UniqueConstraint('id_usuario', 'id_producto', name='uq_carrito_usuario_producto'),
+    )
+
+
+# ===========================================================================
+# MODELO: Favorito
+# ===========================================================================
+class Favorito(db.Model):
+    """
+    Representa un producto marcado como favorito por un usuario.
+
+    Al igual que el carrito, se persiste en la base de datos para que
+    no se pierda al cerrar la sesion.
+
+    Atributos:
+        id_favorito (PK) : Identificador unico autoincremental.
+        id_usuario (FK)  : Usuario que marco el favorito.
+        id_producto (FK) : Producto favorito.
+    """
+
+    __tablename__ = 'favoritos'
+
+    id_favorito = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    id_usuario = db.Column(
+        db.Integer,
+        db.ForeignKey('usuarios.id_usuario'),
+        nullable=False
+    )
+    id_producto = db.Column(
+        db.Integer,
+        db.ForeignKey('productos.id_producto'),
+        nullable=False
+    )
+
+    # Un usuario solo puede tener cada producto una vez en favoritos
+    __table_args__ = (
+        db.UniqueConstraint('id_usuario', 'id_producto', name='uq_favorito_usuario_producto'),
+    )

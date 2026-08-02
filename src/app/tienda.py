@@ -3,9 +3,10 @@ ERP - Tienda de Tecnologia
 Blueprint: Tienda del cliente (tienda).
 
 Experiencia de compra para el rol cliente:
-    - Carrito de compras en sesion (sin persistir en BD).
-    - Favoritos en sesion.
+    - Carrito de compras persistente en BD (sobrevive al cierre de sesion).
+    - Favoritos persistentes en BD.
     - Detalle de producto.
+    - Checkout en 2 pasos: confirmar envio + transaccion ACID.
     - Confirmacion de pedido despues del checkout.
 
 Rutas (requieren autenticacion):
@@ -15,16 +16,17 @@ Rutas (requieren autenticacion):
     POST   /tienda/carrito/actualizar      -> Actualizar cantidades
     POST   /tienda/carrito/eliminar        -> Quitar producto del carrito
     POST   /tienda/carrito/vaciar          -> Vaciar carrito
+    GET    /tienda/carrito/checkout        -> Confirmar envio (paso 1)
     POST   /tienda/carrito/checkout        -> Finalizar compra (transaccion ACID)
     GET    /tienda/pedido/<factura_id>     -> Confirmacion de pedido
     POST   /tienda/favoritos/toggle        -> Marcar/desmarcar favorito
     GET    /tienda/favoritos               -> Ver favoritos
 """
 
-from flask import Blueprint, render_template, request, redirect, url_for, flash, session
+from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_required, current_user
 
-from app.models import db, Producto, Factura
+from app.models import db, Producto, Factura, CarritoItem, Favorito
 from app.invoices import crear_factura_transaccional
 
 tienda_bp = Blueprint('tienda', __name__, url_prefix='/tienda')
@@ -39,28 +41,19 @@ def _es_cliente():
 
 
 def _leer_carrito():
-    """Devuelve el carrito de sesion: {id_producto: cantidad}."""
-    return dict(session.get('carrito', {}))
+    """
+    Devuelve el carrito del usuario desde la BD: {id_producto: cantidad}.
 
-
-def _guardar_carrito(carrito):
-    """Persiste el carrito en la sesion."""
-    session['carrito'] = {int(k): v for k, v in carrito.items() if int(v) > 0}
-
-
-def _cantidad_carrito():
-    """Suma total de unidades en el carrito."""
-    return sum(session.get('carrito', {}).values())
+    Compatible con la forma anterior del carrito de sesion.
+    """
+    items = CarritoItem.query.filter_by(id_usuario=current_user.id_usuario).all()
+    return {item.id_producto: item.cantidad for item in items}
 
 
 def _leer_favoritos():
-    """Devuelve la lista de ids favoritos de la sesion."""
-    return list(session.get('favoritos', []))
-
-
-def _guardar_favoritos(favoritos):
-    """Persiste los favoritos en la sesion."""
-    session['favoritos'] = list(set(int(x) for x in favoritos))
+    """Devuelve el conjunto de ids de productos favoritos del usuario."""
+    filas = Favorito.query.filter_by(id_usuario=current_user.id_usuario).all()
+    return {fila.id_producto for fila in filas}
 
 
 def _exigir_cliente():
@@ -87,7 +80,7 @@ def ver_producto(producto_id):
 @tienda_bp.route('/carrito/agregar', methods=['POST'])
 @login_required
 def agregar_carrito():
-    """Agrega un producto al carrito validando stock (solo clientes)."""
+    """Agrega un producto al carrito (BD) validando stock (solo clientes)."""
     if not _es_cliente():
         flash('La tienda con carrito es exclusiva para clientes.', 'error')
         return redirect(url_for('main.catalogo'))
@@ -105,14 +98,23 @@ def agregar_carrito():
         flash(f'Stock insuficiente para "{producto.nombre}". Disponible: {producto.stock}.', 'error')
         return redirect(request.referrer or url_for('main.catalogo'))
 
-    carrito = _leer_carrito()
-    carrito[producto_id] = carrito.get(producto_id, 0) + cantidad
+    item = CarritoItem.query.filter_by(
+        id_usuario=current_user.id_usuario,
+        id_producto=producto_id
+    ).first()
 
-    # No permitir superar el stock disponible
-    if carrito[producto_id] > producto.stock:
-        carrito[producto_id] = producto.stock
+    if item:
+        # Sumar a lo que ya habia, sin superar el stock disponible
+        item.cantidad = min(item.cantidad + cantidad, producto.stock)
+    else:
+        item = CarritoItem(
+            id_usuario=current_user.id_usuario,
+            id_producto=producto_id,
+            cantidad=min(cantidad, producto.stock)
+        )
+        db.session.add(item)
 
-    _guardar_carrito(carrito)
+    db.session.commit()
     flash(f'"{producto.nombre}" agregado al carrito ({cantidad} unidad/es).', 'success')
     return redirect(request.referrer or url_for('main.catalogo'))
 
@@ -126,7 +128,7 @@ def ver_carrito():
     items = []
     total = 0
     for producto_id, cantidad in carrito.items():
-        producto = Producto.query.get(int(producto_id))
+        producto = Producto.query.get(producto_id)
         if not producto:
             continue
         subtotal = producto.get_precio() * cantidad
@@ -147,7 +149,6 @@ def actualizar_carrito():
     if not _es_cliente():
         return redirect(url_for('main.index'))
 
-    carrito = _leer_carrito()
     for key, value in request.form.items():
         if key.startswith('cantidad_'):
             try:
@@ -156,14 +157,20 @@ def actualizar_carrito():
                 producto = Producto.query.get(producto_id)
                 if producto:
                     cantidad = min(cantidad, producto.stock)
+                item = CarritoItem.query.filter_by(
+                    id_usuario=current_user.id_usuario,
+                    id_producto=producto_id
+                ).first()
+                if not item:
+                    continue
                 if cantidad > 0:
-                    carrito[producto_id] = cantidad
+                    item.cantidad = cantidad
                 else:
-                    carrito.pop(producto_id, None)
+                    db.session.delete(item)
             except ValueError:
                 continue
 
-    _guardar_carrito(carrito)
+    db.session.commit()
     flash('Carrito actualizado.', 'success')
     return redirect(url_for('tienda.ver_carrito'))
 
@@ -180,10 +187,15 @@ def eliminar_carrito():
     except ValueError:
         producto_id = 0
 
-    carrito = _leer_carrito()
-    carrito.pop(producto_id, None)
-    _guardar_carrito(carrito)
-    flash('Producto eliminado del carrito.', 'success')
+    item = CarritoItem.query.filter_by(
+        id_usuario=current_user.id_usuario,
+        id_producto=producto_id
+    ).first()
+    if item:
+        db.session.delete(item)
+        db.session.commit()
+        flash('Producto eliminado del carrito.', 'success')
+
     return redirect(url_for('tienda.ver_carrito'))
 
 
@@ -194,17 +206,19 @@ def vaciar_carrito():
     if not _es_cliente():
         return redirect(url_for('main.index'))
 
-    session['carrito'] = {}
+    CarritoItem.query.filter_by(id_usuario=current_user.id_usuario).delete()
+    db.session.commit()
     flash('Carrito vaciado.', 'info')
     return redirect(url_for('tienda.ver_carrito'))
 
 
-@tienda_bp.route('/carrito/checkout', methods=['POST'])
+@tienda_bp.route('/carrito/checkout', methods=['GET', 'POST'])
 @login_required
 def checkout():
     """
-    Finaliza la compra: crea la factura con transaccion ACID
-    y vacia el carrito. Redirige a la confirmacion de pedido.
+    Finaliza la compra en 2 pasos:
+        GET:  Muestra el formulario de confirmacion de envio (paso 1).
+        POST: Crea la factura con transaccion ACID y vacia el carrito.
     """
     if not _es_cliente():
         flash('La tienda con carrito es exclusiva para clientes.', 'error')
@@ -215,10 +229,64 @@ def checkout():
         flash('Tu carrito esta vacio. Agrega productos antes de comprar.', 'error')
         return redirect(url_for('tienda.ver_carrito'))
 
-    # Construir lineas de venta
+    if request.method == 'GET':
+        # Paso 1: confirmar datos de envio (pre-llenados desde el perfil)
+        items = []
+        total = 0
+        for producto_id, cantidad in carrito.items():
+            producto = Producto.query.get(producto_id)
+            if not producto:
+                continue
+            subtotal = producto.get_precio() * cantidad
+            total += subtotal
+            items.append({
+                'producto': producto,
+                'cantidad': cantidad,
+                'subtotal': subtotal,
+            })
+
+        return render_template(
+            'checkout.html',
+            direccion=current_user.direccion or '',
+            ciudad=current_user.ciudad or '',
+            telefono=current_user.telefono or '',
+            items=items,
+            total=total
+        )
+
+    # Paso 2: procesar la compra
+    direccion = request.form.get('direccion', '').strip()
+    ciudad = request.form.get('ciudad', '').strip()
+    telefono = request.form.get('telefono', '').strip()
+
+    if not direccion or not ciudad:
+        flash('La direccion y la ciudad de envio son obligatorias.', 'error')
+        items_previa = []
+        total_previo = 0
+        for producto_id, cantidad in carrito.items():
+            producto = Producto.query.get(producto_id)
+            if not producto:
+                continue
+            subtotal = producto.get_precio() * cantidad
+            total_previo += subtotal
+            items_previa.append({
+                'producto': producto,
+                'cantidad': cantidad,
+                'subtotal': subtotal,
+            })
+        return render_template(
+            'checkout.html',
+            direccion=direccion,
+            ciudad=ciudad,
+            telefono=telefono,
+            items=items_previa,
+            total=total_previo
+        )
+
+    # Construir lineas de venta desde la BD
     lineas_venta = []
     for producto_id, cantidad in carrito.items():
-        producto = Producto.query.get(int(producto_id))
+        producto = Producto.query.get(producto_id)
         if producto and cantidad > 0:
             lineas_venta.append((producto, cantidad))
 
@@ -227,13 +295,22 @@ def checkout():
         return redirect(url_for('tienda.ver_carrito'))
 
     # Transaccion ACID compartida con la facturacion directa
-    factura, error = crear_factura_transaccional(current_user.id_usuario, lineas_venta)
+    factura, error = crear_factura_transaccional(
+        current_user.id_usuario,
+        lineas_venta,
+        direccion_envio=direccion,
+        ciudad_envio=ciudad,
+        telefono_contacto=telefono
+    )
 
     if error:
         flash(error, 'error')
         return redirect(url_for('tienda.ver_carrito'))
 
-    session['carrito'] = {}
+    # Vaciar carrito en BD
+    CarritoItem.query.filter_by(id_usuario=current_user.id_usuario).delete()
+    db.session.commit()
+
     flash(f'Compra realizada. Factura #{factura.id_factura} generada.', 'success')
     return redirect(url_for('tienda.pedido', factura_id=factura.id_factura))
 
@@ -256,6 +333,64 @@ def pedido(factura_id):
 
 
 # ---------------------------------------------------------------------------
+# RECOMPRAR PEDIDO ANTERIOR
+# ---------------------------------------------------------------------------
+@tienda_bp.route('/recomprar/<int:factura_id>', methods=['POST'])
+@login_required
+def recomprar(factura_id):
+    """
+    Vuelve a agregar al carrito los productos de una factura anterior.
+
+    Solo el dueno de la factura puede recomprar. Los productos sin stock
+    disponible se omiten y se informa al usuario.
+    """
+    factura = Factura.query.get_or_404(factura_id)
+
+    if factura.id_usuario != current_user.id_usuario:
+        flash('No tienes permiso para reordenar este pedido.', 'error')
+        return redirect(url_for('invoices.listar'))
+
+    if factura.esta_anulada():
+        flash('No puedes recomprar una factura anulada.', 'error')
+        return redirect(url_for('invoices.listar'))
+
+    agregados = 0
+    omitidos = 0
+    for detalle in factura.detalles:
+        producto = detalle.producto
+        if not producto or not producto.hay_stock_suficiente(1):
+            omitidos += 1
+            continue
+
+        item = CarritoItem.query.filter_by(
+            id_usuario=current_user.id_usuario,
+            id_producto=producto.id_producto
+        ).first()
+
+        cantidad = min(detalle.cantidad, producto.stock)
+        if item:
+            item.cantidad = min(item.cantidad + cantidad, producto.stock)
+        else:
+            db.session.add(CarritoItem(
+                id_usuario=current_user.id_usuario,
+                id_producto=producto.id_producto,
+                cantidad=cantidad
+            ))
+        agregados += 1
+
+    db.session.commit()
+
+    if agregados:
+        flash(f'Productos de la factura #{factura_id} agregados al carrito.', 'success')
+    if omitidos:
+        flash(f'{omitidos} producto(s) sin stock fueron omitidos.', 'warning')
+    if not agregados:
+        flash('Ningun producto de esta factura tiene stock disponible.', 'error')
+
+    return redirect(url_for('tienda.ver_carrito'))
+
+
+# ---------------------------------------------------------------------------
 # FAVORITOS
 # ---------------------------------------------------------------------------
 @tienda_bp.route('/favoritos/toggle', methods=['POST'])
@@ -271,16 +406,22 @@ def toggle_favorito():
     except ValueError:
         producto_id = 0
 
-    favoritos = _leer_favoritos()
+    existente = Favorito.query.filter_by(
+        id_usuario=current_user.id_usuario,
+        id_producto=producto_id
+    ).first()
 
-    if producto_id in favoritos:
-        favoritos.remove(producto_id)
+    if existente:
+        db.session.delete(existente)
         flash('Producto quitado de favoritos.', 'info')
     else:
-        favoritos.append(producto_id)
+        db.session.add(Favorito(
+            id_usuario=current_user.id_usuario,
+            id_producto=producto_id
+        ))
         flash('Producto agregado a favoritos.', 'success')
 
-    _guardar_favoritos(favoritos)
+    db.session.commit()
     return redirect(request.referrer or url_for('main.catalogo'))
 
 
@@ -292,7 +433,7 @@ def ver_favoritos():
 
     productos = []
     for producto_id in favoritos_ids:
-        producto = Producto.query.get(int(producto_id))
+        producto = Producto.query.get(producto_id)
         if producto:
             productos.append(producto)
 

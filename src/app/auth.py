@@ -53,6 +53,11 @@ def login():
             flash('Email o contrasena incorrectos.', 'error')
             return render_template('login.html')
 
+        # Cuentas bloqueadas no pueden iniciar sesion
+        if not usuario.activo:
+            flash('Tu cuenta esta bloqueada. Contacta al administrador.', 'error')
+            return render_template('login.html')
+
         # Iniciar sesion (Flask-Login crea la cookie de sesion)
         login_user(usuario)
         flash(f'Bienvenido/a, {usuario.nombre}!', 'success')

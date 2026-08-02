@@ -15,10 +15,10 @@ Rutas (requieren autenticacion):
     POST     /perfil/tema       -> Guardar preferencia de tema (AJAX)
 """
 
-from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify, session
+from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify
 from flask_login import login_required, current_user
 
-from app.models import db, Factura
+from app.models import db, Factura, CarritoItem, Favorito
 from app.utils import guardar_imagen, eliminar_imagen
 
 perfil_bp = Blueprint('perfil', __name__, url_prefix='/perfil')
@@ -170,11 +170,18 @@ def _resumen_actividad():
     facturas_activas = [f for f in facturas if not f.esta_anulada()]
     total_gastado = sum(f.get_total() for f in facturas_activas)
 
+    carrito_count = db.session.query(
+        db.func.coalesce(db.func.sum(CarritoItem.cantidad), 0)
+    ).filter_by(id_usuario=current_user.id_usuario).scalar() or 0
+    favoritos_count = Favorito.query.filter_by(
+        id_usuario=current_user.id_usuario
+    ).count()
+
     return {
         'total_facturas': len(facturas),
         'total_activas': len(facturas_activas),
         'total_gastado': total_gastado,
         'ultimas_facturas': facturas[:5],
-        'favoritos_count': len(session.get('favoritos', [])),
-        'carrito_count': sum(session.get('carrito', {}).values()),
+        'favoritos_count': favoritos_count,
+        'carrito_count': carrito_count,
     }

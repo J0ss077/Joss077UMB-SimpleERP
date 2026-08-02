@@ -6,11 +6,11 @@ Este patron permite crear la aplicacion en tiempo de ejecucion,
 facilitando pruebas, configuracion multiple y extension futura.
 """
 
-from flask import Flask, session
-from flask_login import LoginManager
+from flask import Flask
+from flask_login import LoginManager, current_user
 
 from app.config import Config
-from app.models import db, Usuario
+from app.models import db, Usuario, CarritoItem, Favorito
 
 
 # Instancia global de Flask-Login
@@ -60,9 +60,23 @@ def create_app(config_class=Config):
     # 6. Datos globales para todas las plantillas (carrito y favoritos)
     @app.context_processor
     def _contexto_global():
+        # Carrito y favoritos ahora viven en la BD (persistencia real)
+        carrito_cantidad = 0
+        favoritos_ids = set()
+
+        if current_user.is_authenticated:
+            carrito_cantidad = db.session.query(
+                db.func.coalesce(db.func.sum(CarritoItem.cantidad), 0)
+            ).filter_by(id_usuario=current_user.id_usuario).scalar()
+            favoritos_ids = {
+                fila[0] for fila in
+                Favorito.query.with_entities(Favorito.id_producto)
+                .filter_by(id_usuario=current_user.id_usuario).all()
+            }
+
         return {
-            'carrito_cantidad': sum(session.get('carrito', {}).values()),
-            'favoritos_ids': set(session.get('favoritos', [])),
+            'carrito_cantidad': carrito_cantidad or 0,
+            'favoritos_ids': favoritos_ids,
         }
 
     return app
@@ -86,6 +100,7 @@ def _registrar_blueprints(app):
     from app.reports import reports_bp
     from app.tienda import tienda_bp
     from app.perfil import perfil_bp
+    from app.usuarios import usuarios_bp
 
     app.register_blueprint(main_bp)
     app.register_blueprint(auth_bp)
@@ -94,3 +109,4 @@ def _registrar_blueprints(app):
     app.register_blueprint(reports_bp)
     app.register_blueprint(tienda_bp)
     app.register_blueprint(perfil_bp)
+    app.register_blueprint(usuarios_bp)

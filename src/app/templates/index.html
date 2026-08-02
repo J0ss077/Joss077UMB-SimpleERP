@@ -36,7 +36,7 @@
     <div class="card-body">
         <form method="GET" action="{{ url_for('main.catalogo') }}" class="row g-3">
             <!-- Campo de busqueda por texto -->
-            <div class="col-md-6">
+            <div class="col-md-5">
                 <label for="q" class="form-label fw-semibold small text-uppercase text-muted">Buscar</label>
                 <input type="text" name="q" id="q" class="form-control"
                        placeholder="Ej: laptop, mouse, SSD..."
@@ -44,7 +44,7 @@
             </div>
 
             <!-- Filtro por categoria -->
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <label for="categoria" class="form-label fw-semibold small text-uppercase text-muted">Categoria</label>
                 <select name="categoria" id="categoria" class="form-select">
                     <option value="">-- Todas las categorias --</option>
@@ -56,10 +56,21 @@
                 </select>
             </div>
 
+            <!-- Ordenamiento -->
+            <div class="col-md-2">
+                <label for="orden" class="form-label fw-semibold small text-uppercase text-muted">Orden</label>
+                <select name="orden" id="orden" class="form-select">
+                    <option value="nombre" {% if orden == 'nombre' %}selected{% endif %}>Nombre</option>
+                    <option value="precio_asc" {% if orden == 'precio_asc' %}selected{% endif %}>Precio: menor a mayor</option>
+                    <option value="precio_desc" {% if orden == 'precio_desc' %}selected{% endif %}>Precio: mayor a menor</option>
+                    <option value="stock" {% if orden == 'stock' %}selected{% endif %}>Mas stock</option>
+                </select>
+            </div>
+
             <!-- Botones -->
             <div class="col-md-2 d-flex align-items-end gap-2">
                 <button type="submit" class="btn btn-primary w-100">Filtrar</button>
-                {% if texto_busqueda or categoria_filtro %}
+                {% if texto_busqueda or categoria_filtro or orden != 'nombre' %}
                     <a href="{{ url_for('main.catalogo') }}" class="btn btn-outline-secondary w-100">Limpiar</a>
                 {% endif %}
             </div>
@@ -69,12 +80,46 @@
 
 <!-- ===== Resultados ===== -->
 {% if productos %}
-    <p class="text-muted small">{{ productos|length }} producto(s) encontrado(s).</p>
+    <p class="text-muted small">
+        {{ paginacion.total }} producto(s) encontrado(s). Pagina {{ paginacion.page }} de {{ paginacion.pages or 1 }}.
+    </p>
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
         {% for producto in productos %}
             {{ producto_card(producto, current_user.get_rol() == 'cliente') }}
         {% endfor %}
     </div>
+
+    <!-- Paginacion -->
+    {% if paginacion.pages > 1 %}
+        <nav class="mt-4" aria-label="Paginacion del catalogo">
+            <ul class="pagination justify-content-center">
+                <li class="page-item {% if not paginacion.has_prev %}disabled{% endif %}">
+                    <a class="page-link"
+                       href="{{ url_for('main.catalogo', q=texto_busqueda, categoria=categoria_filtro, orden=orden, pagina=paginacion.prev_num) }}">
+                        &laquo; Anterior
+                    </a>
+                </li>
+                {% for p in paginacion.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
+                    {% if p %}
+                        <li class="page-item {% if p == paginacion.page %}active{% endif %}">
+                            <a class="page-link"
+                               href="{{ url_for('main.catalogo', q=texto_busqueda, categoria=categoria_filtro, orden=orden, pagina=p) }}">
+                                {{ p }}
+                            </a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled"><span class="page-link">&hellip;</span></li>
+                    {% endif %}
+                {% endfor %}
+                <li class="page-item {% if not paginacion.has_next %}disabled{% endif %}">
+                    <a class="page-link"
+                       href="{{ url_for('main.catalogo', q=texto_busqueda, categoria=categoria_filtro, orden=orden, pagina=paginacion.next_num) }}">
+                        Siguiente &raquo;
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    {% endif %}
 {% else %}
     <div class="alert alert-info text-center py-5">
         <h4 class="mb-2">Sin resultados</h4>

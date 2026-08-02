@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+{% from "_macros.html" import imagen_producto %}
+{% block title %}Confirmar Compra — ERP TechStore{% endblock %}
+
+{% block content %}
+<!-- ============================================================ -->
+<!-- CHECKOUT: CONFIRMACION DE ENVIO                              -->
+<!-- ============================================================ -->
+
+<div class="page-head mb-4">
+    <span class="page-head-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="8" cy="21" r="1"></circle>
+            <circle cx="19" cy="21" r="1"></circle>
+            <path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"></path>
+        </svg>
+    </span>
+    <div>
+        <h1 class="mb-0">Confirmar Compra</h1>
+        <p class="text-muted small mb-0">Paso 1 de 2: verifica los datos de envio de tu pedido.</p>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Datos de envio -->
+    <div class="col-lg-7">
+        <div class="card mb-4">
+            <div class="card-header card-header-accent">
+                <h6 class="mb-0">Datos de envio</h6>
+            </div>
+            <div class="card-body p-4">
+                <form method="POST" action="{{ url_for('tienda.checkout') }}">
+                    <div class="mb-3">
+                        <label for="direccion" class="form-label fw-semibold small text-uppercase text-muted">Direccion de entrega *</label>
+                        <textarea name="direccion" id="direccion" class="form-control" rows="2"
+                                  required placeholder="Ej: Calle 10 # 5-30, Apto 201">{{ direccion }}</textarea>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="ciudad" class="form-label fw-semibold small text-uppercase text-muted">Ciudad *</label>
+                            <input type="text" name="ciudad" id="ciudad" class="form-control"
+                                   required placeholder="Ej: Pasto" value="{{ ciudad }}">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="telefono" class="form-label fw-semibold small text-uppercase text-muted">Telefono de contacto</label>
+                            <input type="tel" name="telefono" id="telefono" class="form-control"
+                                   placeholder="Ej: 300 123 4567" value="{{ telefono }}">
+                        </div>
+                    </div>
+                    <p class="text-muted small mb-4">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                             style="width: 15px; height: 15px;" aria-hidden="true">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <path d="M12 16v-4"></path>
+                            <path d="M12 8h.01"></path>
+                        </svg>
+                        Estos datos se guardan en tu factura y se pueden actualizar en tu perfil.
+                    </p>
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-success btn-lg">
+                            Confirmar y pagar
+                        </button>
+                        <a href="{{ url_for('tienda.ver_carrito') }}" class="btn btn-outline-secondary btn-lg">
+                            Volver al carrito
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Resumen del pedido -->
+    <div class="col-lg-5">
+        <div class="card mb-4">
+            <div class="card-header card-header-accent">
+                <h6 class="mb-0">Resumen del pedido</h6>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th class="ps-3">Producto</th>
+                                <th class="text-center">Cant.</th>
+                                <th class="text-end pe-3">Subtotal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in items %}
+                            <tr>
+                                <td class="ps-3">
+                                    <div class="d-flex align-items-center gap-2">
+                                        {{ imagen_producto(item.producto, 'carrito-miniatura') }}
+                                        <div>
+                                            <div class="fw-semibold small">{{ item.producto.nombre }}</div>
+                                            <div class="text-muted small">${{ "%.2f"|format(item.producto.get_precio()) }}</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="text-center small">{{ item.cantidad }}</td>
+                                <td class="text-end pe-3 small fw-semibold">${{ "%.2f"|format(item.subtotal) }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="2" class="text-end small text-muted ps-3">Total ({{ items | length }} lineas)</td>
+                                <td class="text-end pe-3 fw-bold">${{ "%.2f"|format(total) }}</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

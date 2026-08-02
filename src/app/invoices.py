@@ -29,13 +29,18 @@ invoices_bp = Blueprint('invoices', __name__, url_prefix='/invoices')
 # ---------------------------------------------------------------------------
 # LOGICA COMPARTIDA: TRANSACCION ACID (RNF01)
 # ---------------------------------------------------------------------------
-def crear_factura_transaccional(id_cliente, lineas_venta):
+def crear_factura_transaccional(id_cliente, lineas_venta,
+                                direccion_envio=None, ciudad_envio=None,
+                                telefono_contacto=None):
     """
     Crea una factura con transaccion ACID (RNF01).
 
     Argumentos:
-        id_cliente    : id_usuario asociado a la factura (cliente de la venta).
-        lineas_venta  : lista de tuplas (producto, cantidad).
+        id_cliente        : id_usuario asociado a la factura (cliente de la venta).
+        lineas_venta      : lista de tuplas (producto, cantidad).
+        direccion_envio   : direccion de entrega del pedido (opcional).
+        ciudad_envio      : ciudad de entrega del pedido (opcional).
+        telefono_contacto : telefono de contacto para el envio (opcional).
 
     Retorna:
         (factura, None)      en exito.
@@ -46,7 +51,10 @@ def crear_factura_transaccional(id_cliente, lineas_venta):
         factura = Factura(
             id_usuario=id_cliente,
             fecha=datetime.utcnow(),
-            estado='activa'
+            estado='activa',
+            direccion_envio=direccion_envio,
+            ciudad_envio=ciudad_envio,
+            telefono_contacto=telefono_contacto
         )
         db.session.add(factura)
         db.session.flush()  # Obtener id_factura sin hacer commit aun
@@ -104,12 +112,20 @@ def listar():
     """
     Muestra el historial de facturas.
 
-    - Admin: ve todas las facturas del sistema.
-    - Vendedor: ve sus propias facturas.
+    - Admin y vendedor: ven todas las facturas del sistema con mini-metricas.
     - Cliente: ve las facturas donde el es el cliente asociado (RF11).
     """
-    if current_user.es_admin():
+    if current_user.es_admin() or current_user.get_rol() == 'vendedor':
         facturas = Factura.query.order_by(Factura.fecha.desc()).all()
+        activas = [f for f in facturas if not f.esta_anulada()]
+        metricas = {
+            'total': len(facturas),
+            'activas': len(activas),
+            'monto_total': sum(f.get_total() for f in activas),
+            'promedio': (sum(f.get_total() for f in activas) / len(activas))
+                        if activas else 0,
+            'pendientes': sum(1 for f in activas if f.estado_pedido == 'pendiente'),
+        }
     else:
         facturas = (
             Factura.query
@@ -117,8 +133,9 @@ def listar():
             .order_by(Factura.fecha.desc())
             .all()
         )
+        metricas = None
 
-    return render_template('invoices/list.html', facturas=facturas)
+    return render_template('invoices/list.html', facturas=facturas, metricas=metricas)
 
 
 # ---------------------------------------------------------------------------
@@ -157,7 +174,11 @@ def crear():
 
         # Determinar el cliente asociado a la factura
         if id_cliente and (current_user.es_admin() or current_user.get_rol() == 'vendedor'):
-            id_cliente = int(id_cliente)
+            try:
+                id_cliente = int(id_cliente)
+            except ValueError:
+                flash('Debes seleccionar un cliente valido de la lista.', 'error')
+                return redirect(url_for('invoices.crear'))
         else:
             id_cliente = current_user.id_usuario
 
@@ -201,6 +222,41 @@ def crear():
         productos=productos,
         clientes=clientes
     )
+
+
+# ---------------------------------------------------------------------------
+# ESTADO DEL PEDIDO - RF12
+# ---------------------------------------------------------------------------
+@invoices_bp.route('/<int:factura_id>/estado', methods=['POST'])
+@login_required
+def cambiar_estado(factura_id):
+    """
+    Actualiza el estado del pedido de una factura (pendiente/enviado/entregado).
+
+    Solo admin y vendedor pueden actualizar el estado.
+    """
+    if current_user.get_rol() not in ('admin', 'vendedor'):
+        flash('Solo administrador o vendedor pueden actualizar el estado del pedido.', 'error')
+        return redirect(url_for('invoices.listar'))
+
+    factura = Factura.query.get_or_404(factura_id)
+
+    if factura.esta_anulada():
+        flash('No puedes cambiar el estado de una factura anulada.', 'error')
+        return redirect(url_for('invoices.ver', factura_id=factura_id))
+
+    nuevo_estado = request.form.get('estado', '').strip()
+    if nuevo_estado not in ('pendiente', 'enviado', 'entregado'):
+        flash('Estado invalido.', 'error')
+        return redirect(url_for('invoices.ver', factura_id=factura_id))
+
+    factura.estado_pedido = nuevo_estado
+    db.session.commit()
+    flash(
+        f'Estado del pedido #{factura.id_factura} actualizado a "{nuevo_estado}".',
+        'success'
+    )
+    return redirect(url_for('invoices.ver', factura_id=factura_id))
 
 
 # ---------------------------------------------------------------------------

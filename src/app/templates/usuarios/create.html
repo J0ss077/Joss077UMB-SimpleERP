@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block title %}Nuevo Usuario — ERP TechStore{% endblock %}
+
+{% block content %}
+<!-- ============================================================ -->
+<!-- CREAR USUARIO (ADMIN)                                        -->
+<!-- ============================================================ -->
+
+<div class="page-head">
+    <span class="page-head-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+            <circle cx="9" cy="7" r="4"></circle>
+            <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+        </svg>
+    </span>
+    <div>
+        <h1 class="mb-0">Nuevo Usuario</h1>
+        <p class="text-muted small mb-0">Crea una cuenta con el rol que necesites.</p>
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-lg-7">
+        <div class="card">
+            <div class="card-header card-header-accent">
+                <h6 class="mb-0">Datos de la cuenta</h6>
+            </div>
+            <div class="card-body p-4">
+                <form method="POST" action="{{ url_for('usuarios.crear') }}">
+                    <div class="mb-3">
+                        <label for="nombre" class="form-label fw-semibold small text-uppercase text-muted">Nombre completo *</label>
+                        <input type="text" name="nombre" id="nombre" class="form-control" required
+                               placeholder="Ej: Ana Rodriguez" value="{{ nombre or '' }}">
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label fw-semibold small text-uppercase text-muted">Email *</label>
+                        <input type="email" name="email" id="email" class="form-control" required
+                               placeholder="Ej: ana@erp.local" value="{{ email or '' }}">
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label fw-semibold small text-uppercase text-muted">Contrasena *</label>
+                        <input type="password" name="password" id="password" class="form-control" required
+                               minlength="4" placeholder="Minimo 4 caracteres">
+                    </div>
+                    <div class="mb-4">
+                        <label for="rol" class="form-label fw-semibold small text-uppercase text-muted">Rol *</label>
+                        <select name="rol" id="rol" class="form-select" required>
+                            {% for r in ['cliente', 'vendedor', 'admin'] %}
+                                <option value="{{ r }}" {% if rol == r %}selected{% endif %}>
+                                    {{ r | capitalize }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                        <div class="form-text">
+                            Cliente: compra en la tienda. Vendedor: factura y gestiona pedidos.
+                            Admin: control total del sistema.
+                        </div>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-success">Crear Usuario</button>
+                        <a href="{{ url_for('usuarios.listar') }}" class="btn btn-outline-secondary">Cancelar</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

@@ -30,6 +30,43 @@
     {% endif %}
 </div>
 
+{% if metricas %}
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-md-3">
+            <div class="card metrica-card border-top border-3 border-primary">
+                <div class="card-body py-3">
+                    <div class="valor">{{ metricas.total }}</div>
+                    <div class="text-muted small text-uppercase">Facturas</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card metrica-card border-top border-3 border-success">
+                <div class="card-body py-3">
+                    <div class="valor">${{ "%.2f"|format(metricas.monto_total) }}</div>
+                    <div class="text-muted small text-uppercase">Ventas activas</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card metrica-card border-top border-3 border-info">
+                <div class="card-body py-3">
+                    <div class="valor">${{ "%.2f"|format(metricas.promedio) }}</div>
+                    <div class="text-muted small text-uppercase">Promedio / factura</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card metrica-card border-top border-3 border-warning">
+                <div class="card-body py-3">
+                    <div class="valor">{{ metricas.pendientes }}</div>
+                    <div class="text-muted small text-uppercase">Pedidos pendientes</div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endif %}
+
 {% if facturas %}
     <div class="card">
         <div class="card-body p-0">
@@ -42,6 +79,7 @@
                             <th>Cliente</th>
                             <th>Total</th>
                             <th>Estado</th>
+                            <th>Pedido</th>
                             <th class="text-end pe-3">Acciones</th>
                         </tr>
                     </thead>
@@ -55,6 +93,12 @@
                                 <td>
                                     <span class="badge {% if factura.esta_anulada() %}bg-danger{% else %}bg-success{% endif %}">
                                         {{ factura.estado | capitalize }}
+                                    </span>
+                                </td>
+                                <td>
+                                    {% set estados = {'pendiente': 'warning', 'enviado': 'info', 'entregado': 'success'} %}
+                                    <span class="badge text-bg-{{ estados.get(factura.estado_pedido, 'secondary') }}">
+                                        {{ factura.estado_pedido | capitalize }}
                                     </span>
                                 </td>
                                 <td class="text-end pe-3">

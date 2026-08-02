@@ -57,15 +57,23 @@ def index():
 @login_required
 def catalogo():
     """
-    Catalogo de productos con busqueda y filtro (RF03, RF04).
+    Catalogo de productos con busqueda, filtro, orden y paginacion (RF03, RF04).
 
     Parametros de URL (opcionales):
         q (str):          Texto de busqueda (busca en nombre y descripcion).
         categoria (str):  Filtra productos de una categoria especifica.
+        orden (str):      Orden: nombre, precio_asc, precio_desc, stock.
+        pagina (int):     Numero de pagina (12 productos por pagina).
     """
     # Obtener parametros de busqueda desde la URL
     texto_busqueda = request.args.get('q', '').strip()
     categoria_filtro = request.args.get('categoria', '').strip()
+    orden = request.args.get('orden', 'nombre').strip()
+
+    try:
+        pagina = max(1, int(request.args.get('pagina', 1)))
+    except ValueError:
+        pagina = 1
 
     # Consulta base: todos los productos
     consulta = Producto.query
@@ -84,8 +92,23 @@ def catalogo():
     if categoria_filtro:
         consulta = consulta.filter(Producto.categoria == categoria_filtro)
 
-    # Ejecutar consulta
-    productos = consulta.order_by(Producto.nombre).all()
+    # Aplicar ordenamiento
+    ordenes_validos = {
+        'nombre': (Producto.nombre, False),
+        'precio_asc': (Producto.precio, False),
+        'precio_desc': (Producto.precio, True),
+        'stock': (Producto.stock, True),
+    }
+    if orden not in ordenes_validos:
+        orden = 'nombre'
+    columna_orden, descendente = ordenes_validos[orden]
+    if descendente:
+        consulta = consulta.order_by(columna_orden.desc())
+    else:
+        consulta = consulta.order_by(columna_orden.asc())
+
+    # Paginacion: 12 productos por pagina
+    paginacion = consulta.paginate(page=pagina, per_page=12, error_out=False)
 
     # Obtener lista unica de categorias para los botones de filtro
     categorias = [
@@ -96,8 +119,10 @@ def catalogo():
 
     return render_template(
         'index.html',
-        productos=productos,
+        productos=paginacion.items,
+        paginacion=paginacion,
         categorias=categorias,
         texto_busqueda=texto_busqueda,
-        categoria_filtro=categoria_filtro
+        categoria_filtro=categoria_filtro,
+        orden=orden
     )

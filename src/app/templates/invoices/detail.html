@@ -37,6 +37,11 @@
         <a href="{{ url_for('invoices.listar') }}" class="btn btn-outline-secondary">
             &larr; Volver
         </a>
+        {% if not factura.esta_anulada() and current_user.get_rol() == 'cliente' %}
+            <form method="POST" action="{{ url_for('tienda.recomprar', factura_id=factura.id_factura) }}">
+                <button type="submit" class="btn btn-success">Comprar de nuevo</button>
+            </form>
+        {% endif %}
     </div>
 </div>
 
@@ -73,9 +78,50 @@
                             </span>
                         </td>
                     </tr>
+                    {% if factura.direccion_envio %}
+                    <tr>
+                        <th class="text-muted text-uppercase small">Envio</th>
+                        <td>
+                            {{ factura.direccion_envio }}<br>
+                            {{ factura.ciudad_envio }}
+                            {% if factura.telefono_contacto %}
+                                <br>{{ factura.telefono_contacto }}
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endif %}
+                    <tr>
+                        <th class="text-muted text-uppercase small">Pedido</th>
+                        <td>
+                            {% set estados = {'pendiente': 'warning', 'enviado': 'info', 'entregado': 'success'} %}
+                            <span class="badge text-bg-{{ estados.get(factura.estado_pedido, 'secondary') }}">
+                                {{ factura.estado_pedido | capitalize }}
+                            </span>
+                        </td>
+                    </tr>
                 </table>
             </div>
         </div>
+        {% if not factura.esta_anulada() and current_user.get_rol() in ('admin', 'vendedor') %}
+        <div class="card">
+            <div class="card-header card-header-accent">
+                <h6 class="mb-0">Actualizar estado del pedido</h6>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('invoices.cambiar_estado', factura_id=factura.id_factura) }}"
+                      class="d-flex gap-2">
+                    <select name="estado" class="form-select">
+                        {% for opcion in ['pendiente', 'enviado', 'entregado'] %}
+                            <option value="{{ opcion }}" {% if factura.estado_pedido == opcion %}selected{% endif %}>
+                                {{ opcion | capitalize }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                    <button type="submit" class="btn btn-primary text-nowrap">Guardar</button>
+                </form>
+            </div>
+        </div>
+        {% endif %}
     </div>
 
     <!-- Detalle de productos -->

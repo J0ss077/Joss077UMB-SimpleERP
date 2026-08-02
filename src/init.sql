@@ -37,7 +37,11 @@ CREATE TABLE IF NOT EXISTS facturas (
     id_usuario INTEGER NOT NULL REFERENCES usuarios(id_usuario),
     fecha TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     total DECIMAL(12, 2) NOT NULL DEFAULT 0,
-    estado VARCHAR(20) NOT NULL DEFAULT 'activa' CHECK (estado IN ('activa', 'anulada'))
+    estado VARCHAR(20) NOT NULL DEFAULT 'activa' CHECK (estado IN ('activa', 'anulada')),
+    direccion_envio TEXT,
+    ciudad_envio VARCHAR(100),
+    telefono_contacto VARCHAR(20),
+    estado_pedido VARCHAR(20) NOT NULL DEFAULT 'pendiente' CHECK (estado_pedido IN ('pendiente', 'enviado', 'entregado'))
 );
 
 -- Tabla: DETALLE_FACTURA
@@ -49,6 +53,25 @@ CREATE TABLE IF NOT EXISTS detalle_factura (
     cantidad INTEGER NOT NULL CHECK (cantidad > 0),
     precio_unitario DECIMAL(10, 2) NOT NULL,
     subtotal DECIMAL(12, 2) NOT NULL
+);
+
+-- Tabla: CARRITO_ITEMS
+-- Carrito de compras persistente por usuario (sobrevive al cierre de sesion)
+CREATE TABLE IF NOT EXISTS carrito_items (
+    id_carrito SERIAL PRIMARY KEY,
+    id_usuario INTEGER NOT NULL REFERENCES usuarios(id_usuario),
+    id_producto INTEGER NOT NULL REFERENCES productos(id_producto),
+    cantidad INTEGER NOT NULL DEFAULT 1 CHECK (cantidad > 0),
+    UNIQUE (id_usuario, id_producto)
+);
+
+-- Tabla: FAVORITOS
+-- Productos favoritos persistentes por usuario
+CREATE TABLE IF NOT EXISTS favoritos (
+    id_favorito SERIAL PRIMARY KEY,
+    id_usuario INTEGER NOT NULL REFERENCES usuarios(id_usuario),
+    id_producto INTEGER NOT NULL REFERENCES productos(id_producto),
+    UNIQUE (id_usuario, id_producto)
 );
 
 -- Datos iniciales de prueba (opcionales)

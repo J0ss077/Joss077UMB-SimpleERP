@@ -7,11 +7,37 @@
 <!-- ============================================================ -->
 
 <h1 class="mb-1">Reporte de Ventas</h1>
-<p class="text-muted mb-4">Resumen de facturacion del sistema.</p>
+<p class="text-muted mb-4">Resumen de facturacion del sistema, con filtro por rango de fechas.</p>
+
+<!-- Filtro por fechas -->
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="GET" action="{{ url_for('reports.ventas') }}" class="row g-3 align-items-end">
+            <div class="col-md-3">
+                <label for="desde" class="form-label fw-semibold small text-uppercase text-muted">Desde</label>
+                <input type="date" name="desde" id="desde" class="form-control" value="{{ desde }}">
+            </div>
+            <div class="col-md-3">
+                <label for="hasta" class="form-label fw-semibold small text-uppercase text-muted">Hasta</label>
+                <input type="date" name="hasta" id="hasta" class="form-control" value="{{ hasta }}">
+            </div>
+            <div class="col-md-6 d-flex gap-2">
+                <button type="submit" class="btn btn-primary">Filtrar</button>
+                {% if desde or hasta %}
+                    <a href="{{ url_for('reports.ventas') }}" class="btn btn-outline-secondary">Limpiar</a>
+                {% endif %}
+                <a href="{{ url_for('reports.ventas_csv', desde=desde, hasta=hasta) }}"
+                   class="btn btn-outline-success ms-auto">
+                    Exportar CSV
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
 
 <!-- Resumen -->
 <div class="row g-4 mb-4">
-    <div class="col-md-6">
+    <div class="col-md-4">
         <div class="card metrica-card border-top border-3 border-success">
             <div class="card-body">
                 <span class="metrica-icon metrica-icon-success">
@@ -21,31 +47,47 @@
                         <path d="M12 2v14l4.5 4.5"></path>
                     </svg>
                 </span>
-                <h6 class="text-muted small text-uppercase mb-2">Total Facturado (Activo)</h6>
+                <h6 class="text-muted small text-uppercase mb-2">Total Facturado</h6>
                 <p class="valor text-success mb-0">${{ "%.2f"|format(total_ventas) }}</p>
             </div>
         </div>
     </div>
-    <div class="col-md-6">
-        <div class="card metrica-card border-top border-3 border-danger">
+    <div class="col-md-4">
+        <div class="card metrica-card border-top border-3 border-primary">
             <div class="card-body">
-                <span class="metrica-icon metrica-icon-danger">
+                <span class="metrica-icon metrica-icon-primary">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                          stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <path d="m15 9-6 6"></path>
-                        <path d="m9 9 6 6"></path>
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <path d="M14 2v6h6"></path>
                     </svg>
                 </span>
-                <h6 class="text-muted small text-uppercase mb-2">Facturas Anuladas</h6>
-                <p class="valor text-danger mb-0">{{ facturas_anuladas }}</p>
+                <h6 class="text-muted small text-uppercase mb-2">Facturas en el rango</h6>
+                <p class="valor mb-0">{{ facturas | length }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card metrica-card border-top border-3 border-info">
+            <div class="card-body">
+                <span class="metrica-icon metrica-icon-primary">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                         stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M3 3v18h18"></path>
+                        <path d="m19 9-5 5-4-4-3 3"></path>
+                    </svg>
+                </span>
+                <h6 class="text-muted small text-uppercase mb-2">Promedio por factura</h6>
+                <p class="valor mb-0">
+                    ${{ "%.2f"|format((total_ventas / facturas|length) if facturas else 0) }}
+                </p>
             </div>
         </div>
     </div>
 </div>
 
 <!-- Tabla de facturas activas -->
-<h3 class="mb-3">Facturas Activas</h3>
+<h3 class="mb-3">Facturas en el rango seleccionado</h3>
 
 {% if facturas %}
     <div class="card">
@@ -58,6 +100,7 @@
                             <th>Fecha</th>
                             <th>Cliente</th>
                             <th>Productos</th>
+                            <th>Pedido</th>
                             <th class="text-end">Total</th>
                             <th class="text-end pe-3"></th>
                         </tr>
@@ -69,6 +112,12 @@
                                 <td class="small">{{ factura.fecha.strftime('%d/%m/%Y') }}</td>
                                 <td>{{ factura.usuario.nombre }}</td>
                                 <td>{{ factura.detalles | length }}</td>
+                                <td>
+                                    {% set estados = {'pendiente': 'warning', 'enviado': 'info', 'entregado': 'success'} %}
+                                    <span class="badge text-bg-{{ estados.get(factura.estado_pedido, 'secondary') }}">
+                                        {{ factura.estado_pedido | capitalize }}
+                                    </span>
+                                </td>
                                 <td class="text-end fw-bold text-primary">${{ "%.2f"|format(factura.get_total()) }}</td>
                                 <td class="text-end pe-3">
                                     <a href="{{ url_for('invoices.ver', factura_id=factura.id_factura) }}"
@@ -82,7 +131,7 @@
         </div>
     </div>
 {% else %}
-    <div class="alert alert-info">No hay facturas activas registradas.</div>
+    <div class="alert alert-info">No hay facturas activas en el rango seleccionado.</div>
 {% endif %}
 
 <div class="mt-3">

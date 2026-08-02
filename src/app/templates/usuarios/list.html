@@ -1,0 +1,167 @@
+{% extends "base.html" %}
+{% block title %}Gestion de Usuarios — ERP TechStore{% endblock %}
+
+{% block content %}
+<!-- ============================================================ -->
+<!-- GESTION DE USUARIOS (ADMIN)                                  -->
+<!-- ============================================================ -->
+
+<div class="d-flex justify-content-between align-items-start mb-4 gap-3 flex-wrap">
+    <div class="page-head mb-0">
+        <span class="page-head-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                 stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+                <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+            </svg>
+        </span>
+        <div>
+            <h1 class="mb-0">Gestion de Usuarios</h1>
+            <p class="text-muted small mb-0">Administra las cuentas del sistema y sus roles.</p>
+        </div>
+    </div>
+    <a href="{{ url_for('usuarios.crear') }}" class="btn btn-success">+ Nuevo Usuario</a>
+</div>
+
+<!-- Resumen por rol -->
+<div class="row g-3 mb-4">
+    <div class="col-6 col-md-3">
+        <div class="card metrica-card border-top border-3 border-primary">
+            <div class="card-body py-3">
+                <div class="valor">{{ conteo.total }}</div>
+                <div class="text-muted small text-uppercase">Total cuentas</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="card metrica-card border-top border-3 border-danger">
+            <div class="card-body py-3">
+                <div class="valor">{{ conteo.admin }}</div>
+                <div class="text-muted small text-uppercase">Administradores</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="card metrica-card border-top border-3 border-warning">
+            <div class="card-body py-3">
+                <div class="valor">{{ conteo.vendedor }}</div>
+                <div class="text-muted small text-uppercase">Vendedores</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="card metrica-card border-top border-3 border-success">
+            <div class="card-body py-3">
+                <div class="valor">{{ conteo.cliente }}</div>
+                <div class="text-muted small text-uppercase">Clientes</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Filtro por rol -->
+<div class="btn-group mb-3" role="group" aria-label="Filtrar por rol">
+    <a href="{{ url_for('usuarios.listar') }}"
+       class="btn btn-sm {% if not rol_filtro %}btn-primary{% else %}btn-outline-primary{% endif %}">
+        Todos
+    </a>
+    {% for r in ['admin', 'vendedor', 'cliente'] %}
+        <a href="{{ url_for('usuarios.listar', rol=r) }}"
+           class="btn btn-sm {% if rol_filtro == r %}btn-primary{% else %}btn-outline-primary{% endif %}">
+            {{ r | capitalize }}
+        </a>
+    {% endfor %}
+</div>
+
+<div class="card">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th class="ps-3">Usuario</th>
+                        <th>Email</th>
+                        <th>Rol</th>
+                        <th>Estado</th>
+                        <th class="text-end pe-3">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for u in usuarios %}
+                        <tr>
+                            <td class="ps-3">
+                                <div class="d-flex align-items-center gap-2">
+                                    {% if u.imagen %}
+                                        <img src="{{ url_for('static', filename='uploads/' + u.imagen) }}"
+                                             alt="avatar" class="avatar-mini">
+                                    {% else %}
+                                        <span class="avatar-mini avatar-placeholder">
+                                            {{ u.nombre[:1] | upper }}
+                                        </span>
+                                    {% endif %}
+                                    <span class="fw-semibold">{{ u.nombre }}</span>
+                                    {% if u.id_usuario == current_user.id_usuario %}
+                                        <span class="badge text-bg-secondary">tu</span>
+                                    {% endif %}
+                                </div>
+                            </td>
+                            <td class="small">{{ u.email }}</td>
+                            <td>
+                                <span class="badge rol-badge rol-{{ u.get_rol() }}">{{ u.get_rol() }}</span>
+                            </td>
+                            <td>
+                                {% if u.activo %}
+                                    <span class="badge text-bg-success">Activo</span>
+                                {% else %}
+                                    <span class="badge text-bg-secondary">Bloqueado</span>
+                                {% endif %}
+                            </td>
+                            <td class="text-end pe-3">
+                                <form method="POST"
+                                      action="{{ url_for('usuarios.cambiar_rol', usuario_id=u.id_usuario) }}"
+                                      class="d-inline-flex gap-1">
+                                    <select name="rol" class="form-select form-select-sm" style="width: 130px;">
+                                        {% for r in ['cliente', 'vendedor', 'admin'] %}
+                                            <option value="{{ r }}" {% if u.get_rol() == r %}selected{% endif %}>
+                                                {{ r | capitalize }}
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+                                    <button type="submit" class="btn btn-sm btn-outline-primary">Cambiar</button>
+                                </form>
+                                <button type="button" class="btn btn-sm btn-outline-secondary"
+                                        data-bs-toggle="collapse" data-bs-target="#reset-{{ u.id_usuario }}">
+                                    Contrasena
+                                </button>
+                                {% if u.id_usuario != current_user.id_usuario %}
+                                <form method="POST"
+                                      action="{{ url_for('usuarios.bloquear', usuario_id=u.id_usuario) }}"
+                                      style="display:inline;">
+                                    <button type="submit"
+                                            class="btn btn-sm {% if u.activo %}btn-outline-danger{% else %}btn-outline-success{% endif %}"
+                                            onsubmit="return confirm('Confirmar accion?')">
+                                        {% if u.activo %}Bloquear{% else %}Desbloquear{% endif %}
+                                    </button>
+                                </form>
+                                {% endif %}
+                                <div class="collapse mt-2" id="reset-{{ u.id_usuario }}">
+                                    <form method="POST"
+                                          action="{{ url_for('usuarios.resetear_password', usuario_id=u.id_usuario) }}"
+                                          class="input-group input-group-sm" style="max-width: 320px;">
+                                        <input type="password" name="password" class="form-control"
+                                               placeholder="Nueva contrasena (min 4)" required minlength="4">
+                                        <button type="submit" class="btn btn-warning">Guardar</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

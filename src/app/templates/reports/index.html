@@ -85,7 +85,7 @@
 
 <!-- ===== Accesos rapidos ===== -->
 <div class="row g-4">
-    <div class="col-md-6">
+    <div class="col-md-4">
         <div class="card h-100">
             <div class="card-body text-center py-5">
                 <span class="quick-icon quick-icon-info">
@@ -98,7 +98,7 @@
                     </svg>
                 </span>
                 <h3 class="h5 mb-2">Reporte de Ventas</h3>
-                <p class="text-muted mb-3">Total facturado, facturas activas y anuladas.</p>
+                <p class="text-muted mb-3">Total facturado con filtro por fechas y exportacion CSV.</p>
                 <a href="{{ url_for('reports.ventas') }}" class="btn btn-primary mt-2">
                     Ver Reporte de Ventas
                 </a>
@@ -106,7 +106,70 @@
         </div>
     </div>
 
-    <div class="col-md-6">
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-body text-center py-5">
+                <span class="quick-icon quick-icon-warn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                         stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"></path>
+                        <path d="M3 6h18"></path>
+                        <path d="M16 10a4 4 0 0 1-8 0"></path>
+                    </svg>
+                </span>
+                <h3 class="h5 mb-2">Ventas por Categoria</h3>
+                <p class="text-muted mb-3">Facturacion y unidades agrupadas por categoria.</p>
+                <a href="{{ url_for('reports.por_categoria') }}" class="btn btn-success mt-2">
+                    Ver Categorias
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-body text-center py-5">
+                <span class="quick-icon quick-icon-warn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                         stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M20 21v-8a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v8"></path>
+                        <path d="M4 21v-4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v4"></path>
+                        <path d="m2 21 4-4 4 4"></path>
+                        <path d="M16 3h6v6"></path>
+                        <path d="m22 3-9 9"></path>
+                    </svg>
+                </span>
+                <h3 class="h5 mb-2">Top 5 Productos</h3>
+                <p class="text-muted mb-3">Los mas vendidos por unidades e ingresos.</p>
+                <a href="{{ url_for('reports.top_productos') }}" class="btn btn-success mt-2">
+                    Ver Top Productos
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-body text-center py-5">
+                <span class="quick-icon quick-icon-warn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                         stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                        <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                    </svg>
+                </span>
+                <h3 class="h5 mb-2">Ventas por Cliente</h3>
+                <p class="text-muted mb-3">Volumen de compras de cada cliente.</p>
+                <a href="{{ url_for('reports.por_cliente') }}" class="btn btn-success mt-2">
+                    Ver Clientes
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
         <div class="card h-100">
             <div class="card-body text-center py-5">
                 <span class="quick-icon quick-icon-warn">
@@ -117,7 +180,7 @@
                         <path d="M12 16h.01"></path>
                     </svg>
                 </span>
-                <h3 class="h5 mb-2">Reporte de Stock Bajo</h3>
+                <h3 class="h5 mb-2">Stock Bajo</h3>
                 <p class="text-muted mb-3">Productos que necesitan reabastecimiento urgente.</p>
                 <a href="{{ url_for('reports.stock_bajo') }}" class="btn btn-warning mt-2">
                     Ver Stock Bajo

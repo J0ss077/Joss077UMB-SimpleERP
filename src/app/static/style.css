@@ -607,6 +607,24 @@ main {
     flex-shrink: 0;
 }
 
+.avatar-mini {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.avatar-placeholder {
+    background: linear-gradient(135deg, #2563eb, #7c3aed);
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 0.8rem;
+}
+
 /* ===== Portal: hero ===== */
 .hero-portal {
     position: relative;

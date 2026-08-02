@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+{% from "_macros.html" import imagen_producto %}
+{% block title %}Top Productos — ERP TechStore{% endblock %}
+
+{% block content %}
+<!-- ============================================================ -->
+<!-- REPORTE: TOP PRODUCTOS                                       -->
+<!-- ============================================================ -->
+
+<div class="page-head mb-4">
+    <span class="page-head-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M20 21v-8a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v8"></path>
+            <path d="M4 21v-4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v4"></path>
+            <path d="m2 21 4-4 4 4"></path>
+            <path d="M16 3h6v6"></path>
+            <path d="m22 3-9 9"></path>
+        </svg>
+    </span>
+    <div>
+        <h1 class="mb-0">Top 5 Productos</h1>
+        <p class="text-muted small mb-0">Los productos mas vendidos por unidades y por ingresos.</p>
+    </div>
+</div>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="GET" action="{{ url_for('reports.top_productos') }}" class="row g-3 align-items-end">
+            <div class="col-md-3">
+                <label for="desde" class="form-label fw-semibold small text-uppercase text-muted">Desde</label>
+                <input type="date" name="desde" id="desde" class="form-control" value="{{ desde }}">
+            </div>
+            <div class="col-md-3">
+                <label for="hasta" class="form-label fw-semibold small text-uppercase text-muted">Hasta</label>
+                <input type="date" name="hasta" id="hasta" class="form-control" value="{{ hasta }}">
+            </div>
+            <div class="col-md-6 d-flex gap-2">
+                <button type="submit" class="btn btn-primary">Filtrar</button>
+                {% if desde or hasta %}
+                    <a href="{{ url_for('reports.top_productos') }}" class="btn btn-outline-secondary">Limpiar</a>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-6">
+        <div class="card h-100">
+            <div class="card-header card-header-accent">
+                <h6 class="mb-0">Mas vendidos por unidades</h6>
+            </div>
+            <div class="card-body p-0">
+                <table class="table table-hover align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th class="ps-3">#</th>
+                            <th>Producto</th>
+                            <th class="text-center">Unidades</th>
+                            <th class="text-end pe-3">Ingresos</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for d in por_unidades %}
+                            <tr>
+                                <td class="ps-3 fw-bold">{{ loop.index }}</td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-2">
+                                        {{ imagen_producto(d.producto, 'carrito-miniatura') }}
+                                        <span class="fw-semibold small">{{ d.producto.nombre }}</span>
+                                    </div>
+                                </td>
+                                <td class="text-center">{{ d.unidades }}</td>
+                                <td class="text-end pe-3 fw-bold text-primary">${{ "%.2f"|format(d.ingresos) }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="card h-100">
+            <div class="card-header card-header-accent">
+                <h6 class="mb-0">Mas vendidos por ingresos</h6>
+            </div>
+            <div class="card-body p-0">
+                <table class="table table-hover align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th class="ps-3">#</th>
+                            <th>Producto</th>
+                            <th class="text-center">Unidades</th>
+                            <th class="text-end pe-3">Ingresos</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for d in por_ingresos %}
+                            <tr>
+                                <td class="ps-3 fw-bold">{{ loop.index }}</td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-2">
+                                        {{ imagen_producto(d.producto, 'carrito-miniatura') }}
+                                        <span class="fw-semibold small">{{ d.producto.nombre }}</span>
+                                    </div>
+                                </td>
+                                <td class="text-center">{{ d.unidades }}</td>
+                                <td class="text-end pe-3 fw-bold text-primary">${{ "%.2f"|format(d.ingresos) }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="mt-3">
+    <a href="{{ url_for('reports.index') }}" class="btn btn-outline-secondary">
+        &larr; Volver a Reportes
+    </a>
+</div>
+
+{% endblock %}
