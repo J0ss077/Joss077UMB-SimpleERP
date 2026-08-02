@@ -107,6 +107,7 @@
     {% endblock navbar %}
 
     <!-- ===== Mensajes Flash ===== -->
+    {% block flashes %}
     <div class="container">
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
@@ -119,18 +120,21 @@
             {% endif %}
         {% endwith %}
     </div>
+    {% endblock flashes %}
 
     <!-- ===== Contenido principal de cada pagina ===== -->
-    <main class="container">
+    <main class="{% block main_class %}container{% endblock %}">
         {% block content %}{% endblock %}
     </main>
 
     <!-- ===== Pie de pagina ===== -->
+    {% block footer %}
     <footer class="text-center py-3 mt-5 border-top">
         <div class="container">
             <small>ERP Tienda de Tecnologia &mdash; Sistema Transaccional</small>
         </div>
     </footer>
+    {% endblock footer %}
 
     <!-- Bootstrap 5 JS desde CDN oficial -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

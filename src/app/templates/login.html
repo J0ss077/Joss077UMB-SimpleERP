@@ -2,52 +2,111 @@
 {% block title %}Iniciar Sesion — ERP TechStore{% endblock %}
 
 {% block navbar %}{% endblock %}
+{% block main_class %}auth-main{% endblock %}
+{% block flashes %}{% endblock %}
+{% block footer %}{% endblock %}
 
 {% block content %}
 <!-- ============================================================ -->
-<!-- FORMULARIO DE LOGIN (RF01)                                   -->
+<!-- LOGIN PROFESIONAL (RF01): panel de marca + formulario         -->
 <!-- ============================================================ -->
 
-<div class="row justify-content-center">
-    <div class="col-md-5 col-lg-4">
+<div class="auth-wrapper">
 
-        <h1 class="mb-1 text-center">Iniciar Sesion</h1>
-        <p class="text-muted text-center mb-4">Ingrese sus credenciales para acceder al sistema.</p>
-
-        <div class="card">
-            <div class="card-body p-4">
-
-                <form method="POST" action="{{ url_for('auth.login') }}">
-                    <!-- Email -->
-                    <div class="mb-3">
-                        <label for="email" class="form-label fw-semibold small text-uppercase text-muted">Correo Electronico</label>
-                        <input type="email" name="email" id="email" class="form-control"
-                               placeholder="tu@email.com" required autofocus>
-                    </div>
-
-                    <!-- Contrasena -->
-                    <div class="mb-3">
-                        <label for="password" class="form-label fw-semibold small text-uppercase text-muted">Contrasena</label>
-                        <input type="password" name="password" id="password" class="form-control"
-                               placeholder="········" required>
-                    </div>
-
-                    <!-- Boton -->
-                    <button type="submit" class="btn btn-primary w-100 mt-2">
-                        Iniciar Sesion
-                    </button>
-                </form>
-
+    <!-- ===== Panel izquierdo: presentacion de la app ===== -->
+    <aside class="auth-panel">
+        <div class="auth-panel-inner">
+            <div class="auth-brand">
+                <span class="auth-brand-mark">ERP</span>
+                <span class="auth-brand-name">TechStore</span>
             </div>
+
+            <h2 class="auth-title">
+                Gestiona tu tienda de tecnologia, todo en un solo lugar
+            </h2>
+            <p class="auth-subtitle">
+                Controla tu inventario, emite facturas con transacciones seguras
+                y toma decisiones con reportes en tiempo real.
+            </p>
+
+            <ul class="auth-features">
+                <li>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                         stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <path d="m8.5 12.5 2.5 2.5 5-5.5"></path>
+                    </svg>
+                    Inventario y catalogo de productos
+                </li>
+                <li>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                         stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <path d="m8.5 12.5 2.5 2.5 5-5.5"></path>
+                    </svg>
+                    Facturacion con descuento automatico de stock
+                </li>
+                <li>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                         stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <path d="m8.5 12.5 2.5 2.5 5-5.5"></path>
+                    </svg>
+                    Reportes de ventas y alertas de stock bajo
+                </li>
+            </ul>
         </div>
+    </aside>
 
-        <!-- Enlace a registro -->
-        <p class="text-center mt-3 small">
-            No tiene cuenta?
-            <a href="{{ url_for('auth.register') }}">Registrese aqui</a>
-        </p>
+    <!-- ===== Panel derecho: formulario de acceso ===== -->
+    <section class="auth-form-side">
+        <div class="auth-form-wrap">
+            <h1 class="auth-form-title">Iniciar Sesion</h1>
+            <p class="auth-form-subtitle">Ingrese sus credenciales para acceder al sistema.</p>
 
-    </div>
+            <form method="POST" action="{{ url_for('auth.login') }}">
+                <!-- Email -->
+                <div class="mb-3">
+                    <label for="email" class="form-label fw-semibold small text-uppercase text-muted">Correo Electronico</label>
+                    <input type="email" name="email" id="email" class="form-control"
+                           placeholder="tu@email.com" required autofocus>
+                </div>
+
+                <!-- Contrasena -->
+                <div class="mb-3">
+                    <label for="password" class="form-label fw-semibold small text-uppercase text-muted">Contrasena</label>
+                    <input type="password" name="password" id="password" class="form-control"
+                           placeholder="········" required>
+                </div>
+
+                <!-- Boton -->
+                <button type="submit" class="btn btn-primary w-100 mt-2">
+                    Iniciar Sesion
+                </button>
+            </form>
+
+            <!-- ===== Alertas (debajo del formulario) ===== -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="mt-4">
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+
+            <!-- Enlace a registro -->
+            <p class="text-center mt-4 small">
+                No tiene cuenta?
+                <a href="{{ url_for('auth.register') }}">Registrese aqui</a>
+            </p>
+        </div>
+    </section>
+
 </div>
 
 {% endblock %}
