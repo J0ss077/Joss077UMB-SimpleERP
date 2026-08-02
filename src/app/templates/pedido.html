@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% from "_macros.html" import imagen_producto %}
 {% block title %}Pedido Confirmado — ERP TechStore{% endblock %}
 
 {% block content %}
@@ -41,7 +42,12 @@
                     <tbody>
                         {% for detalle in factura.detalles %}
                             <tr>
-                                <td class="ps-3 fw-semibold">{{ detalle.producto.nombre }}</td>
+                                <td class="ps-3">
+                                    <div class="d-flex align-items-center gap-3">
+                                        {{ imagen_producto(detalle.producto, 'img-mini') }}
+                                        <span class="fw-semibold">{{ detalle.producto.nombre }}</span>
+                                    </div>
+                                </td>
                                 <td class="text-center">{{ detalle.cantidad }}</td>
                                 <td class="text-end">${{ "%.2f"|format(detalle.precio_unitario | float) }}</td>
                                 <td class="text-end pe-3 fw-bold">${{ "%.2f"|format(detalle.get_subtotal()) }}</td>

@@ -1,12 +1,32 @@
+{% macro imagen_producto(producto, clase='img-prod') -%}
+<div class="img-contenedor {{ clase }}">
+    <div class="img-fallback" role="img" aria-label="{{ producto.nombre }}">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+            <path d="m3.3 7 8.7 5 8.7-5"></path>
+            <path d="M12 22V12"></path>
+        </svg>
+    </div>
+    {% if producto.imagen %}
+        <img src="{{ url_for('static', filename='uploads/' ~ producto.imagen) }}"
+             alt="{{ producto.nombre }}" class="img-cargada"
+             loading="lazy" onerror="this.style.display='none'">
+    {% endif %}
+</div>
+{%- endmacro %}
+
 {% macro producto_card(producto, cliente=False) -%}
 <div class="col">
     <div class="producto-card">
         <a href="{{ url_for('tienda.ver_producto', producto_id=producto.id_producto) }}"
            class="producto-card-link">
-            <div class="d-flex justify-content-between align-items-start mb-2">
-                <h5 class="card-title mb-0">{{ producto.nombre }}</h5>
-                <span class="badge bg-secondary">{{ producto.categoria or 'Sin categoria' }}</span>
+            <div class="producto-card-img">
+                {{ imagen_producto(producto) }}
+                <span class="badge bg-secondary producto-cat">{{ producto.categoria or 'Sin categoria' }}</span>
             </div>
+
+            <h5 class="card-title mb-2">{{ producto.nombre }}</h5>
 
             {% if producto.descripcion %}
                 <p class="text-muted small mb-3">

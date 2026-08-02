@@ -488,6 +488,67 @@ main {
     -webkit-text-fill-color: transparent;
 }
 
+/* ===== Imagenes de producto ===== */
+.img-contenedor {
+    position: relative;
+    overflow: hidden;
+    background: var(--bg-soft);
+}
+.img-contenedor .img-fallback {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+    opacity: 0.85;
+}
+.img-contenedor .img-fallback svg {
+    width: 40%;
+    height: 40%;
+    max-width: 72px;
+    max-height: 72px;
+}
+.img-contenedor .img-cargada {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 1;
+}
+.producto-card-img {
+    margin: -1.25rem -1.25rem 1rem;
+    height: 170px;
+    border-bottom: 1px solid var(--border);
+    border-radius: 14px 14px 0 0;
+}
+.producto-cat {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 2;
+    background: rgba(15, 23, 42, 0.72) !important;
+    color: #ffffff !important;
+    backdrop-filter: blur(4px);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+}
+.img-mini {
+    width: 48px;
+    height: 48px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    flex-shrink: 0;
+}
+.img-detalle {
+    height: 340px;
+    border-radius: 14px 14px 0 0;
+}
+.img-detalle .img-fallback svg {
+    max-width: 110px;
+    max-height: 110px;
+}
+
 /* ===== Boton de favorito (corazon) ===== */
 .favorito-btn {
     display: inline-flex;
@@ -1235,4 +1296,236 @@ html[data-theme="dark"] .theme-toggle .icon-luna {
     h2 { font-size: 1.15rem; }
     .table { font-size: 0.82rem; }
     .metrica-card .valor { font-size: 1.9rem; }
+}
+
+/* ===== Figuras decorativas extra del portal ===== */
+.decor-extra {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+}
+main {
+    position: relative;
+    z-index: 1;
+}
+.fx-circulo {
+    position: absolute;
+    border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, rgba(99, 102, 241, 0.16), rgba(99, 102, 241, 0.03) 70%);
+}
+.fx-anillo {
+    position: absolute;
+    border-radius: 50%;
+    border: 2px dashed rgba(139, 92, 246, 0.22);
+}
+.fx-triangulo {
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-left: 14px solid transparent;
+    border-right: 14px solid transparent;
+    border-bottom: 24px solid rgba(16, 185, 129, 0.14);
+}
+.fx-cruz {
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    opacity: 0.5;
+}
+.fx-cruz::before,
+.fx-cruz::after {
+    content: "";
+    position: absolute;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    border-radius: 2px;
+}
+.fx-cruz::before {
+    width: 2px;
+    height: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+}
+.fx-cruz::after {
+    height: 2px;
+    width: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+}
+.fx-cuadro {
+    position: absolute;
+    border: 2px solid rgba(245, 158, 11, 0.2);
+    border-radius: 6px;
+    transform: rotate(45deg);
+}
+.fx-1 { width: 120px; height: 120px; top: 18%; left: -40px; animation: fxFloat 9s ease-in-out infinite; }
+.fx-2 { width: 60px; height: 60px; top: 8%; right: 6%; animation: fxFloat 7s ease-in-out infinite reverse; }
+.fx-3 { top: 30%; right: 14%; animation: fxFloat 8s ease-in-out infinite; }
+.fx-4 { width: 90px; height: 90px; bottom: 12%; left: 6%; animation: fxFloat 10s ease-in-out infinite reverse; }
+.fx-5 { top: 22%; left: 38%; animation: fxGiro 14s linear infinite; }
+.fx-6 { width: 50px; height: 50px; top: 60%; right: 3%; animation: fxFloat 6s ease-in-out infinite; }
+.fx-7 { width: 30px; height: 30px; bottom: 20%; right: 22%; animation: fxFloat 8s ease-in-out infinite reverse; }
+.fx-8 { width: 26px; height: 26px; top: 12%; left: 22%; animation: fxGiro 12s linear infinite; }
+@keyframes fxFloat {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-18px); }
+}
+@keyframes fxGiro {
+    to { transform: rotate(360deg); }
+}
+
+/* ===== Portal: categorias ===== */
+.categoria-card {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 1.1rem;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: var(--bg-card);
+    color: var(--text);
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+.categoria-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--accent);
+    box-shadow: 0 12px 28px var(--shadow);
+    color: var(--text);
+}
+.categoria-chip {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    flex-shrink: 0;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    opacity: 0.9;
+}
+.categoria-nombre {
+    font-weight: 600;
+    font-size: 0.95rem;
+    flex-grow: 1;
+}
+.categoria-flecha {
+    width: 16px;
+    height: 16px;
+    color: var(--text-muted);
+    transition: transform 0.25s ease, color 0.25s ease;
+}
+.categoria-card:hover .categoria-flecha {
+    transform: translateX(3px);
+    color: var(--accent);
+}
+
+/* ===== Portal: seccion nosotros / ventajas ===== */
+.seccion-nosotros {
+    background:
+        radial-gradient(120% 160% at 0% 0%, rgba(99, 102, 241, 0.08), transparent 50%),
+        radial-gradient(120% 160% at 100% 100%, rgba(16, 185, 129, 0.08), transparent 50%),
+        var(--bg-card);
+    border: 1px solid var(--border);
+    box-shadow: 0 4px 20px var(--shadow);
+}
+.ventaja-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    border-radius: 18px;
+    background: rgba(37, 99, 235, 0.12);
+    color: #2563eb;
+    box-shadow: inset 0 0 0 1px rgba(37, 99, 235, 0.18);
+}
+.ventaja-icon svg {
+    width: 26px;
+    height: 26px;
+}
+.ventaja-icon-verde { background: rgba(22, 163, 74, 0.12); color: #16a34a; box-shadow: inset 0 0 0 1px rgba(22, 163, 74, 0.18); }
+.ventaja-icon-violeta { background: rgba(139, 92, 246, 0.12); color: #8b5cf6; box-shadow: inset 0 0 0 1px rgba(139, 92, 246, 0.18); }
+.ventaja-icon-naranja { background: rgba(245, 158, 11, 0.12); color: #f59e0b; box-shadow: inset 0 0 0 1px rgba(245, 158, 11, 0.18); }
+
+.stat-box {
+    padding: 0.9rem 0.5rem;
+    border-radius: 14px;
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
+}
+.stat-num {
+    display: block;
+    font-size: 1.6rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+.stat-label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+}
+
+/* ===== Portal: testimonios ===== */
+.testimonio {
+    padding: 1rem 1.2rem;
+    border-radius: 14px;
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--accent);
+}
+.testimonio-estrellas {
+    color: #f59e0b;
+    letter-spacing: 2px;
+    font-size: 0.9rem;
+    margin-bottom: 0.35rem;
+}
+.testimonio-texto {
+    font-style: italic;
+    color: var(--text);
+}
+.testimonio-autor {
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+/* ===== Portal: CTA final ===== */
+.banner-cta {
+    background:
+        radial-gradient(90% 200% at 10% 0%, rgba(99, 102, 241, 0.55), transparent 55%),
+        radial-gradient(90% 200% at 90% 100%, rgba(236, 72, 153, 0.45), transparent 55%),
+        linear-gradient(135deg, #2563eb, #7c3aed 55%, #ec4899);
+    color: #ffffff;
+    box-shadow: 0 16px 40px rgba(99, 102, 241, 0.35);
+    position: relative;
+    overflow: hidden;
+}
+.banner-cta::before {
+    content: "";
+    position: absolute;
+    width: 220px;
+    height: 220px;
+    border-radius: 50%;
+    border: 2px dashed rgba(255, 255, 255, 0.25);
+    top: -80px;
+    right: -60px;
+    animation: fxGiro 20s linear infinite;
+}
+.banner-cta::after {
+    content: "";
+    position: absolute;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.08);
+    bottom: -50px;
+    left: 8%;
+    animation: fxFloat 8s ease-in-out infinite;
+}
+.banner-cta > * {
+    position: relative;
+    z-index: 1;
 }

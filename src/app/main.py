@@ -39,7 +39,18 @@ def index():
         .all()
     )
 
-    return render_template('home.html', destacados=destacados)
+    # Categorias disponibles (para la seccion de categorias del portal)
+    categorias = [
+        row[0] for row in
+        Producto.query.with_entities(Producto.categoria).distinct().all()
+        if row[0]
+    ]
+
+    return render_template(
+        'home.html',
+        destacados=destacados,
+        categorias=categorias
+    )
 
 
 @main_bp.route('/catalogo')

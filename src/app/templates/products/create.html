@@ -28,7 +28,7 @@
         <div class="card">
             <div class="card-body p-4">
 
-                <form method="POST" action="{{ url_for('products.crear') }}">
+                <form method="POST" action="{{ url_for('products.crear') }}" enctype="multipart/form-data">
                     <!-- Nombre -->
                     <div class="mb-3">
                         <label for="nombre" class="form-label fw-semibold small text-uppercase text-muted">Nombre del Producto *</label>
@@ -62,6 +62,14 @@
                         <label for="categoria" class="form-label fw-semibold small text-uppercase text-muted">Categoria</label>
                         <input type="text" name="categoria" id="categoria" class="form-control"
                                placeholder="Ej: Computadoras, Perifericos, Monitores...">
+                    </div>
+
+                    <!-- Imagen -->
+                    <div class="mb-3">
+                        <label for="imagen" class="form-label fw-semibold small text-uppercase text-muted">Imagen del Producto</label>
+                        <input type="file" name="imagen" id="imagen" class="form-control"
+                               accept="image/png,image/jpeg,image/webp,image/gif,image/svg+xml">
+                        <div class="form-text">PNG, JPG, WEBP, GIF o SVG. Tamano maximo 5 MB. Opcional.</div>
                     </div>
 
                     <!-- Botones -->

@@ -92,6 +92,7 @@ class Producto(db.Model):
         precio            : Precio unitario de venta.
         stock             : Unidades disponibles en inventario.
         categoria         : Categoria (ej. 'Computadoras', 'Perifericos').
+        imagen            : Nombre del archivo de imagen subido (opcional).
     """
 
     __tablename__ = 'productos'
@@ -103,6 +104,7 @@ class Producto(db.Model):
     precio = db.Column(db.Numeric(10, 2), nullable=False)
     stock = db.Column(db.Integer, nullable=False)
     categoria = db.Column(db.String(100))
+    imagen = db.Column(db.String(255))
 
     # --- Relaciones ---
     detalles = db.relationship('DetalleFactura', backref='producto', lazy=True)

@@ -20,7 +20,8 @@ CREATE TABLE IF NOT EXISTS productos (
     descripcion TEXT,
     precio DECIMAL(10, 2) NOT NULL CHECK (precio >= 0),
     stock INTEGER NOT NULL CHECK (stock >= 0),
-    categoria VARCHAR(100)
+    categoria VARCHAR(100),
+    imagen VARCHAR(255)
 );
 
 -- Tabla: FACTURAS
@@ -69,3 +70,43 @@ WHERE NOT EXISTS (SELECT 1 FROM productos OFFSET 3 LIMIT 1);
 INSERT INTO productos (nombre, descripcion, precio, stock, categoria)
 SELECT 'SSD 1TB NVMe', 'Disco de estado solido NVMe M.2, lectura 7000MB/s', 119.99, 40, 'Almacenamiento'
 WHERE NOT EXISTS (SELECT 1 FROM productos OFFSET 4 LIMIT 1);
+
+INSERT INTO productos (nombre, descripcion, precio, stock, categoria)
+SELECT 'Audifonos Gamer 7.1', 'Audifonos con sonido envolvente 7.1, microfono con cancelacion de ruido', 59.99, 60, 'Audio'
+WHERE NOT EXISTS (SELECT 1 FROM productos OFFSET 5 LIMIT 1);
+
+INSERT INTO productos (nombre, descripcion, precio, stock, categoria)
+SELECT 'Parlante Bluetooth', 'Parlante portatil 20W, resistente al agua, bateria de 12 horas', 34.99, 45, 'Audio'
+WHERE NOT EXISTS (SELECT 1 FROM productos OFFSET 6 LIMIT 1);
+
+INSERT INTO productos (nombre, descripcion, precio, stock, categoria)
+SELECT 'Tablet 10.5"', 'Tablet Android 10.5" 2K, 8GB RAM, 128GB, incluye lapiz', 349.99, 20, 'Tablets'
+WHERE NOT EXISTS (SELECT 1 FROM productos OFFSET 7 LIMIT 1);
+
+INSERT INTO productos (nombre, descripcion, precio, stock, categoria)
+SELECT 'Camara Web HD', 'Camara web 1080p Full HD con microfono dual y tapa de privacidad', 24.99, 30, 'Perifericos'
+WHERE NOT EXISTS (SELECT 1 FROM productos OFFSET 8 LIMIT 1);
+
+INSERT INTO productos (nombre, descripcion, precio, stock, categoria)
+SELECT 'Router WiFi 6', 'Router dual band WiFi 6, velocidad hasta 3000Mbps, 4 antenas', 89.99, 18, 'Redes'
+WHERE NOT EXISTS (SELECT 1 FROM productos OFFSET 9 LIMIT 1);
+
+INSERT INTO productos (nombre, descripcion, precio, stock, categoria)
+SELECT 'Consola Retro 64GB', 'Consola retro con 1000 juegos incluidos, salida HDMI 4K', 189.99, 12, 'Gaming'
+WHERE NOT EXISTS (SELECT 1 FROM productos OFFSET 10 LIMIT 1);
+
+INSERT INTO productos (nombre, descripcion, precio, stock, categoria)
+SELECT 'Silla Gamer', 'Silla ergonomica reclinable con soporte lumbar y reposabrazos ajustables', 149.99, 8, 'Gaming'
+WHERE NOT EXISTS (SELECT 1 FROM productos OFFSET 11 LIMIT 1);
+
+INSERT INTO productos (nombre, descripcion, precio, stock, categoria)
+SELECT 'Impresora Multifuncional', 'Impresora laser WiFi: imprime, escanea y copia a doble cara', 179.99, 10, 'Oficina'
+WHERE NOT EXISTS (SELECT 1 FROM productos OFFSET 12 LIMIT 1);
+
+INSERT INTO productos (nombre, descripcion, precio, stock, categoria)
+SELECT 'Cargador Rapido 65W', 'Cargador GaN 65W USB-C compatible con laptop y celulares', 27.99, 55, 'Accesorios'
+WHERE NOT EXISTS (SELECT 1 FROM productos OFFSET 13 LIMIT 1);
+
+INSERT INTO productos (nombre, descripcion, precio, stock, categoria)
+SELECT 'Hub USB-C 8 en 1', 'Hub con HDMI 4K, 3x USB 3.0, lectura de tarjetas y cargador PD', 42.99, 35, 'Accesorios'
+WHERE NOT EXISTS (SELECT 1 FROM productos OFFSET 14 LIMIT 1);

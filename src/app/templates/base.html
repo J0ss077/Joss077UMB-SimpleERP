@@ -88,22 +88,6 @@
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ url_for('tienda.ver_favoritos') }}">Favoritos</a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link position-relative" href="{{ url_for('tienda.ver_carrito') }}">
-                                    <span class="d-inline-flex align-items-center gap-1">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                             stroke-linecap="round" stroke-linejoin="round" style="width: 18px; height: 18px;" aria-hidden="true">
-                                            <circle cx="8" cy="21" r="1"></circle>
-                                            <circle cx="19" cy="21" r="1"></circle>
-                                            <path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"></path>
-                                        </svg>
-                                        Carrito
-                                        {% if carrito_cantidad > 0 %}
-                                            <span class="carrito-badge" id="carritoBadge">{{ carrito_cantidad }}</span>
-                                        {% endif %}
-                                    </span>
-                                </a>
-                            </li>
                         {% else %}
                             <!-- Gestion para vendedor y admin -->
                             <li class="nav-item">
@@ -129,6 +113,23 @@
                 <!-- Usuario / Sesion -->
                 <ul class="navbar-nav">
                     {% if current_user.is_authenticated %}
+                        {% if current_user.get_rol() == 'cliente' %}
+                            <li class="nav-item">
+                                <a class="nav-link position-relative d-flex align-items-center gap-2 me-2"
+                                   href="{{ url_for('tienda.ver_carrito') }}">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                         stroke-linecap="round" stroke-linejoin="round" style="width: 20px; height: 20px;" aria-hidden="true">
+                                        <circle cx="8" cy="21" r="1"></circle>
+                                        <circle cx="19" cy="21" r="1"></circle>
+                                        <path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"></path>
+                                    </svg>
+                                    <span class="d-none d-lg-inline">Carrito</span>
+                                    {% if carrito_cantidad > 0 %}
+                                        <span class="carrito-badge" id="carritoBadge">{{ carrito_cantidad }}</span>
+                                    {% endif %}
+                                </a>
+                            </li>
+                        {% endif %}
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle d-flex align-items-center gap-2"
                                href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">

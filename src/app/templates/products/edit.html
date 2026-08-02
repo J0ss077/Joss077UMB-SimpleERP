@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% from "_macros.html" import imagen_producto %}
 {% block title %}Editar Producto — ERP TechStore{% endblock %}
 
 {% block content %}
@@ -26,7 +27,7 @@
         <div class="card">
             <div class="card-body p-4">
 
-                <form method="POST" action="{{ url_for('products.editar', producto_id=producto.id_producto) }}">
+                <form method="POST" action="{{ url_for('products.editar', producto_id=producto.id_producto) }}" enctype="multipart/form-data">
                     <!-- Nombre -->
                     <div class="mb-3">
                         <label for="nombre" class="form-label fw-semibold small text-uppercase text-muted">Nombre del Producto *</label>
@@ -60,6 +61,23 @@
                         <label for="categoria" class="form-label fw-semibold small text-uppercase text-muted">Categoria</label>
                         <input type="text" name="categoria" id="categoria" class="form-control"
                                value="{{ producto.categoria or '' }}">
+                    </div>
+
+                    <!-- Imagen -->
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold small text-uppercase text-muted">Imagen del Producto</label>
+                        {% if producto.imagen %}
+                            <div class="d-flex align-items-center gap-3 mb-2">
+                                {{ imagen_producto(producto, 'img-mini') }}
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="quitar_imagen" id="quitar_imagen" value="1">
+                                    <label class="form-check-label small" for="quitar_imagen">Quitar imagen actual</label>
+                                </div>
+                            </div>
+                        {% endif %}
+                        <input type="file" name="imagen" id="imagen" class="form-control"
+                               accept="image/png,image/jpeg,image/webp,image/gif,image/svg+xml">
+                        <div class="form-text">PNG, JPG, WEBP, GIF o SVG. Tamano maximo 5 MB. Si subes una, reemplaza la actual.</div>
                     </div>
 
                     <!-- Botones -->

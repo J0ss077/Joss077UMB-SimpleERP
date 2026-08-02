@@ -25,3 +25,12 @@ class Config:
 
     # Desactivar seguimiento de modificaciones de SQLAlchemy (ahorra memoria)
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+    # Carpeta de imagenes subidas de los productos
+    UPLOAD_FOLDER = os.environ.get(
+        'UPLOAD_FOLDER',
+        os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static', 'uploads')
+    )
+
+    # Tamano maximo de archivo permitido (5 MB)
+    MAX_CONTENT_LENGTH = 5 * 1024 * 1024

@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% from "_macros.html" import imagen_producto %}
 {% block title %}Gestion de Productos — ERP TechStore{% endblock %}
 
 {% block content %}
@@ -36,7 +37,7 @@
                     <thead>
                         <tr>
                             <th class="ps-3">ID</th>
-                            <th>Nombre</th>
+                            <th>Producto</th>
                             <th>Categoria</th>
                             <th>Precio</th>
                             <th>Stock</th>
@@ -47,7 +48,12 @@
                         {% for producto in productos %}
                             <tr>
                                 <td class="ps-3 text-muted small">#{{ producto.id_producto }}</td>
-                                <td class="fw-semibold">{{ producto.nombre }}</td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-2">
+                                        {{ imagen_producto(producto, 'img-mini') }}
+                                        <span class="fw-semibold">{{ producto.nombre }}</span>
+                                    </div>
+                                </td>
                                 <td>
                                     <span class="badge bg-light text-dark border">{{ producto.categoria or 'N/A' }}</span>
                                 </td>

@@ -127,4 +127,21 @@
         }
         requestAnimationFrame(paso);
     });
+
+    /* ===== Contadores animados del portal (stats de la tienda) ===== */
+    document.querySelectorAll('.stat-num[data-contador]').forEach(function (el) {
+        var objetivo = parseInt(el.getAttribute('data-contador'), 10);
+        if (isNaN(objetivo)) return;
+
+        var duracion = 1100;
+        var inicio = performance.now();
+
+        function pasoStats(ahora) {
+            var progreso = Math.min((ahora - inicio) / duracion, 1);
+            var suavizado = 1 - Math.pow(1 - progreso, 3);
+            el.textContent = Math.round(objetivo * suavizado).toLocaleString('es-CO');
+            if (progreso < 1) requestAnimationFrame(pasoStats);
+        }
+        requestAnimationFrame(pasoStats);
+    });
 })();

@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% from "_macros.html" import imagen_producto %}
 {% block title %}{{ producto.nombre }} — ERP TechStore{% endblock %}
 
 {% block content %}
@@ -11,6 +12,15 @@
 </a>
 
 <div class="row g-4">
+    <!-- Imagen del producto -->
+    <div class="col-lg-5">
+        <div class="card h-100">
+            <div class="card-body p-0">
+                {{ imagen_producto(producto, 'img-detalle') }}
+            </div>
+        </div>
+    </div>
+
     <!-- Informacion principal -->
     <div class="col-lg-7">
         <div class="card h-100">
@@ -67,7 +77,7 @@
     </div>
 
     <!-- Datos secundarios -->
-    <div class="col-lg-5">
+    <div class="col-lg-6">
         <div class="card">
             <div class="card-header card-header-accent">
                 <h6 class="mb-0">Informacion del Producto</h6>
@@ -93,8 +103,10 @@
                 </table>
             </div>
         </div>
+    </div>
 
-        <div class="card mt-3">
+    <div class="col-lg-6">
+        <div class="card h-100">
             <div class="card-body">
                 <h6 class="fw-semibold mb-2">Compra segura</h6>
                 <p class="text-muted small mb-0">

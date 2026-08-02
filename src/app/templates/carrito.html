@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% from "_macros.html" import imagen_producto %}
 {% block title %}Carrito de Compras — ERP TechStore{% endblock %}
 
 {% block content %}
@@ -40,13 +41,21 @@
                             {% for item in items %}
                                 <tr>
                                     <td class="ps-3">
-                                        <a href="{{ url_for('tienda.ver_producto', producto_id=item.producto.id_producto) }}"
-                                           class="fw-semibold text-decoration-none">{{ item.producto.nombre }}</a>
-                                        <br>
-                                        <small class="text-muted">
-                                            {{ item.producto.categoria or '' }} &middot;
-                                            Stock disponible: {{ item.producto.stock }}
-                                        </small>
+                                        <div class="d-flex align-items-center gap-3">
+                                            <a href="{{ url_for('tienda.ver_producto', producto_id=item.producto.id_producto) }}"
+                                               class="text-decoration-none">
+                                                {{ imagen_producto(item.producto, 'img-mini') }}
+                                            </a>
+                                            <div>
+                                                <a href="{{ url_for('tienda.ver_producto', producto_id=item.producto.id_producto) }}"
+                                                   class="fw-semibold text-decoration-none">{{ item.producto.nombre }}</a>
+                                                <br>
+                                                <small class="text-muted">
+                                                    {{ item.producto.categoria or '' }} &middot;
+                                                    Stock disponible: {{ item.producto.stock }}
+                                                </small>
+                                            </div>
+                                        </div>
                                     </td>
                                     <td class="text-center">
                                         <input type="number"
