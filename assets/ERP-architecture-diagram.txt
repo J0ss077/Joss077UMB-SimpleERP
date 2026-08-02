@@ -1,0 +1,58 @@
+@startuml ERP_Arquitectura
+
+title Arquitectura ERP - Tienda de Tecnologia (Sistema Transaccional)
+
+skinparam componentStyle rectangle
+skinparam linetype ortho
+
+actor Cliente
+actor Administrador
+
+package "Capa de Presentacion" {
+  [Pagina Web (Catalogo)] as Web
+  [Panel Admin] as PanelAdmin
+}
+
+package "Capa de Negocio (API / Backend)" {
+  [Modulo Autenticacion] as Auth
+  [Modulo Facturacion] as Facturacion
+  [Modulo Inventario] as Inventario
+  [API Gateway] as Gateway
+}
+
+package "Capa de Datos" {
+  database "Base de Datos\n(MySQL/PostgreSQL)" as BD {
+    [Usuarios]
+    [Productos]
+    [Facturas]
+    [Detalle_Factura]
+  }
+}
+
+cloud "Servicios Externos" {
+  [Pasarela de Pago] as Pago
+}
+
+Cliente --> Web : consulta productos
+Administrador --> PanelAdmin : gestiona inventario/usuarios
+
+Web --> Gateway : peticiones HTTP/REST
+PanelAdmin --> Gateway : peticiones HTTP/REST
+
+Gateway --> Auth : valida sesion
+Gateway --> Facturacion : procesa venta
+Gateway --> Inventario : consulta/actualiza stock
+
+Auth --> BD : lee/escribe Usuarios
+Facturacion --> BD : lee/escribe Facturas, Detalle_Factura
+Inventario --> BD : lee/escribe Productos
+
+Facturacion --> Pago : solicita cobro
+
+note right of Facturacion
+  Transaccion ACID:
+  factura + descuento stock
+  ocurren juntos o ninguno
+end note
+
+@enduml

@@ -1,0 +1,14 @@
+# ERP - Tienda de Tecnologia
+# Dependencias de Python, todas desde PyPI (repositorio oficial)
+
+# Framework web
+Flask==3.1.0
+
+# ORM para PostgreSQL (manejo de modelos y transacciones ACID)
+Flask-SQLAlchemy==3.1.1
+
+# Driver de conexion a PostgreSQL
+psycopg2-binary==2.9.10
+
+# Manejo de sesiones de usuario (login/logout)
+Flask-Login==0.6.3

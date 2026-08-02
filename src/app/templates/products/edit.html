@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block title %}Editar Producto — ERP TechStore{% endblock %}
+
+{% block content %}
+<!-- ============================================================ -->
+<!-- FORMULARIO: EDITAR PRODUCTO (RF05)                           -->
+<!-- ============================================================ -->
+
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+
+        <h1 class="mb-4">✏️ Editar Producto #{{ producto.id_producto }}</h1>
+
+        <div class="card shadow-sm">
+            <div class="card-body">
+
+                <form method="POST" action="{{ url_for('products.editar', producto_id=producto.id_producto) }}">
+                    <!-- Nombre -->
+                    <div class="mb-3">
+                        <label for="nombre" class="form-label">Nombre del Producto *</label>
+                        <input type="text" name="nombre" id="nombre" class="form-control"
+                               value="{{ producto.nombre }}" required autofocus>
+                    </div>
+
+                    <!-- Descripción -->
+                    <div class="mb-3">
+                        <label for="descripcion" class="form-label">Descripción</label>
+                        <textarea name="descripcion" id="descripcion" class="form-control" rows="3">{{ producto.descripcion or '' }}</textarea>
+                    </div>
+
+                    <!-- Precio y Stock -->
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="precio" class="form-label">Precio ($) *</label>
+                            <input type="number" name="precio" id="precio" class="form-control"
+                                   value="{{ "%.2f"|format(producto.get_precio()) }}"
+                                   step="0.01" min="0" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="stock" class="form-label">Stock *</label>
+                            <input type="number" name="stock" id="stock" class="form-control"
+                                   value="{{ producto.stock }}" min="0" required>
+                        </div>
+                    </div>
+
+                    <!-- Categoría -->
+                    <div class="mb-3">
+                        <label for="categoria" class="form-label">Categoría</label>
+                        <input type="text" name="categoria" id="categoria" class="form-control"
+                               value="{{ producto.categoria or '' }}">
+                    </div>
+
+                    <!-- Botones -->
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-warning">
+                            💾 Guardar Cambios
+                        </button>
+                        <a href="{{ url_for('products.listar') }}" class="btn btn-outline-secondary">
+                            Cancelar
+                        </a>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,43 @@
+# ERP - Tienda de Tecnologia
+# Orquestacion de servicios: aplicacion web + base de datos PostgreSQL
+# Compatible con Docker y Podman (con capa de integracion Docker)
+
+services:
+  # Servicio 1: Aplicacion web Flask
+  web:
+    build: .
+    container_name: erp-web
+    ports:
+      - "5000:5000"
+    volumes:
+      # Montar codigo como volumen para desarrollo (cambios en caliente)
+      - ./app:/app/app
+      - ./run.py:/app/run.py
+    environment:
+      - FLASK_ENV=development
+      # URL de conexion a la base de datos (apunta al servicio 'db')
+      - DATABASE_URL=postgresql://erp_user:erp_password@db:5432/erp_db
+    depends_on:
+      - db
+    restart: unless-stopped
+
+  # Servicio 2: Base de datos PostgreSQL
+  db:
+    image: postgres:16-alpine
+    container_name: erp-db
+    environment:
+      POSTGRES_USER: erp_user
+      POSTGRES_PASSWORD: erp_password
+      POSTGRES_DB: erp_db
+    ports:
+      - "5432:5432"
+    volumes:
+      # Volumen persistente para los datos
+      - pgdata:/var/lib/postgresql/data
+      # Script de inicializacion: crea tablas al primer arranque
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    restart: unless-stopped
+
+# Volumen nombrado para persistencia de datos
+volumes:
+  pgdata:

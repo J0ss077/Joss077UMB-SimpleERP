@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block title %}Stock — {{ producto.nombre }}{% endblock %}
+
+{% block content %}
+<!-- ============================================================ -->
+<!-- CONSULTA DE STOCK DE PRODUCTO (RF06)                         -->
+<!-- ============================================================ -->
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+
+        <h1 class="mb-4">📊 Consulta de Stock</h1>
+
+        <div class="card shadow-sm">
+            <div class="card-header bg-dark text-white">
+                <h5 class="mb-0">{{ producto.nombre }}</h5>
+            </div>
+            <div class="card-body">
+
+                <!-- Detalle del producto -->
+                <table class="table table-borderless">
+                    <tr>
+                        <th class="text-muted">ID:</th>
+                        <td>{{ producto.id_producto }}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-muted">Nombre:</th>
+                        <td>{{ producto.nombre }}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-muted">Categoría:</th>
+                        <td>{{ producto.categoria or 'Sin categoría' }}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-muted">Precio:</th>
+                        <td class="fw-bold text-primary">${{ "%.2f"|format(producto.get_precio()) }}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-muted">Stock Disponible:</th>
+                        <td>
+                            <span class="fs-3 fw-bold {% if producto.stock > 10 %}text-success{% elif producto.stock > 0 %}text-warning{% else %}text-danger{% endif %}">
+                                {{ producto.stock }}
+                            </span>
+                            <span class="text-muted ms-2">unidades</span>
+                        </td>
+                    </tr>
+                </table>
+
+                <!-- Barra visual de stock -->
+                {% set porcentaje = producto.stock / 50 * 100 if producto.stock <= 50 else 100 %}
+                <div class="progress mb-3" style="height: 25px;">
+                    <div class="progress-bar {% if producto.stock > 10 %}bg-success{% elif producto.stock > 0 %}bg-warning{% else %}bg-danger{% endif %}"
+                         role="progressbar"
+                         style="width: {{ porcentaje if porcentaje <= 100 else 100 }}%;"
+                         aria-valuenow="{{ producto.stock }}" aria-valuemin="0" aria-valuemax="100">
+                        {{ producto.stock }} / 50+
+                    </div>
+                </div>
+
+                <!-- Estado del inventario -->
+                {% if producto.stock == 0 %}
+                    <div class="alert alert-danger">
+                        ⚠️ Producto agotado. Se requiere reabastecimiento urgente.
+                    </div>
+                {% elif producto.stock < 5 %}
+                    <div class="alert alert-warning">
+                        ⚡ Stock bajo. Se recomienda reabastecer pronto.
+                    </div>
+                {% else %}
+                    <div class="alert alert-success">
+                        ✅ Stock suficiente para operación normal.
+                    </div>
+                {% endif %}
+
+            </div>
+            <div class="card-footer">
+                <a href="{{ url_for('products.listar') }}" class="btn btn-outline-secondary">
+                    ← Volver a Productos
+                </a>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

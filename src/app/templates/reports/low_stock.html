@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block title %}Reporte de Stock Bajo — ERP TechStore{% endblock %}
+
+{% block content %}
+<!-- ============================================================ -->
+<!-- REPORTE DE STOCK BAJO (RF12)                                 -->
+<!-- ============================================================ -->
+
+<h1 class="mb-4">📉 Reporte de Stock Bajo</h1>
+<p class="text-muted">
+    Productos con menos de <strong>{{ umbral }} unidades</strong> en inventario.
+    Se recomienda reabastecimiento urgente.
+</p>
+
+{% if productos %}
+    <div class="table-responsive">
+        <table class="table table-hover align-middle shadow-sm">
+            <thead class="table-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Producto</th>
+                    <th>Categoría</th>
+                    <th>Precio</th>
+                    <th>Stock Actual</th>
+                    <th>Estado</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for producto in productos %}
+                    <tr>
+                        <td>{{ producto.id_producto }}</td>
+                        <td>
+                            <strong>{{ producto.nombre }}</strong>
+                            {% if producto.descripcion %}
+                                <br><small class="text-muted">{{ producto.descripcion[:50] }}...</small>
+                            {% endif %}
+                        </td>
+                        <td><span class="badge bg-secondary">{{ producto.categoria or 'N/A' }}</span></td>
+                        <td>${{ "%.2f"|format(producto.get_precio()) }}</td>
+                        <td>
+                            <span class="fs-5 fw-bold {% if producto.stock == 0 %}text-danger{% else %}text-warning{% endif %}">
+                                {{ producto.stock }}
+                            </span>
+                        </td>
+                        <td>
+                            {% if producto.stock == 0 %}
+                                <span class="badge bg-danger">Agotado</span>
+                            {% elif producto.stock <= 2 %}
+                                <span class="badge bg-danger">Crítico</span>
+                            {% else %}
+                                <span class="badge bg-warning text-dark">Bajo</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% else %}
+    <div class="alert alert-success text-center py-4">
+        <h4>✅ Todo en orden</h4>
+        <p>No hay productos con stock bajo. Todos tienen 5 o más unidades.</p>
+    </div>
+{% endif %}
+
+<div class="mt-3">
+    <a href="{{ url_for('reports.index') }}" class="btn btn-outline-secondary">
+        ← Volver a Reportes
+    </a>
+</div>
+
+{% endblock %}

@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% block title %}Catálogo — ERP TechStore{% endblock %}
+
+{% block content %}
+<!-- ============================================================ -->
+<!-- CATÁLOGO PÚBLICO DE PRODUCTOS (RF03, RF04)                   -->
+<!-- ============================================================ -->
+
+<h1 class="mb-3">📦 Catálogo de Productos</h1>
+<p class="text-muted">Explora nuestros productos de tecnología. Usa los filtros para encontrar lo que buscas.</p>
+
+<!-- ===== Barra de búsqueda y filtros (RF04) ===== -->
+<div class="card mb-4 shadow-sm">
+    <div class="card-body">
+        <form method="GET" action="{{ url_for('main.index') }}" class="row g-3">
+            <!-- Campo de búsqueda por texto -->
+            <div class="col-md-6">
+                <label for="q" class="form-label">🔍 Buscar</label>
+                <input type="text" name="q" id="q" class="form-control"
+                       placeholder="Ej: laptop, mouse, SSD..."
+                       value="{{ texto_busqueda }}">
+            </div>
+
+            <!-- Filtro por categoría -->
+            <div class="col-md-4">
+                <label for="categoria" class="form-label">📂 Categoría</label>
+                <select name="categoria" id="categoria" class="form-select">
+                    <option value="">— Todas las categorías —</option>
+                    {% for cat in categorias %}
+                        <option value="{{ cat }}" {% if categoria_filtro == cat %}selected{% endif %}>
+                            {{ cat }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Botones -->
+            <div class="col-md-2 d-flex align-items-end gap-2">
+                <button type="submit" class="btn btn-primary w-100">Filtrar</button>
+                {% if texto_busqueda or categoria_filtro %}
+                    <a href="{{ url_for('main.index') }}" class="btn btn-outline-secondary w-100">Limpiar</a>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- ===== Resultados ===== -->
+{% if productos %}
+    <p class="text-muted">{{ productos|length }} producto(s) encontrado(s).</p>
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        {% for producto in productos %}
+            <div class="col">
+                <div class="card h-100 shadow-sm {% if producto.stock == 0 %}border-danger{% endif %}">
+                    <div class="card-body">
+                        <!-- Nombre y categoría -->
+                        <h5 class="card-title">{{ producto.nombre }}</h5>
+                        <span class="badge bg-secondary mb-2">{{ producto.categoria or 'Sin categoría' }}</span>
+
+                        <!-- Descripción -->
+                        {% if producto.descripcion %}
+                            <p class="card-text text-muted small">{{ producto.descripcion[:120] }}{% if producto.descripcion|length > 120 %}...{% endif %}</p>
+                        {% endif %}
+
+                        <!-- Precio y stock -->
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                            <span class="fs-4 fw-bold text-primary">${{ "%.2f"|format(producto.get_precio()) }}</span>
+                            <span class="badge {% if producto.stock > 10 %}bg-success{% elif producto.stock > 0 %}bg-warning text-dark{% else %}bg-danger{% endif %}">
+                                {% if producto.stock > 0 %}
+                                    Stock: {{ producto.stock }}
+                                {% else %}
+                                    Agotado
+                                {% endif %}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="alert alert-info text-center py-4">
+        <h4>😕 No se encontraron productos</h4>
+        <p>Intenta con otros términos de búsqueda o limpia los filtros.</p>
+    </div>
+{% endif %}
+
+{% endblock %}

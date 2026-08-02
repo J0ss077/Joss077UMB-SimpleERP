@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block title %}Registro — ERP TechStore{% endblock %}
+
+{% block content %}
+<!-- ============================================================ -->
+<!-- FORMULARIO DE REGISTRO (RF02)                                -->
+<!-- ============================================================ -->
+
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+
+        <h1 class="mb-4 text-center">📝 Crear Cuenta</h1>
+
+        <div class="card shadow-sm">
+            <div class="card-body">
+
+                <form method="POST" action="{{ url_for('auth.register') }}">
+                    <!-- Nombre -->
+                    <div class="mb-3">
+                        <label for="nombre" class="form-label">Nombre Completo</label>
+                        <input type="text" name="nombre" id="nombre" class="form-control"
+                               placeholder="Tu nombre" required autofocus>
+                    </div>
+
+                    <!-- Email -->
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Correo Electrónico</label>
+                        <input type="email" name="email" id="email" class="form-control"
+                               placeholder="tu@email.com" required>
+                    </div>
+
+                    <!-- Contraseña -->
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Contraseña</label>
+                        <input type="password" name="password" id="password" class="form-control"
+                               placeholder="Mínimo 4 caracteres" required minlength="4">
+                    </div>
+
+                    <!-- Confirmar contraseña -->
+                    <div class="mb-3">
+                        <label for="password_confirm" class="form-label">Confirmar Contraseña</label>
+                        <input type="password" name="password_confirm" id="password_confirm" class="form-control"
+                               placeholder="Repite tu contraseña" required minlength="4">
+                    </div>
+
+                    <!-- Botón -->
+                    <button type="submit" class="btn btn-success w-100">
+                        Crear Cuenta
+                    </button>
+                </form>
+
+            </div>
+        </div>
+
+        <!-- Enlace a login -->
+        <p class="text-center mt-3">
+            ¿Ya tienes cuenta?
+            <a href="{{ url_for('auth.login') }}">Inicia sesión aquí</a>
+        </p>
+
+    </div>
+</div>
+
+{% endblock %}

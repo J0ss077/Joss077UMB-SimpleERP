@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}Historial de Facturas — ERP TechStore{% endblock %}
+
+{% block content %}
+<!-- ============================================================ -->
+<!-- HISTORIAL DE FACTURAS (RF11)                                 -->
+<!-- ============================================================ -->
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>🧾 Historial de Facturas</h1>
+    <a href="{{ url_for('invoices.crear') }}" class="btn btn-success">
+        ➕ Nueva Factura
+    </a>
+</div>
+
+{% if facturas %}
+    <div class="table-responsive">
+        <table class="table table-hover align-middle shadow-sm">
+            <thead class="table-dark">
+                <tr>
+                    <th># Factura</th>
+                    <th>Fecha</th>
+                    <th>Cliente</th>
+                    <th>Total</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for factura in facturas %}
+                    <tr class="{% if factura.esta_anulada() %}table-secondary text-muted{% endif %}">
+                        <td>{{ factura.id_factura }}</td>
+                        <td>{{ factura.fecha.strftime('%d/%m/%Y %H:%M') }}</td>
+                        <td>{{ factura.usuario.nombre }}</td>
+                        <td class="fw-bold">${{ "%.2f"|format(factura.get_total()) }}</td>
+                        <td>
+                            <span class="badge {% if factura.esta_anulada() %}bg-danger{% else %}bg-success{% endif %}">
+                                {{ factura.estado | capitalize }}
+                            </span>
+                        </td>
+                        <td>
+                            <a href="{{ url_for('invoices.ver', factura_id=factura.id_factura) }}"
+                               class="btn btn-sm btn-outline-primary">
+                                👁️ Ver Detalle
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% else %}
+    <div class="alert alert-info text-center py-4">
+        <h4>📭 No hay facturas registradas</h4>
+        <a href="{{ url_for('invoices.crear') }}" class="btn btn-success mt-2">Crear primera factura</a>
+    </div>
+{% endif %}
+
+{% endblock %}

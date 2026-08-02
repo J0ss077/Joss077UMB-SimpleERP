@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block title %}Nuevo Producto — ERP TechStore{% endblock %}
+
+{% block content %}
+<!-- ============================================================ -->
+<!-- FORMULARIO: CREAR PRODUCTO (RF05)                            -->
+<!-- ============================================================ -->
+
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+
+        <h1 class="mb-4">➕ Nuevo Producto</h1>
+
+        <div class="card shadow-sm">
+            <div class="card-body">
+
+                <form method="POST" action="{{ url_for('products.crear') }}">
+                    <!-- Nombre -->
+                    <div class="mb-3">
+                        <label for="nombre" class="form-label">Nombre del Producto *</label>
+                        <input type="text" name="nombre" id="nombre" class="form-control"
+                               placeholder="Ej: Laptop Pro 15&quot;" required autofocus>
+                    </div>
+
+                    <!-- Descripción -->
+                    <div class="mb-3">
+                        <label for="descripcion" class="form-label">Descripción</label>
+                        <textarea name="descripcion" id="descripcion" class="form-control" rows="3"
+                                  placeholder="Descripción detallada del producto..."></textarea>
+                    </div>
+
+                    <!-- Precio y Stock (misma fila) -->
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="precio" class="form-label">Precio ($) *</label>
+                            <input type="number" name="precio" id="precio" class="form-control"
+                                   placeholder="0.00" step="0.01" min="0" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="stock" class="form-label">Stock Inicial *</label>
+                            <input type="number" name="stock" id="stock" class="form-control"
+                                   placeholder="0" min="0" required>
+                        </div>
+                    </div>
+
+                    <!-- Categoría -->
+                    <div class="mb-3">
+                        <label for="categoria" class="form-label">Categoría</label>
+                        <input type="text" name="categoria" id="categoria" class="form-control"
+                               placeholder="Ej: Computadoras, Periféricos, Monitores...">
+                    </div>
+
+                    <!-- Botones -->
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-success">
+                            💾 Guardar Producto
+                        </button>
+                        <a href="{{ url_for('products.listar') }}" class="btn btn-outline-secondary">
+                            Cancelar
+                        </a>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

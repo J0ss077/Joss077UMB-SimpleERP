@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block title %}Reporte de Ventas — ERP TechStore{% endblock %}
+
+{% block content %}
+<!-- ============================================================ -->
+<!-- REPORTE DE VENTAS (RF12)                                     -->
+<!-- ============================================================ -->
+
+<h1 class="mb-4">💰 Reporte de Ventas</h1>
+
+<!-- Resumen -->
+<div class="row g-4 mb-4">
+    <div class="col-md-6">
+        <div class="card shadow-sm text-center border-success">
+            <div class="card-body">
+                <h5 class="text-muted">Total Facturado (Activo)</h5>
+                <p class="display-4 fw-bold text-success">${{ "%.2f"|format(total_ventas) }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card shadow-sm text-center border-danger">
+            <div class="card-body">
+                <h5 class="text-muted">Facturas Anuladas</h5>
+                <p class="display-4 fw-bold text-danger">{{ facturas_anuladas }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Tabla de facturas activas -->
+<h3 class="mb-3">📋 Facturas Activas</h3>
+
+{% if facturas %}
+    <div class="table-responsive">
+        <table class="table table-hover align-middle shadow-sm">
+            <thead class="table-dark">
+                <tr>
+                    <th>#</th>
+                    <th>Fecha</th>
+                    <th>Cliente</th>
+                    <th>Productos</th>
+                    <th>Total</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for factura in facturas %}
+                    <tr>
+                        <td>{{ factura.id_factura }}</td>
+                        <td>{{ factura.fecha.strftime('%d/%m/%Y') }}</td>
+                        <td>{{ factura.usuario.nombre }}</td>
+                        <td>{{ factura.detalles | length }}</td>
+                        <td class="fw-bold text-primary">${{ "%.2f"|format(factura.get_total()) }}</td>
+                        <td>
+                            <a href="{{ url_for('invoices.ver', factura_id=factura.id_factura) }}"
+                               class="btn btn-sm btn-outline-primary">Ver</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% else %}
+    <div class="alert alert-info">No hay facturas activas registradas.</div>
+{% endif %}
+
+<div class="mt-3">
+    <a href="{{ url_for('reports.index') }}" class="btn btn-outline-secondary">
+        ← Volver a Reportes
+    </a>
+</div>
+
+{% endblock %}

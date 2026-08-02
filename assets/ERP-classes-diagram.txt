@@ -1,0 +1,55 @@
+@startuml ERP_Clases
+
+class Usuario {
+  -id: int
+  -nombre: string
+  -email: string
+  -passwordHash: string
+  -rol: string
+  +getId(): int
+  +getEmail(): string
+  +getRol(): string
+  +login(email, password): bool
+  +validarCredenciales(): bool
+}
+
+class Producto {
+  -id: int
+  -nombre: string
+  -descripcion: string
+  -precio: float
+  -stock: int
+  -categoria: string
+  +getStock(): int
+  +getPrecio(): float
+  +actualizarStock(cantidad: int): void
+  +registrarProducto(): void
+}
+
+class Factura {
+  -id: int
+  -fecha: date
+  -idUsuario: int
+  -total: float
+  -estado: string
+  +getTotal(): float
+  +generarFactura(): void
+  +calcularTotal(): float
+  +anularFactura(): void
+}
+
+class DetalleFactura {
+  -id: int
+  -idFactura: int
+  -idProducto: int
+  -cantidad: int
+  -precioUnitario: float
+  -subtotal: float
+  +getSubtotal(): float
+}
+
+Usuario "1" -- "0..*" Factura : genera
+Factura "1" -- "1..*" DetalleFactura : contiene
+DetalleFactura "1" -- "1" Producto : referencia
+
+@enduml

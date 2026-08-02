@@ -1,0 +1,71 @@
+/*
+ * ERP - Tienda de Tecnologia
+ * Estilos visuales simples sobre Bootstrap 5.
+ *
+ * Este archivo contiene ajustes menores de estilo.
+ * La mayor parte del diseno responsivo lo maneja Bootstrap.
+ * El desarrollador puede modificar este archivo para
+ * personalizar la apariencia segun sus necesidades.
+ */
+
+/* ===== Ajustes generales ===== */
+body {
+    /* Fondo sutil para toda la pagina */
+    background-color: #f8f9fa;
+}
+
+/* ===== Tablas con hover mejorado ===== */
+.table-hover tbody tr:hover {
+    background-color: rgba(13, 110, 253, 0.05);
+}
+
+/* ===== Tarjetas (cards) ===== */
+.card {
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    transition: box-shadow 0.2s ease;
+}
+.card:hover {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* ===== Barra de navegacion ===== */
+.navbar {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+.navbar-brand {
+    letter-spacing: -0.5px;
+}
+
+/* ===== Badges ===== */
+.badge {
+    font-weight: 500;
+}
+
+/* ===== Footer ===== */
+footer {
+    font-size: 0.85rem;
+}
+
+/* ===== Ajustes responsive ===== */
+@media (max-width: 768px) {
+    /* En pantallas pequenas, reducir titulos */
+    h1 { font-size: 1.5rem; }
+    h2 { font-size: 1.25rem; }
+
+    /* Hacer tablas mas compactas */
+    .table {
+        font-size: 0.85rem;
+    }
+}
+
+/* ===== Progreso de stock ===== */
+.progress {
+    background-color: #e9ecef;
+    border-radius: 0.5rem;
+}
+
+/* ===== Mejora visual de alertas flash ===== */
+.alert {
+    border-radius: 0.5rem;
+    border: none;
+}

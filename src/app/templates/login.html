@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Iniciar Sesión — ERP TechStore{% endblock %}
+
+{% block content %}
+<!-- ============================================================ -->
+<!-- FORMULARIO DE LOGIN (RF01)                                   -->
+<!-- ============================================================ -->
+
+<div class="row justify-content-center">
+    <div class="col-md-5 col-lg-4">
+
+        <h1 class="mb-4 text-center">🔐 Iniciar Sesión</h1>
+
+        <div class="card shadow-sm">
+            <div class="card-body">
+
+                <form method="POST" action="{{ url_for('auth.login') }}">
+                    <!-- Email -->
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Correo Electrónico</label>
+                        <input type="email" name="email" id="email" class="form-control"
+                               placeholder="tu@email.com" required autofocus>
+                    </div>
+
+                    <!-- Contraseña -->
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Contraseña</label>
+                        <input type="password" name="password" id="password" class="form-control"
+                               placeholder="••••••••" required>
+                    </div>
+
+                    <!-- Botón -->
+                    <button type="submit" class="btn btn-primary w-100">
+                        Iniciar Sesión
+                    </button>
+                </form>
+
+            </div>
+        </div>
+
+        <!-- Enlace a registro -->
+        <p class="text-center mt-3">
+            ¿No tienes cuenta?
+            <a href="{{ url_for('auth.register') }}">Regístrate aquí</a>
+        </p>
+
+    </div>
+</div>
+
+{% endblock %}
