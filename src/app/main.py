@@ -6,7 +6,9 @@ Rutas publicas que no requieren autenticacion:
     GET /         -> Catalogo de productos con busqueda y filtro (RF03, RF04)
 """
 
-from flask import Blueprint, render_template, request
+from flask import Blueprint, redirect, render_template, request, url_for
+from flask_login import current_user
+
 from app.models import db, Producto
 
 main_bp = Blueprint('main', __name__)
@@ -20,10 +22,12 @@ def index():
     RF03: Muestra nombre, precio, stock y categoria de cada producto.
     RF04: Permite buscar por texto y filtrar por categoria.
 
-    Parametros de URL (opcionales):
-        q (str):          Texto de busqueda (busca en nombre y descripcion).
-        categoria (str):  Filtra productos de una categoria especifica.
+    Si el usuario no esta autenticado, se redirige al login.
     """
+    # Si no hay sesion activa, mostrar primero el login
+    if not current_user.is_authenticated:
+        return redirect(url_for('auth.login'))
+
     # Obtener parametros de busqueda desde la URL
     texto_busqueda = request.args.get('q', '').strip()
     categoria_filtro = request.args.get('categoria', '').strip()
