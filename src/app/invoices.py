@@ -42,7 +42,6 @@ def listar():
     if current_user.es_admin():
         facturas = Factura.query.order_by(Factura.fecha.desc()).all()
     else:
-        # Vendedor y cliente ven sus propias facturas
         facturas = (
             Factura.query
             .filter_by(id_usuario=current_user.id_usuario)
@@ -73,7 +72,7 @@ def crear():
               5. Calcular total.
               6. Confirmar (commit) o deshacer (rollback) todo junto.
     """
-    # Obtener cliente (admin/vendedor puede seleccionar cliente, cliente se asigna a si mismo)
+    # Obtener clientes para selector (admin/vendedor pueden elegir)
     clientes = None
     if current_user.es_admin() or current_user.get_rol() == 'vendedor':
         clientes = Usuario.query.order_by(Usuario.nombre).all()
@@ -108,8 +107,6 @@ def crear():
             return redirect(url_for('invoices.crear'))
 
         # --- Paso 2: Iniciar transaccion ACID ---
-        # SQLAlchemy maneja el BEGIN/COMMIT/ROLLBACK automaticamente
-        # con el contexto 'with db.session.begin_nested()' o usando try/except
         try:
             # Crear cabecera de factura
             factura = Factura(
@@ -150,7 +147,6 @@ def crear():
             factura.calcular_total()
 
             # --- Confirmar transaccion (COMMIT) ---
-            # Si llegamos aqui sin errores, todo se persiste atomicamente
             db.session.commit()
 
             flash(

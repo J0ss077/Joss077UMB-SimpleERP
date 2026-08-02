@@ -12,7 +12,8 @@ Rutas (solo admin):
     GET /reports/stock-bajo -> Reporte de productos con stock bajo (< 5 unidades)
 """
 
-from flask import Blueprint, render_template
+from functools import wraps
+from flask import Blueprint, render_template, redirect, url_for, flash
 from flask_login import login_required, current_user
 from app.models import db, Factura, Producto
 from sqlalchemy import func
@@ -25,9 +26,6 @@ reports_bp = Blueprint('reports', __name__, url_prefix='/reports')
 # ---------------------------------------------------------------------------
 def admin_requerido(f):
     """Verifica que el usuario actual tenga rol de administrador."""
-    from functools import wraps
-    from flask import redirect, url_for, flash
-
     @wraps(f)
     @login_required
     def decorated(*args, **kwargs):
@@ -46,7 +44,6 @@ def admin_requerido(f):
 @admin_requerido
 def index():
     """Muestra el panel principal de reportes con metricas resumidas."""
-    # Metricas rapidas para el panel
     total_productos = Producto.query.count()
     total_facturas = Factura.query.filter_by(estado='activa').count()
     productos_stock_bajo = Producto.query.filter(Producto.stock < 5).count()
@@ -69,17 +66,14 @@ def ventas():
     Reporte de ventas: muestra el total facturado, cantidad de facturas
     activas y desglose por factura.
     """
-    # Suma total de todas las facturas activas
     total_ventas = (
         db.session.query(func.sum(Factura.total))
         .filter(Factura.estado == 'activa')
         .scalar()
     ) or 0
 
-    # Total de facturas anuladas
     facturas_anuladas = Factura.query.filter_by(estado='anulada').count()
 
-    # Facturas activas con detalle
     facturas = (
         Factura.query
         .filter_by(estado='activa')

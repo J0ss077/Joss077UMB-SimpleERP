@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Iniciar Sesión — ERP TechStore{% endblock %}
+{% block title %}Iniciar Sesion — ERP TechStore{% endblock %}
 
 {% block content %}
 <!-- ============================================================ -->
@@ -9,29 +9,30 @@
 <div class="row justify-content-center">
     <div class="col-md-5 col-lg-4">
 
-        <h1 class="mb-4 text-center">🔐 Iniciar Sesión</h1>
+        <h1 class="mb-1 text-center">Iniciar Sesion</h1>
+        <p class="text-muted text-center mb-4">Ingrese sus credenciales para acceder al sistema.</p>
 
-        <div class="card shadow-sm">
-            <div class="card-body">
+        <div class="card">
+            <div class="card-body p-4">
 
                 <form method="POST" action="{{ url_for('auth.login') }}">
                     <!-- Email -->
                     <div class="mb-3">
-                        <label for="email" class="form-label">Correo Electrónico</label>
+                        <label for="email" class="form-label fw-semibold small text-uppercase text-muted">Correo Electronico</label>
                         <input type="email" name="email" id="email" class="form-control"
                                placeholder="tu@email.com" required autofocus>
                     </div>
 
-                    <!-- Contraseña -->
+                    <!-- Contrasena -->
                     <div class="mb-3">
-                        <label for="password" class="form-label">Contraseña</label>
+                        <label for="password" class="form-label fw-semibold small text-uppercase text-muted">Contrasena</label>
                         <input type="password" name="password" id="password" class="form-control"
-                               placeholder="••••••••" required>
+                               placeholder="········" required>
                     </div>
 
-                    <!-- Botón -->
-                    <button type="submit" class="btn btn-primary w-100">
-                        Iniciar Sesión
+                    <!-- Boton -->
+                    <button type="submit" class="btn btn-primary w-100 mt-2">
+                        Iniciar Sesion
                     </button>
                 </form>
 
@@ -39,9 +40,9 @@
         </div>
 
         <!-- Enlace a registro -->
-        <p class="text-center mt-3">
-            ¿No tienes cuenta?
-            <a href="{{ url_for('auth.register') }}">Regístrate aquí</a>
+        <p class="text-center mt-3 small">
+            No tiene cuenta?
+            <a href="{{ url_for('auth.register') }}">Registrese aqui</a>
         </p>
 
     </div>

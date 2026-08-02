@@ -9,42 +9,43 @@
 <div class="row justify-content-center">
     <div class="col-md-6 col-lg-5">
 
-        <h1 class="mb-4 text-center">📝 Crear Cuenta</h1>
+        <h1 class="mb-1 text-center">Crear Cuenta</h1>
+        <p class="text-muted text-center mb-4">Complete el formulario para registrarse en el sistema.</p>
 
-        <div class="card shadow-sm">
-            <div class="card-body">
+        <div class="card">
+            <div class="card-body p-4">
 
                 <form method="POST" action="{{ url_for('auth.register') }}">
                     <!-- Nombre -->
                     <div class="mb-3">
-                        <label for="nombre" class="form-label">Nombre Completo</label>
+                        <label for="nombre" class="form-label fw-semibold small text-uppercase text-muted">Nombre Completo</label>
                         <input type="text" name="nombre" id="nombre" class="form-control"
-                               placeholder="Tu nombre" required autofocus>
+                               placeholder="Su nombre" required autofocus>
                     </div>
 
                     <!-- Email -->
                     <div class="mb-3">
-                        <label for="email" class="form-label">Correo Electrónico</label>
+                        <label for="email" class="form-label fw-semibold small text-uppercase text-muted">Correo Electronico</label>
                         <input type="email" name="email" id="email" class="form-control"
                                placeholder="tu@email.com" required>
                     </div>
 
-                    <!-- Contraseña -->
+                    <!-- Contrasena -->
                     <div class="mb-3">
-                        <label for="password" class="form-label">Contraseña</label>
+                        <label for="password" class="form-label fw-semibold small text-uppercase text-muted">Contrasena</label>
                         <input type="password" name="password" id="password" class="form-control"
-                               placeholder="Mínimo 4 caracteres" required minlength="4">
+                               placeholder="Minimo 4 caracteres" required minlength="4">
                     </div>
 
-                    <!-- Confirmar contraseña -->
+                    <!-- Confirmar contrasena -->
                     <div class="mb-3">
-                        <label for="password_confirm" class="form-label">Confirmar Contraseña</label>
+                        <label for="password_confirm" class="form-label fw-semibold small text-uppercase text-muted">Confirmar Contrasena</label>
                         <input type="password" name="password_confirm" id="password_confirm" class="form-control"
-                               placeholder="Repite tu contraseña" required minlength="4">
+                               placeholder="Repita su contrasena" required minlength="4">
                     </div>
 
-                    <!-- Botón -->
-                    <button type="submit" class="btn btn-success w-100">
+                    <!-- Boton -->
+                    <button type="submit" class="btn btn-success w-100 mt-2">
                         Crear Cuenta
                     </button>
                 </form>
@@ -53,9 +54,9 @@
         </div>
 
         <!-- Enlace a login -->
-        <p class="text-center mt-3">
-            ¿Ya tienes cuenta?
-            <a href="{{ url_for('auth.login') }}">Inicia sesión aquí</a>
+        <p class="text-center mt-3 small">
+            Ya tiene cuenta?
+            <a href="{{ url_for('auth.login') }}">Inicie sesion aqui</a>
         </p>
 
     </div>

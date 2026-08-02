@@ -7,20 +7,23 @@
 <!-- ============================================================ -->
 
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <h1>🧾 Factura #{{ factura.id_factura }}</h1>
     <div>
+        <h1 class="mb-0">Factura #{{ factura.id_factura }}</h1>
+        <p class="text-muted small mb-0">Emitida el {{ factura.fecha.strftime('%d/%m/%Y a las %H:%M:%S') }}.</p>
+    </div>
+    <div class="d-flex gap-2">
         {% if not factura.esta_anulada() and current_user.es_admin() %}
             <form method="POST"
                   action="{{ url_for('invoices.anular', factura_id=factura.id_factura) }}"
-                  onsubmit="return confirm('¿Estás seguro de anular esta factura? El stock será revertido.')"
+                  onsubmit="return confirm('Esta seguro de anular esta factura? El stock sera revertido.')"
                   style="display:inline;">
                 <button type="submit" class="btn btn-danger">
-                    ❌ Anular Factura
+                    Anular Factura
                 </button>
             </form>
         {% endif %}
         <a href="{{ url_for('invoices.listar') }}" class="btn btn-outline-secondary">
-            ← Volver
+            &larr; Volver
         </a>
     </div>
 </div>
@@ -28,32 +31,32 @@
 <div class="row">
     <!-- Datos de cabecera -->
     <div class="col-md-4">
-        <div class="card shadow-sm mb-3">
+        <div class="card mb-3">
             <div class="card-header bg-dark text-white">
-                <h6 class="mb-0">📋 Información General</h6>
+                <h6 class="mb-0">Informacion General</h6>
             </div>
             <div class="card-body">
-                <table class="table table-sm table-borderless mb-0">
+                <table class="table table-sm table-borderless mb-0 small">
                     <tr>
-                        <th class="text-muted">Factura #:</th>
-                        <td>{{ factura.id_factura }}</td>
+                        <th class="text-muted text-uppercase small">Factura #</th>
+                        <td class="fw-semibold">{{ factura.id_factura }}</td>
                     </tr>
                     <tr>
-                        <th class="text-muted">Fecha:</th>
-                        <td>{{ factura.fecha.strftime('%d/%m/%Y %H:%M:%S') }}</td>
+                        <th class="text-muted text-uppercase small">Fecha</th>
+                        <td>{{ factura.fecha.strftime('%d/%m/%Y %H:%M') }}</td>
                     </tr>
                     <tr>
-                        <th class="text-muted">Cliente:</th>
+                        <th class="text-muted text-uppercase small">Cliente</th>
                         <td>{{ factura.usuario.nombre }}</td>
                     </tr>
                     <tr>
-                        <th class="text-muted">Email:</th>
+                        <th class="text-muted text-uppercase small">Email</th>
                         <td>{{ factura.usuario.email }}</td>
                     </tr>
                     <tr>
-                        <th class="text-muted">Estado:</th>
+                        <th class="text-muted text-uppercase small">Estado</th>
                         <td>
-                            <span class="badge {% if factura.esta_anulada() %}bg-danger{% else %}bg-success{% endif %} fs-6">
+                            <span class="badge {% if factura.esta_anulada() %}bg-danger{% else %}bg-success{% endif %}">
                                 {{ factura.estado | capitalize }}
                             </span>
                         </td>
@@ -65,37 +68,37 @@
 
     <!-- Detalle de productos -->
     <div class="col-md-8">
-        <div class="card shadow-sm">
+        <div class="card">
             <div class="card-header bg-dark text-white">
-                <h6 class="mb-0">🛒 Detalle de Productos</h6>
+                <h6 class="mb-0">Detalle de Productos</h6>
             </div>
             <div class="card-body p-0">
                 <table class="table table-striped mb-0">
-                    <thead class="table-light">
+                    <thead>
                         <tr>
-                            <th>Producto</th>
-                            <th class="text-center">Cantidad</th>
-                            <th class="text-end">Precio Unitario</th>
-                            <th class="text-end">Subtotal</th>
+                            <th class="ps-3">Producto</th>
+                            <th class="text-center">Cant.</th>
+                            <th class="text-end">Precio Unit.</th>
+                            <th class="text-end pe-3">Subtotal</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for detalle in factura.detalles %}
                             <tr>
-                                <td>
-                                    <strong>{{ detalle.producto.nombre }}</strong>
+                                <td class="ps-3">
+                                    <span class="fw-semibold">{{ detalle.producto.nombre }}</span>
                                     <br><small class="text-muted">{{ detalle.producto.categoria or '' }}</small>
                                 </td>
                                 <td class="text-center">{{ detalle.cantidad }}</td>
                                 <td class="text-end">${{ "%.2f"|format(detalle.precio_unitario | float) }}</td>
-                                <td class="text-end fw-bold">${{ "%.2f"|format(detalle.get_subtotal()) }}</td>
+                                <td class="text-end pe-3 fw-bold">${{ "%.2f"|format(detalle.get_subtotal()) }}</td>
                             </tr>
                         {% endfor %}
                     </tbody>
                     <tfoot class="table-dark">
                         <tr>
-                            <td colspan="3" class="text-end fw-bold fs-5">TOTAL (RF08):</td>
-                            <td class="text-end fw-bold fs-4 text-warning">
+                            <td colspan="3" class="text-end fw-bold fs-6 pe-2">TOTAL (RF08):</td>
+                            <td class="text-end fw-bold fs-4 pe-3 text-warning">
                                 ${{ "%.2f"|format(factura.get_total()) }}
                             </td>
                         </tr>

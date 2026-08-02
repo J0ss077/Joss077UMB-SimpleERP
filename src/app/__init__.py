@@ -77,8 +77,8 @@ def _registrar_blueprints(app):
     from app.invoices import invoices_bp
     from app.reports import reports_bp
 
-    app.register_blueprint(main_bp)           # Rutas publicas (/, /catalogo)
-    app.register_blueprint(auth_bp)           # Rutas /auth/*
-    app.register_blueprint(products_bp)       # Rutas /products/*
-    app.register_blueprint(invoices_bp)       # Rutas /invoices/*
-    app.register_blueprint(reports_bp)        # Rutas /reports/*
+    app.register_blueprint(main_bp)
+    app.register_blueprint(auth_bp)
+    app.register_blueprint(products_bp)
+    app.register_blueprint(invoices_bp)
+    app.register_blueprint(reports_bp)

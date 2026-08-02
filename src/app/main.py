@@ -61,5 +61,3 @@ def index():
         texto_busqueda=texto_busqueda,
         categoria_filtro=categoria_filtro
     )
-
-

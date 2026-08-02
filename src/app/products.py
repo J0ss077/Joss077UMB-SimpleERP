@@ -6,7 +6,7 @@ RF05: Admin puede registrar, editar y eliminar productos (CRUD).
 RF06: Consulta de stock disponible de un producto.
 
 Rutas (requieren autenticacion):
-    GET    /products/            -> Listado de productos (admin)
+    GET    /products/            -> Listado de productos
     GET    /products/<id>/stock  -> Consulta de stock (RF06)
     GET    /products/crear       -> Formulario de nuevo producto
     POST   /products/crear       -> Procesar creacion de producto
@@ -15,6 +15,7 @@ Rutas (requieren autenticacion):
     POST   /products/<id>/eliminar -> Eliminar producto
 """
 
+from functools import wraps
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_required, current_user
 from app.models import db, Producto
@@ -29,15 +30,7 @@ def admin_requerido(f):
     """
     Decorador que verifica si el usuario actual es administrador.
     Si no lo es, redirige al catalogo con un mensaje de error.
-
-    Uso:
-        @products_bp.route('/ruta-admin')
-        @admin_requerido
-        def funcion_admin():
-            ...
     """
-    from functools import wraps
-
     @wraps(f)
     @login_required
     def decorated(*args, **kwargs):
@@ -50,7 +43,7 @@ def admin_requerido(f):
 
 
 # ---------------------------------------------------------------------------
-# LISTADO DE PRODUCTOS (admin) - RF05
+# LISTADO DE PRODUCTOS - RF05
 # ---------------------------------------------------------------------------
 @products_bp.route('/')
 @login_required
@@ -217,7 +210,7 @@ def eliminar(producto_id):
         db.session.rollback()
         flash(
             'No se puede eliminar el producto porque tiene facturas asociadas. '
-            'Elimina primero las facturas o considera descontinuarlo en su lugar.',
+            'Elimine primero las facturas o considere descontinuarlo en su lugar.',
             'error'
         )
 

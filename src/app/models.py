@@ -44,7 +44,6 @@ class Usuario(UserMixin, db.Model):
     rol = db.Column(db.String(20), nullable=False)
 
     # --- Relaciones ---
-    # Un usuario puede tener muchas facturas asociadas
     facturas = db.relationship('Factura', backref='usuario', lazy=True)
 
     # === Metodos requeridos por Flask-Login ===
@@ -106,7 +105,6 @@ class Producto(db.Model):
     categoria = db.Column(db.String(100))
 
     # --- Relaciones ---
-    # Un producto puede aparecer en multiples lineas de detalle de factura
     detalles = db.relationship('DetalleFactura', backref='producto', lazy=True)
 
     # === Metodos del modelo de clases ===
@@ -168,12 +166,11 @@ class Factura(db.Model):
     estado = db.Column(db.String(20), nullable=False, default='activa')
 
     # --- Relaciones ---
-    # Una factura contiene uno o mas detalles (lineas de productos)
     detalles = db.relationship(
         'DetalleFactura',
         backref='factura',
         lazy=True,
-        cascade='all, delete-orphan'  # Al borrar factura, borra sus detalles
+        cascade='all, delete-orphan'
     )
 
     # === Metodos del modelo de clases ===

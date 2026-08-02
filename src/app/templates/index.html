@@ -1,31 +1,31 @@
 {% extends "base.html" %}
-{% block title %}Catálogo — ERP TechStore{% endblock %}
+{% block title %}Catalogo — ERP TechStore{% endblock %}
 
 {% block content %}
 <!-- ============================================================ -->
-<!-- CATÁLOGO PÚBLICO DE PRODUCTOS (RF03, RF04)                   -->
+<!-- CATALOGO PUBLICO DE PRODUCTOS (RF03, RF04)                   -->
 <!-- ============================================================ -->
 
-<h1 class="mb-3">📦 Catálogo de Productos</h1>
-<p class="text-muted">Explora nuestros productos de tecnología. Usa los filtros para encontrar lo que buscas.</p>
+<h1 class="mb-1">Catalogo de Productos</h1>
+<p class="text-muted mb-4">Explore nuestros productos de tecnologia. Use los filtros para encontrar lo que busca.</p>
 
-<!-- ===== Barra de búsqueda y filtros (RF04) ===== -->
-<div class="card mb-4 shadow-sm">
+<!-- ===== Barra de busqueda y filtros (RF04) ===== -->
+<div class="card mb-4">
     <div class="card-body">
         <form method="GET" action="{{ url_for('main.index') }}" class="row g-3">
-            <!-- Campo de búsqueda por texto -->
+            <!-- Campo de busqueda por texto -->
             <div class="col-md-6">
-                <label for="q" class="form-label">🔍 Buscar</label>
+                <label for="q" class="form-label fw-semibold small text-uppercase text-muted">Buscar</label>
                 <input type="text" name="q" id="q" class="form-control"
                        placeholder="Ej: laptop, mouse, SSD..."
                        value="{{ texto_busqueda }}">
             </div>
 
-            <!-- Filtro por categoría -->
+            <!-- Filtro por categoria -->
             <div class="col-md-4">
-                <label for="categoria" class="form-label">📂 Categoría</label>
+                <label for="categoria" class="form-label fw-semibold small text-uppercase text-muted">Categoria</label>
                 <select name="categoria" id="categoria" class="form-select">
-                    <option value="">— Todas las categorías —</option>
+                    <option value="">-- Todas las categorias --</option>
                     {% for cat in categorias %}
                         <option value="{{ cat }}" {% if categoria_filtro == cat %}selected{% endif %}>
                             {{ cat }}
@@ -47,41 +47,42 @@
 
 <!-- ===== Resultados ===== -->
 {% if productos %}
-    <p class="text-muted">{{ productos|length }} producto(s) encontrado(s).</p>
+    <p class="text-muted small">{{ productos|length }} producto(s) encontrado(s).</p>
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
         {% for producto in productos %}
             <div class="col">
-                <div class="card h-100 shadow-sm {% if producto.stock == 0 %}border-danger{% endif %}">
-                    <div class="card-body">
-                        <!-- Nombre y categoría -->
-                        <h5 class="card-title">{{ producto.nombre }}</h5>
-                        <span class="badge bg-secondary mb-2">{{ producto.categoria or 'Sin categoría' }}</span>
-
-                        <!-- Descripción -->
-                        {% if producto.descripcion %}
-                            <p class="card-text text-muted small">{{ producto.descripcion[:120] }}{% if producto.descripcion|length > 120 %}...{% endif %}</p>
-                        {% endif %}
-
-                        <!-- Precio y stock -->
-                        <div class="d-flex justify-content-between align-items-center mt-3">
-                            <span class="fs-4 fw-bold text-primary">${{ "%.2f"|format(producto.get_precio()) }}</span>
-                            <span class="badge {% if producto.stock > 10 %}bg-success{% elif producto.stock > 0 %}bg-warning text-dark{% else %}bg-danger{% endif %}">
-                                {% if producto.stock > 0 %}
-                                    Stock: {{ producto.stock }}
-                                {% else %}
-                                    Agotado
-                                {% endif %}
-                            </span>
-                        </div>
+                <!-- Producto cliqueable: redirige a consulta de stock -->
+                <a href="{{ url_for('products.ver_stock', producto_id=producto.id_producto) }}"
+                   class="producto-card">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <h5 class="card-title mb-0">{{ producto.nombre }}</h5>
+                        <span class="badge bg-secondary">{{ producto.categoria or 'Sin categoria' }}</span>
                     </div>
-                </div>
+
+                    {% if producto.descripcion %}
+                        <p class="text-muted small mb-3">
+                            {{ producto.descripcion[:120] }}{% if producto.descripcion|length > 120 %}...{% endif %}
+                        </p>
+                    {% endif %}
+
+                    <div class="d-flex justify-content-between align-items-center mt-auto">
+                        <span class="precio fs-5">${{ "%.2f"|format(producto.get_precio()) }}</span>
+                        <span class="badge {% if producto.stock > 10 %}bg-success{% elif producto.stock > 0 %}bg-warning text-dark{% else %}bg-danger{% endif %}">
+                            {% if producto.stock > 0 %}
+                                Stock: {{ producto.stock }}
+                            {% else %}
+                                Agotado
+                            {% endif %}
+                        </span>
+                    </div>
+                </a>
             </div>
         {% endfor %}
     </div>
 {% else %}
-    <div class="alert alert-info text-center py-4">
-        <h4>😕 No se encontraron productos</h4>
-        <p>Intenta con otros términos de búsqueda o limpia los filtros.</p>
+    <div class="alert alert-info text-center py-5">
+        <h4 class="mb-2">Sin resultados</h4>
+        <p class="mb-0">No se encontraron productos con los filtros actuales. Intente con otros terminos o limpie los filtros.</p>
     </div>
 {% endif %}
 

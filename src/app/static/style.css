@@ -1,71 +1,219 @@
 /*
  * ERP - Tienda de Tecnologia
- * Estilos visuales simples sobre Bootstrap 5.
+ * Tema profesional estilo oficina con animaciones sutiles.
  *
- * Este archivo contiene ajustes menores de estilo.
- * La mayor parte del diseno responsivo lo maneja Bootstrap.
- * El desarrollador puede modificar este archivo para
- * personalizar la apariencia segun sus necesidades.
+ * Paleta:
+ *   - Fondo general:     #f4f6f9 (gris azulado claro)
+ *   - Blanco cards:      #ffffff
+ *   - Acento primario:   #1a56db (azul corporativo)
+ *   - Texto principal:   #1e293b (slate oscuro)
+ *   - Texto secundario:  #64748b (slate medio)
+ *   - Borde sutil:       #e2e8f0
  */
 
-/* ===== Ajustes generales ===== */
+/* ===== Reset y base ===== */
 body {
-    /* Fondo sutil para toda la pagina */
-    background-color: #f8f9fa;
+    background-color: #f4f6f9;
+    color: #1e293b;
+    font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+    transition: background-color 0.3s ease;
 }
 
-/* ===== Tablas con hover mejorado ===== */
-.table-hover tbody tr:hover {
-    background-color: rgba(13, 110, 253, 0.05);
+a {
+    color: #1a56db;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+a:hover {
+    color: #1040b0;
 }
 
-/* ===== Tarjetas (cards) ===== */
-.card {
-    border: 1px solid rgba(0, 0, 0, 0.08);
-    transition: box-shadow 0.2s ease;
-}
-.card:hover {
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1) !important;
-}
-
-/* ===== Barra de navegacion ===== */
+/* ===== Navbar profesional ===== */
 .navbar {
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    border-bottom: 1px solid #e2e8f0;
 }
 .navbar-brand {
-    letter-spacing: -0.5px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+    font-size: 1.15rem;
+}
+
+/* ===== Cards ===== */
+.card {
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    background: #ffffff;
+    transition: box-shadow 0.25s ease, transform 0.25s ease, border-color 0.25s ease;
+}
+.card:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.07);
+    border-color: #cbd5e1;
+}
+.card-header {
+    border-bottom: 1px solid #e2e8f0;
+    font-weight: 600;
+}
+
+/* ===== Tablas ===== */
+.table {
+    border-collapse: separate;
+    border-spacing: 0;
+}
+.table thead th {
+    font-weight: 600;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid #e2e8f0;
+    color: #64748b;
+    background: #f8fafc;
+}
+.table-hover tbody tr {
+    transition: background-color 0.15s ease;
+}
+.table-hover tbody tr:hover {
+    background-color: #f1f5f9;
 }
 
 /* ===== Badges ===== */
 .badge {
     font-weight: 500;
+    letter-spacing: 0.2px;
+    border-radius: 4px;
+    padding: 0.35em 0.65em;
+}
+
+/* ===== Botones ===== */
+.btn {
+    font-weight: 500;
+    letter-spacing: 0.2px;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+.btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+.btn:active {
+    transform: translateY(0);
+}
+.btn-primary {
+    background-color: #1a56db;
+    border-color: #1a56db;
+}
+.btn-primary:hover {
+    background-color: #1040b0;
+    border-color: #1040b0;
+}
+
+/* ===== Formularios ===== */
+.form-control, .form-select {
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.form-control:focus, .form-select:focus {
+    border-color: #1a56db;
+    box-shadow: 0 0 0 3px rgba(26, 86, 219, 0.12);
+}
+
+/* ===== Alertas ===== */
+.alert {
+    border: none;
+    border-radius: 8px;
+    border-left: 4px solid transparent;
+    animation: slideDown 0.3s ease;
+}
+.alert-success { border-left-color: #16a34a; }
+.alert-danger  { border-left-color: #dc2626; }
+.alert-info    { border-left-color: #2563eb; }
+.alert-warning { border-left-color: #d97706; }
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ===== Catalogo: tarjetas de producto cliqueables ===== */
+.producto-card {
+    display: block;
+    color: inherit;
+    text-decoration: none;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    background: #ffffff;
+    padding: 1.25rem;
+    height: 100%;
+    transition: box-shadow 0.3s ease, transform 0.3s ease, border-color 0.3s ease;
+}
+.producto-card:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.10);
+    transform: translateY(-3px);
+    border-color: #1a56db;
+    color: inherit;
+}
+.producto-card .precio {
+    color: #1a56db;
+    font-weight: 700;
+}
+
+/* ===== Progress bar (stock) ===== */
+.progress {
+    background-color: #f1f5f9;
+    border-radius: 6px;
+    overflow: hidden;
+}
+.progress-bar {
+    transition: width 0.5s ease;
 }
 
 /* ===== Footer ===== */
 footer {
-    font-size: 0.85rem;
+    font-size: 0.8rem;
+    color: #94a3b8;
+    border-top: 1px solid #e2e8f0 !important;
 }
 
-/* ===== Ajustes responsive ===== */
+/* ===== Panel de metricas ===== */
+.metrica-card {
+    text-align: center;
+    padding: 1.5rem;
+}
+.metrica-card .valor {
+    font-size: 2.5rem;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+/* ===== Fila de factura anulada ===== */
+.fila-anulada {
+    opacity: 0.55;
+    transition: opacity 0.3s ease;
+}
+.fila-anulada:hover {
+    opacity: 0.8;
+}
+
+/* ===== Animacion de entrada para filas de tablas ===== */
+@keyframes fadeInRow {
+    from { opacity: 0; transform: translateX(-6px); }
+    to   { opacity: 1; transform: translateX(0); }
+}
+.table tbody tr {
+    animation: fadeInRow 0.3s ease forwards;
+}
+
+/* ===== Responsive ===== */
 @media (max-width: 768px) {
-    /* En pantallas pequenas, reducir titulos */
-    h1 { font-size: 1.5rem; }
-    h2 { font-size: 1.25rem; }
-
-    /* Hacer tablas mas compactas */
-    .table {
-        font-size: 0.85rem;
-    }
-}
-
-/* ===== Progreso de stock ===== */
-.progress {
-    background-color: #e9ecef;
-    border-radius: 0.5rem;
-}
-
-/* ===== Mejora visual de alertas flash ===== */
-.alert {
-    border-radius: 0.5rem;
-    border: none;
+    h1 { font-size: 1.4rem; }
+    h2 { font-size: 1.15rem; }
+    .table { font-size: 0.82rem; }
+    .metrica-card .valor { font-size: 1.8rem; }
 }

@@ -9,51 +9,52 @@
 <div class="row justify-content-center">
     <div class="col-md-8 col-lg-6">
 
-        <h1 class="mb-4">✏️ Editar Producto #{{ producto.id_producto }}</h1>
+        <h1 class="mb-1">Editar Producto #{{ producto.id_producto }}</h1>
+        <p class="text-muted mb-4">Modifique los datos del producto en el inventario.</p>
 
-        <div class="card shadow-sm">
-            <div class="card-body">
+        <div class="card">
+            <div class="card-body p-4">
 
                 <form method="POST" action="{{ url_for('products.editar', producto_id=producto.id_producto) }}">
                     <!-- Nombre -->
                     <div class="mb-3">
-                        <label for="nombre" class="form-label">Nombre del Producto *</label>
+                        <label for="nombre" class="form-label fw-semibold small text-uppercase text-muted">Nombre del Producto *</label>
                         <input type="text" name="nombre" id="nombre" class="form-control"
                                value="{{ producto.nombre }}" required autofocus>
                     </div>
 
-                    <!-- Descripción -->
+                    <!-- Descripcion -->
                     <div class="mb-3">
-                        <label for="descripcion" class="form-label">Descripción</label>
+                        <label for="descripcion" class="form-label fw-semibold small text-uppercase text-muted">Descripcion</label>
                         <textarea name="descripcion" id="descripcion" class="form-control" rows="3">{{ producto.descripcion or '' }}</textarea>
                     </div>
 
                     <!-- Precio y Stock -->
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label for="precio" class="form-label">Precio ($) *</label>
+                            <label for="precio" class="form-label fw-semibold small text-uppercase text-muted">Precio ($) *</label>
                             <input type="number" name="precio" id="precio" class="form-control"
                                    value="{{ "%.2f"|format(producto.get_precio()) }}"
                                    step="0.01" min="0" required>
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label for="stock" class="form-label">Stock *</label>
+                            <label for="stock" class="form-label fw-semibold small text-uppercase text-muted">Stock *</label>
                             <input type="number" name="stock" id="stock" class="form-control"
                                    value="{{ producto.stock }}" min="0" required>
                         </div>
                     </div>
 
-                    <!-- Categoría -->
+                    <!-- Categoria -->
                     <div class="mb-3">
-                        <label for="categoria" class="form-label">Categoría</label>
+                        <label for="categoria" class="form-label fw-semibold small text-uppercase text-muted">Categoria</label>
                         <input type="text" name="categoria" id="categoria" class="form-control"
                                value="{{ producto.categoria or '' }}">
                     </div>
 
                     <!-- Botones -->
-                    <div class="d-flex gap-2">
+                    <div class="d-flex gap-2 mt-3">
                         <button type="submit" class="btn btn-warning">
-                            💾 Guardar Cambios
+                            Guardar Cambios
                         </button>
                         <a href="{{ url_for('products.listar') }}" class="btn btn-outline-secondary">
                             Cancelar

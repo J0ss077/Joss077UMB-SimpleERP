@@ -6,35 +6,36 @@
 <!-- PANEL DE REPORTES (RF12)                                     -->
 <!-- ============================================================ -->
 
-<h1 class="mb-4">📈 Panel de Reportes</h1>
+<h1 class="mb-1">Panel de Reportes</h1>
+<p class="text-muted mb-4">Metricas y reportes del sistema.</p>
 
 <div class="row g-4 mb-4">
     <!-- Tarjeta: Total Productos -->
     <div class="col-md-4">
-        <div class="card shadow-sm text-center border-primary">
+        <div class="card metrica-card border-top border-3 border-primary">
             <div class="card-body">
-                <h5 class="text-muted">📦 Productos Registrados</h5>
-                <p class="display-4 fw-bold text-primary">{{ total_productos }}</p>
+                <h6 class="text-muted small text-uppercase mb-2">Productos Registrados</h6>
+                <p class="valor text-primary mb-0">{{ total_productos }}</p>
             </div>
         </div>
     </div>
 
     <!-- Tarjeta: Total Facturas Activas -->
     <div class="col-md-4">
-        <div class="card shadow-sm text-center border-success">
+        <div class="card metrica-card border-top border-3 border-success">
             <div class="card-body">
-                <h5 class="text-muted">🧾 Facturas Activas</h5>
-                <p class="display-4 fw-bold text-success">{{ total_facturas }}</p>
+                <h6 class="text-muted small text-uppercase mb-2">Facturas Activas</h6>
+                <p class="valor text-success mb-0">{{ total_facturas }}</p>
             </div>
         </div>
     </div>
 
     <!-- Tarjeta: Productos Stock Bajo -->
     <div class="col-md-4">
-        <div class="card shadow-sm text-center {% if productos_stock_bajo > 0 %}border-danger{% else %}border-success{% endif %}">
+        <div class="card metrica-card border-top border-3 border-{% if productos_stock_bajo > 0 %}danger{% else %}success{% endif %}">
             <div class="card-body">
-                <h5 class="text-muted">⚠️ Stock Bajo (&lt;5)</h5>
-                <p class="display-4 fw-bold {% if productos_stock_bajo > 0 %}text-danger{% else %}text-success{% endif %}">
+                <h6 class="text-muted small text-uppercase mb-2">Stock Bajo (&lt;5)</h6>
+                <p class="valor text-{% if productos_stock_bajo > 0 %}danger{% else %}success{% endif %} mb-0">
                     {{ productos_stock_bajo }}
                 </p>
             </div>
@@ -42,27 +43,27 @@
     </div>
 </div>
 
-<!-- Accesos rápidos -->
+<!-- Accesos rapidos -->
 <div class="row g-4">
     <div class="col-md-6">
-        <div class="card shadow-sm">
-            <div class="card-body text-center py-4">
-                <h3>💰 Reporte de Ventas</h3>
+        <div class="card">
+            <div class="card-body text-center py-5">
+                <h3>Reporte de Ventas</h3>
                 <p class="text-muted">Total facturado, facturas activas y anuladas.</p>
-                <a href="{{ url_for('reports.ventas') }}" class="btn btn-primary btn-lg">
-                    Ver Reporte de Ventas →
+                <a href="{{ url_for('reports.ventas') }}" class="btn btn-primary btn-lg mt-2">
+                    Ver Reporte de Ventas
                 </a>
             </div>
         </div>
     </div>
 
     <div class="col-md-6">
-        <div class="card shadow-sm">
-            <div class="card-body text-center py-4">
-                <h3>📉 Reporte de Stock Bajo</h3>
+        <div class="card">
+            <div class="card-body text-center py-5">
+                <h3>Reporte de Stock Bajo</h3>
                 <p class="text-muted">Productos que necesitan reabastecimiento urgente.</p>
-                <a href="{{ url_for('reports.stock_bajo') }}" class="btn btn-warning btn-lg">
-                    Ver Stock Bajo →
+                <a href="{{ url_for('reports.stock_bajo') }}" class="btn btn-warning btn-lg mt-2">
+                    Ver Stock Bajo
                 </a>
             </div>
         </div>
