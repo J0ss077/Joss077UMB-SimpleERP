@@ -1,58 +1,97 @@
-@startuml ERP_Arquitectura
-
-title Arquitectura ERP - Tienda de Tecnologia (Sistema Transaccional)
-
+@startuml Arquitectura_ERP_TechStore
+title Arquitectura del Sistema Transaccional - ERP TechStore
 skinparam componentStyle rectangle
-skinparam linetype ortho
-
-actor Cliente
-actor Administrador
-
-package "Capa de Presentacion" {
-  [Pagina Web (Catalogo)] as Web
-  [Panel Admin] as PanelAdmin
+skinparam defaultFontName Helvetica
+skinparam component {
+  BackgroundColor #eef4ff
+  BorderColor #2563eb
+  FontColor #0f172a
+}
+skinparam database {
+  BackgroundColor #ecfdf5
+  BorderColor #059669
+}
+skinparam actor {
+  BackgroundColor #fef3c7
+  BorderColor #d97706
 }
 
-package "Capa de Negocio (API / Backend)" {
-  [Modulo Autenticacion] as Auth
-  [Modulo Facturacion] as Facturacion
-  [Modulo Inventario] as Inventario
-  [API Gateway] as Gateway
+' ===== Actores =====
+actor "Admin" as A1
+actor "Vendedor" as A2
+actor "Cliente" as A3
+
+' ===== Capa de presentacion =====
+package "Capa de Presentacion (Navegador)" {
+  component "Plantillas Jinja2\n(HTML server-side)" as UI
+  component "CSS + JS vanilla\n(tema claro/oscuro,\nanimaciones)" as FRONT
 }
 
-package "Capa de Datos" {
-  database "Base de Datos\n(MySQL/PostgreSQL)" as BD {
-    [Usuarios]
-    [Productos]
-    [Facturas]
-    [Detalle_Factura]
-  }
+' ===== Capa de aplicacion (Flask) =====
+package "Capa de Aplicacion - Flask (Blueprints)" {
+  component "main.py\nPortal y Catalogo" as MAIN
+  component "auth.py\nLogin / Registro" as AUTH
+  component "tienda.py\nCarrito, favoritos,\ncheckout 2 pasos,\nrecompra" as TIE
+  component "invoices.py\nFacturacion:\ncrear_factura_transaccional()\n(transaccion ACID)" as INV
+  component "products.py\nInventario CRUD" as PROD
+  component "perfil.py\nPerfil de usuario" as PERF
+  component "usuarios.py\nGestion usuarios" as USU
+  component "reports.py\nReportes + CSV" as REP
 }
 
-cloud "Servicios Externos" {
-  [Pasarela de Pago] as Pago
+' ===== Capa de datos =====
+package "Capa de Datos (SQLAlchemy ORM)" {
+  component "models.py\nUsuario, Producto, Factura,\nDetalleFactura,\nCarritoItem, Favorito" as MODELS
+  component "config.py\nDATABASE_URL, SECRET_KEY" as CONFIG
 }
 
-Cliente --> Web : consulta productos
-Administrador --> PanelAdmin : gestiona inventario/usuarios
+database "Base de Datos\nPostgreSQL 16 (Docker)\no SQLite (local)" as DB {
+  entity "usuarios" as T1
+  entity "productos" as T2
+  entity "facturas" as T3
+  entity "detalle_factura" as T4
+  entity "carrito_items" as T5
+  entity "favoritos" as T6
+  T1 -- T3
+  T1 -- T5
+  T1 -- T6
+  T3 -- T4
+  T2 -- T4
+  T2 -- T5
+  T2 -- T6
+}
 
-Web --> Gateway : peticiones HTTP/REST
-PanelAdmin --> Gateway : peticiones HTTP/REST
+' ===== Flujo transaccional =====
+A1 --> UI
+A2 --> UI
+A3 --> UI
+UI --> MAIN : HTTP GET/POST
+UI --> AUTH
+UI --> TIE : HTTP GET/POST
+UI --> INV
+UI --> PROD
+UI --> PERF
+UI --> USU
+UI --> REP
+UI --> FRONT : carga estilos y scripts
 
-Gateway --> Auth : valida sesion
-Gateway --> Facturacion : procesa venta
-Gateway --> Inventario : consulta/actualiza stock
+TIE --> INV : crear_factura_transaccional(\nid_cliente, lineas_venta, envio)
+INV --> DB : BEGIN / COMMIT / ROLLBACK\n(insert factura + detalle\n+ descuento de stock\n= 1 sola operacion atomica)
 
-Auth --> BD : lee/escribe Usuarios
-Facturacion --> BD : lee/escribe Facturas, Detalle_Factura
-Inventario --> BD : lee/escribe Productos
+MAIN --> MODELS
+AUTH --> MODELS
+TIE --> MODELS
+INV --> MODELS
+PROD --> MODELS
+PERF --> MODELS
+USU --> MODELS
+REP --> MODELS
+MODELS --> DB : SQLAlchemy (ORM)
+CONFIG --> MODELS : configuracion
+CONFIG --> DB : URI de conexion
 
-Facturacion --> Pago : solicita cobro
-
-note right of Facturacion
-  Transaccion ACID:
-  factura + descuento stock
-  ocurren juntos o ninguno
-end note
+artifact "static/uploads/\nimagenes de productos\ny fotos de perfil" as UP
+PROD --> UP
+PERF --> UP
 
 @enduml
