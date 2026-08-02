@@ -1,48 +1,49 @@
 /*
  * ERP - Tienda de Tecnologia
- * Tema profesional estilo oficina con animaciones sutiles.
- * Soporta modo claro (default) y modo oscuro mediante CSS variables.
- * El tema se controla con el atributo data-theme en <html>.
+ * Tema profesional con modo claro/oscuro (CSS variables + data-theme).
  *
  * Paleta (claro):
- *   - Fondo general:     #f4f6f9 (gris azulado claro)
- *   - Blanco cards:      #ffffff
- *   - Acento primario:   #1a56db (azul corporativo)
- *   - Texto principal:   #1e293b (slate oscuro)
- *   - Texto secundario:  #64748b (slate medio)
- *   - Borde sutil:       #e2e8f0
+ *   - Fondo:            #f5f7fb (gris azulado claro)
+ *   - Cards:            #ffffff
+ *   - Acento gradiente: #2563eb -> #7c3aed (azul -> violeta)
+ *   - Texto:            #0f172a / secundario #64748b
+ *   - Bordes:           #e2e8f0
  */
 
 :root {
-    --bg: #f4f6f9;
+    --bg: #f5f7fb;
     --bg-card: #ffffff;
-    --bg-soft: #f8fafc;
-    --text: #1e293b;
+    --bg-soft: #f1f5f9;
+    --text: #0f172a;
     --text-muted: #64748b;
     --border: #e2e8f0;
     --border-hover: #cbd5e1;
-    --accent: #1a56db;
-    --accent-hover: #1040b0;
+    --accent: #2563eb;
+    --accent-2: #7c3aed;
+    --accent-hover: #1d4ed8;
     --row-hover: #f1f5f9;
-    --track: #f1f5f9;
+    --track: #e9eef5;
     --footer-bg: #ffffff;
-    --shadow: rgba(0, 0, 0, 0.08);
+    --navbar-bg: rgba(15, 23, 42, 0.92);
+    --shadow: rgba(15, 23, 42, 0.10);
 }
 
 html[data-theme="dark"] {
-    --bg: #0f172a;
-    --bg-card: #1e293b;
-    --bg-soft: #1b2740;
-    --text: #e2e8f0;
-    --text-muted: #94a3b8;
-    --border: #334155;
-    --border-hover: #475569;
+    --bg: #0b1220;
+    --bg-card: #111a2e;
+    --bg-soft: #0f1a30;
+    --text: #e6ebf5;
+    --text-muted: #93a3c4;
+    --border: #243352;
+    --border-hover: #33466e;
     --accent: #3b82f6;
+    --accent-2: #8b5cf6;
     --accent-hover: #60a5fa;
-    --row-hover: rgba(148, 163, 184, 0.10);
-    --track: #334155;
-    --footer-bg: #1e293b;
-    --shadow: rgba(0, 0, 0, 0.45);
+    --row-hover: rgba(147, 163, 196, 0.08);
+    --track: #1b2740;
+    --footer-bg: #111a2e;
+    --navbar-bg: rgba(8, 12, 24, 0.85);
+    --shadow: rgba(0, 0, 0, 0.50);
 }
 
 /* ===== Reset y base ===== */
@@ -62,36 +63,94 @@ a:hover {
     color: var(--accent-hover);
 }
 
-/* ===== Navbar profesional ===== */
+/* ===== Seleccion de texto y scrollbar ===== */
+::selection {
+    background: rgba(37, 99, 235, 0.25);
+}
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+::-webkit-scrollbar-track {
+    background: var(--bg);
+}
+::-webkit-scrollbar-thumb {
+    background: var(--border-hover);
+    border-radius: 6px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: var(--text-muted);
+}
+
+/* ===== Enfoque visible accesible ===== */
+.btn:focus-visible,
+a:focus-visible,
+.theme-toggle:focus-visible,
+.nav-link:focus-visible,
+.producto-card:focus-visible {
+    outline: 3px solid rgba(37, 99, 235, 0.35);
+    outline-offset: 2px;
+}
+
+/* ===== Navbar con efecto glass ===== */
 .navbar {
+    background-color: var(--navbar-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     box-shadow: 0 1px 3px var(--shadow);
     border-bottom: 1px solid var(--border);
     transition: box-shadow 0.3s ease;
 }
 .navbar.navbar-scrolled {
-    box-shadow: 0 4px 14px var(--shadow);
+    box-shadow: 0 4px 16px var(--shadow);
 }
 .navbar-brand {
     font-weight: 700;
     letter-spacing: -0.3px;
     font-size: 1.15rem;
+    background: linear-gradient(90deg, #60a5fa, #a78bfa);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+.navbar .nav-link {
+    position: relative;
+    transition: color 0.2s ease;
+}
+.navbar .nav-link::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 2px;
+    height: 2px;
+    width: 0;
+    border-radius: 2px;
+    background: var(--accent-2);
+    transition: width 0.25s ease;
+}
+.navbar .nav-link:hover::after {
+    width: 100%;
 }
 
 /* ===== Cards ===== */
 .card {
     border: 1px solid var(--border);
-    border-radius: 8px;
+    border-radius: 14px;
     background: var(--bg-card);
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
     transition: box-shadow 0.25s ease, transform 0.25s ease,
                 border-color 0.25s ease, background-color 0.35s ease;
 }
 .card:hover {
-    box-shadow: 0 4px 16px var(--shadow);
+    box-shadow: 0 14px 32px var(--shadow);
+    transform: translateY(-3px);
     border-color: var(--border-hover);
 }
 .card-header {
     border-bottom: 1px solid var(--border);
     font-weight: 600;
+    background: var(--bg-soft);
+    border-radius: 13px 13px 0 0;
 }
 
 /* ===== Tablas ===== */
@@ -100,10 +159,10 @@ a:hover {
     border-spacing: 0;
 }
 .table thead th {
-    font-weight: 600;
-    font-size: 0.8rem;
+    font-weight: 700;
+    font-size: 0.78rem;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.6px;
     border-bottom: 2px solid var(--border);
     color: var(--text-muted);
     background: var(--bg-soft);
@@ -115,54 +174,143 @@ a:hover {
     background-color: var(--row-hover);
 }
 
-/* ===== Badges ===== */
+/* ===== Badges con fondo suave ===== */
 .badge {
-    font-weight: 500;
+    font-weight: 600;
     letter-spacing: 0.2px;
-    border-radius: 4px;
-    padding: 0.35em 0.65em;
+    border-radius: 999px;
+    padding: 0.45em 0.8em;
 }
+.badge.bg-success {
+    background: rgba(22, 163, 74, 0.14) !important;
+    color: #15803d;
+}
+.badge.bg-warning {
+    background: rgba(217, 119, 6, 0.14) !important;
+    color: #b45309;
+}
+.badge.bg-danger {
+    background: rgba(220, 38, 38, 0.14) !important;
+    color: #b91c1c;
+}
+.badge.bg-secondary {
+    background: rgba(100, 116, 139, 0.14) !important;
+    color: #475569;
+}
+.badge.bg-info {
+    background: rgba(37, 99, 235, 0.14) !important;
+    color: #1d4ed8;
+}
+html[data-theme="dark"] .badge.bg-success { color: #4ade80; }
+html[data-theme="dark"] .badge.bg-warning { color: #fbbf24; }
+html[data-theme="dark"] .badge.bg-danger  { color: #f87171; }
+html[data-theme="dark"] .badge.bg-secondary { color: #94a3b8; }
+html[data-theme="dark"] .badge.bg-info    { color: #60a5fa; }
 
 /* ===== Botones ===== */
 .btn {
-    font-weight: 500;
+    position: relative;
+    overflow: hidden;
+    font-weight: 600;
     letter-spacing: 0.2px;
-    border-radius: 6px;
-    transition: all 0.2s ease;
+    border-radius: 10px;
+    padding: 0.55rem 1.15rem;
+    transition: transform 0.18s ease, box-shadow 0.25s ease, filter 0.25s ease;
 }
 .btn:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 2px 8px var(--shadow);
+    transform: translateY(-2px);
 }
 .btn:active {
-    transform: translateY(0);
+    transform: translateY(0) scale(0.98);
 }
 .btn-primary {
-    background-color: var(--accent);
-    border-color: var(--accent);
+    border: none;
+    background-image: linear-gradient(135deg, #2563eb, #7c3aed);
+    box-shadow: 0 4px 14px rgba(37, 99, 235, 0.30);
 }
 .btn-primary:hover {
-    background-color: var(--accent-hover);
-    border-color: var(--accent-hover);
+    background-image: linear-gradient(135deg, #1d4ed8, #6d28d9);
+    box-shadow: 0 6px 20px rgba(37, 99, 235, 0.42);
+    filter: brightness(1.05);
+}
+.btn-success {
+    border: none;
+    background-image: linear-gradient(135deg, #16a34a, #0d9488);
+    box-shadow: 0 4px 14px rgba(22, 163, 74, 0.30);
+}
+.btn-success:hover {
+    background-image: linear-gradient(135deg, #15803d, #0f766e);
+    box-shadow: 0 6px 20px rgba(22, 163, 74, 0.40);
+}
+.btn-warning {
+    border: none;
+    background-image: linear-gradient(135deg, #f59e0b, #f97316);
+    box-shadow: 0 4px 14px rgba(245, 158, 11, 0.30);
+}
+.btn-warning:hover {
+    background-image: linear-gradient(135deg, #d97706, #ea580c);
+    box-shadow: 0 6px 20px rgba(245, 158, 11, 0.40);
+}
+.btn-danger {
+    border: none;
+    background-image: linear-gradient(135deg, #dc2626, #e11d48);
+    box-shadow: 0 4px 14px rgba(220, 38, 38, 0.30);
+}
+.btn-danger:hover {
+    background-image: linear-gradient(135deg, #b91c1c, #be123c);
+    box-shadow: 0 6px 20px rgba(220, 38, 38, 0.40);
+}
+.btn-outline-secondary {
+    border-width: 1.5px;
+    color: var(--text-muted);
+}
+.btn-outline-secondary:hover {
+    background-color: var(--row-hover);
+    color: var(--text);
+    border-color: var(--text-muted);
+    box-shadow: none;
+}
+
+/* ===== Efecto ripple (generado por app.js) ===== */
+.ripple {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.45);
+    transform: scale(0);
+    animation: efectoRipple 0.6s ease-out forwards;
+    pointer-events: none;
+}
+.ripple-oscura {
+    background: rgba(0, 0, 0, 0.12);
+}
+@keyframes efectoRipple {
+    to {
+        transform: scale(3);
+        opacity: 0;
+    }
 }
 
 /* ===== Formularios ===== */
 .form-control, .form-select {
     border: 1px solid var(--border);
-    border-radius: 6px;
+    border-radius: 10px;
+    padding: 0.6rem 0.9rem;
+    background-color: var(--bg-card);
+    color: var(--text);
     transition: border-color 0.2s ease, box-shadow 0.2s ease,
                 background-color 0.35s ease, color 0.35s ease;
 }
 .form-control:focus, .form-select:focus {
     border-color: var(--accent);
-    box-shadow: 0 0 0 3px rgba(26, 86, 219, 0.12);
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.14);
 }
 
 /* ===== Alertas ===== */
 .alert {
     border: none;
-    border-radius: 8px;
-    border-left: 4px solid transparent;
+    border-radius: 12px;
+    border-left: 5px solid transparent;
+    box-shadow: 0 4px 12px var(--shadow);
     animation: slideDown 0.3s ease;
 }
 .alert-success { border-left-color: #16a34a; }
@@ -202,22 +350,26 @@ main {
     color: inherit;
     text-decoration: none;
     border: 1px solid var(--border);
-    border-radius: 10px;
+    border-radius: 14px;
     background: var(--bg-card);
     padding: 1.25rem;
     height: 100%;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
     transition: box-shadow 0.3s ease, transform 0.3s ease,
                 border-color 0.3s ease, background-color 0.35s ease;
 }
 .producto-card:hover {
-    box-shadow: 0 8px 24px var(--shadow);
-    transform: translateY(-3px);
+    box-shadow: 0 16px 40px var(--shadow);
+    transform: translateY(-5px);
     border-color: var(--accent);
     color: inherit;
 }
 .producto-card .precio {
-    color: var(--accent);
-    font-weight: 700;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
 /* ===== Progress bar (stock) ===== */
@@ -227,6 +379,7 @@ main {
     overflow: hidden;
 }
 .progress-bar {
+    background-image: linear-gradient(90deg, var(--accent), var(--accent-2));
     transition: width 0.5s ease;
 }
 
@@ -242,11 +395,13 @@ footer {
 /* ===== Panel de metricas ===== */
 .metrica-card {
     text-align: center;
-    padding: 1.5rem;
+    padding: 1.75rem;
+    background: linear-gradient(180deg, var(--bg-card) 0%, var(--bg-soft) 100%);
 }
 .metrica-card .valor {
-    font-size: 2.5rem;
-    font-weight: 700;
+    font-size: 2.6rem;
+    font-weight: 800;
+    letter-spacing: -0.5px;
     line-height: 1.2;
 }
 
@@ -266,6 +421,56 @@ footer {
 }
 .table tbody tr {
     animation: fadeInRow 0.3s ease forwards;
+}
+
+/* ===== Barra de progreso de carga (base.html) ===== */
+.load-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1055;
+    height: 3px;
+    width: 100%;
+    pointer-events: none;
+    overflow: hidden;
+}
+.load-bar::after {
+    content: "";
+    display: block;
+    height: 100%;
+    width: 45%;
+    border-radius: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    box-shadow: 0 0 8px var(--accent);
+    animation: barraCarga 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+@keyframes barraCarga {
+    0%   { transform: translateX(-110%); opacity: 1; }
+    70%  { transform: translateX(150%); opacity: 1; }
+    100% { transform: translateX(250%); opacity: 0; }
+}
+
+/* ===== Transiciones de pagina (View Transitions API) ===== */
+@view-transition {
+    navigation: auto;
+}
+::view-transition-old(root) {
+    animation: salidaPagina 0.22s ease;
+}
+::view-transition-new(root) {
+    animation: entradaPagina 0.32s ease;
+}
+@keyframes salidaPagina {
+    to {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+}
+@keyframes entradaPagina {
+    from {
+        opacity: 0;
+        transform: translateY(14px);
+    }
 }
 
 /* ===== Boton de cambio de tema ===== */
@@ -289,7 +494,7 @@ footer {
                 background-color 0.35s ease, color 0.35s ease;
 }
 .theme-toggle:hover {
-    transform: scale(1.12);
+    transform: scale(1.12) rotate(15deg);
     box-shadow: 0 4px 14px var(--shadow);
 }
 .theme-toggle:active {
@@ -335,8 +540,11 @@ html[data-theme="dark"] .theme-toggle .icon-luna {
         transform: none;
         transition: none;
     }
-    * {
+    *,
+    ::view-transition-old(root),
+    ::view-transition-new(root) {
         animation: none !important;
+        transition: none !important;
     }
 }
 
@@ -345,5 +553,5 @@ html[data-theme="dark"] .theme-toggle .icon-luna {
     h1 { font-size: 1.4rem; }
     h2 { font-size: 1.15rem; }
     .table { font-size: 0.82rem; }
-    .metrica-card .valor { font-size: 1.8rem; }
+    .metrica-card .valor { font-size: 1.9rem; }
 }

@@ -31,6 +31,29 @@
         });
     }
 
+    /* ===== Efecto ripple en botones ===== */
+    document.querySelectorAll('.btn').forEach(function (boton) {
+        boton.addEventListener('click', function (evento) {
+            var rect = boton.getBoundingClientRect();
+            var tamano = Math.max(rect.width, rect.height);
+            var ondulacion = document.createElement('span');
+            ondulacion.className = 'ripple';
+            if (boton.classList.contains('btn-outline-secondary') ||
+                    boton.classList.contains('btn-warning') ||
+                    boton.classList.contains('btn-light')) {
+                ondulacion.classList.add('ripple-oscura');
+            }
+            ondulacion.style.width = tamano + 'px';
+            ondulacion.style.height = tamano + 'px';
+            ondulacion.style.left = (evento.clientX - rect.left - tamano / 2) + 'px';
+            ondulacion.style.top = (evento.clientY - rect.top - tamano / 2) + 'px';
+            boton.appendChild(ondulacion);
+            setTimeout(function () {
+                ondulacion.remove();
+            }, 650);
+        });
+    });
+
     /* ===== Sombra del navbar al hacer scroll ===== */
     var navbar = document.querySelector('.navbar');
     if (navbar) {
