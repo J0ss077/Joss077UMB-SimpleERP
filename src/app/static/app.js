@@ -54,13 +54,31 @@
         });
     });
 
-    /* ===== Sombra del navbar al hacer scroll ===== */
+    /* ===== Navbar dinamica: sombra + ocultar al bajar, mostrar al subir ===== */
     var navbar = document.querySelector('.navbar');
     if (navbar) {
+        var ultimoScroll = 0;
         window.addEventListener('scroll', function () {
-            navbar.classList.toggle('navbar-scrolled', window.scrollY > 10);
+            var y = window.scrollY;
+            navbar.classList.toggle('navbar-scrolled', y > 10);
+            if (y > 90 && y > ultimoScroll) {
+                navbar.classList.add('nav-oculta');
+            } else {
+                navbar.classList.remove('nav-oculta');
+            }
+            ultimoScroll = y;
         }, { passive: true });
     }
+
+    /* ===== Resaltar el enlace de la pagina actual ===== */
+    var rutaActual = window.location.pathname;
+    document.querySelectorAll('.navbar .nav-link[href]').forEach(function (enlace) {
+        var urlEnlace = new URL(enlace.href, window.location.origin);
+        if (urlEnlace.pathname === rutaActual ||
+                (urlEnlace.pathname.length > 1 && rutaActual.startsWith(urlEnlace.pathname))) {
+            enlace.classList.add('active');
+        }
+    });
 
     /* ===== Animacion reveal al hacer scroll ===== */
     var observador = new IntersectionObserver(function (entradas) {
