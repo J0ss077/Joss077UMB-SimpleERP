@@ -23,9 +23,11 @@
             <p class="text-muted small mb-0">Registro de todas las facturas emitidas.</p>
         </div>
     </div>
-    <a href="{{ url_for('invoices.crear') }}" class="btn btn-success">
-        + Nueva Factura
-    </a>
+    {% if current_user.get_rol() != 'cliente' %}
+        <a href="{{ url_for('invoices.crear') }}" class="btn btn-success">
+            + Nueva Factura
+        </a>
+    {% endif %}
 </div>
 
 {% if facturas %}
@@ -71,7 +73,11 @@
 {% else %}
     <div class="alert alert-info text-center py-5">
         <h4 class="mb-2">Sin facturas registradas</h4>
-        <a href="{{ url_for('invoices.crear') }}" class="btn btn-success mt-2">Crear primera factura</a>
+        {% if current_user.get_rol() != 'cliente' %}
+            <a href="{{ url_for('invoices.crear') }}" class="btn btn-success mt-2">Crear primera factura</a>
+        {% else %}
+            <a href="{{ url_for('tienda.catalogo') }}" class="btn btn-primary mt-2">Ir al catálogo</a>
+        {% endif %}
     </div>
 {% endif %}
 
