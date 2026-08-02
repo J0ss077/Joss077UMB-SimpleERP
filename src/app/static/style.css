@@ -154,6 +154,16 @@ a:focus-visible,
 .navbar .container {
     padding-right: 4.5rem;
 }
+
+/* Separacion entre items del menu: lineas de hover despejadas */
+.navbar .navbar-nav {
+    gap: 0.3rem;
+}
+@media (min-width: 992px) {
+    .navbar .nav-link:not(.dropdown-toggle) {
+        padding: 0.55rem 0.9rem;
+    }
+}
 .navbar-brand {
     font-weight: 700;
     letter-spacing: -0.3px;
@@ -178,10 +188,11 @@ a:focus-visible,
 .navbar .nav-link:not(.dropdown-toggle)::after {
     content: "";
     position: absolute;
-    left: 0;
-    bottom: -7px;
+    left: 50%;
+    bottom: -8px;
     height: 3px;
     width: 0;
+    transform: translateX(-50%);
     border-radius: 3px;
     background: linear-gradient(90deg, var(--accent), var(--accent-2));
     transition: width 0.25s ease;
@@ -192,7 +203,7 @@ a:focus-visible,
 }
 .navbar .nav-link:not(.dropdown-toggle):hover::after,
 .navbar .nav-link:not(.dropdown-toggle).active::after {
-    width: 100%;
+    width: 55%;
 }
 .nav-usuario {
     color: var(--navbar-text) !important;

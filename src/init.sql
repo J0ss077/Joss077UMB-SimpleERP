@@ -15,7 +15,8 @@ CREATE TABLE IF NOT EXISTS usuarios (
     ciudad VARCHAR(100),
     imagen VARCHAR(255),
     newsletter BOOLEAN NOT NULL DEFAULT FALSE,
-    tema_preferido VARCHAR(10) NOT NULL DEFAULT 'auto'
+    tema_preferido VARCHAR(10) NOT NULL DEFAULT 'auto',
+    activo BOOLEAN NOT NULL DEFAULT TRUE
 );
 
 -- Tabla: PRODUCTOS
@@ -76,9 +77,19 @@ CREATE TABLE IF NOT EXISTS favoritos (
 
 -- Datos iniciales de prueba (opcionales)
 -- Se insertan solo si las tablas estan vacias
-INSERT INTO usuarios (nombre, email, password_hash, rol)
-SELECT 'Administrador', 'admin@erp.local', 'scrypt:32768:8:1$initial-placeholder-hash$not-a-real-hash', 'admin'
+
+-- Cuentas demo: admin123 / vendedor123 / cliente123
+INSERT INTO usuarios (nombre, email, password_hash, rol, telefono, direccion, ciudad, newsletter, tema_preferido, activo)
+SELECT 'Admin Demo', 'admin@erp.local', 'scrypt:32768:8:1$qV66BI8fytaUfQqB$f3fd0de898dda9953d07b5e023c967c72de1368506dd12adb15a1f0aeaeb0bd33f5bc6f350a59f90667ba5798b34294e65c79e1b9f2b77418ad2e3334a9af289', 'admin', NULL, NULL, NULL, FALSE, 'auto', TRUE
 WHERE NOT EXISTS (SELECT 1 FROM usuarios LIMIT 1);
+
+INSERT INTO usuarios (nombre, email, password_hash, rol, telefono, direccion, ciudad, newsletter, tema_preferido, activo)
+SELECT 'Vendedor Demo', 'vendedor@erp.local', 'scrypt:32768:8:1$UjFBsitDuRA37fTB$8e4a3f26d6eedee4d1d81a6e77d0f1aa1b5b27f57416f6541b0261b31b1f77cd94a24246e5ffe170f3b9156623d564e6d58389e3350fdd2e5ba7786fc7285842', 'vendedor', '3105556789', 'Av. Los Estudiantes # 20-15', 'Pasto', FALSE, 'auto', TRUE
+WHERE NOT EXISTS (SELECT 1 FROM usuarios WHERE email = 'vendedor@erp.local');
+
+INSERT INTO usuarios (nombre, email, password_hash, rol, telefono, direccion, ciudad, newsletter, tema_preferido, activo)
+SELECT 'Cliente Demo', 'cliente@erp.local', 'scrypt:32768:8:1$4x4hJfCPZCR9e0kP$c40fc52eab8e5f2430ca1cd037d245d5c1458f0a7fca5545e381a6f0d2ce84fe11669170010f00d75161cf77ca2bd7075972e6f1c1b22f4c11a03279e8ff22e0', 'cliente', '3005551234', 'Calle 10 # 5-30, Apto 201', 'Pasto', TRUE, 'auto', TRUE
+WHERE NOT EXISTS (SELECT 1 FROM usuarios WHERE email = 'cliente@erp.local');
 
 INSERT INTO productos (nombre, descripcion, precio, stock, categoria)
 SELECT 'Laptop Pro 15"', 'Laptop de alto rendimiento, 16GB RAM, 512GB SSD', 899.99, 25, 'Computadoras'
